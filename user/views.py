@@ -1,3 +1,58 @@
-from django.shortcuts import render
+
 
 # Create your views here.
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from core.models import User
+
+
+
+def register_user(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+        messages.success(request, "Account created successfully!")
+        return redirect("login")
+
+    return render(request, "user/registration.html")
+
+
+
+
+def login_user(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(username=username, password=password)
+
+        if user:
+            login(request, user)
+            return redirect("profile")
+        else:
+            messages.error(request, "Invalid username or password")
+
+    return render(request, "user/login.html")
+
+
+
+# LOGOUT
+def logout_user(request):
+    logout(request)
+    return redirect("login")
+
+
+
+# PROFILE
+@login_required
+def profile(request):
+    return render(request, "user/profile.html")

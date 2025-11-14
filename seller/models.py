@@ -5,15 +5,36 @@ from core.models import Category
 
 class Seller(models.Model):
     user = models.OneToOneField(
-        "user.User",
+        "core.User",
         on_delete=models.CASCADE,
         related_name="seller_profile"
     )
+
     shop_name = models.CharField(max_length=200)
-    gst_number = models.CharField(max_length=20, blank=True, null=True)  # removed unique=True
+
+    shop_type_choices = [
+        ("RETAIL", "Retail Shop"),
+        ("WHOLESALE", "Wholesale"),
+        ("DROPSHIPPING", "Dropshipping"),
+        ("MANUFACTURER", "Manufacturer"),
+        ("OTHER", "Other"),
+    ]
+    shop_type = models.CharField(max_length=50, choices=shop_type_choices)
+
+    shop_address = models.CharField(max_length=255, blank=True, null=True)
+
+    gst_number = models.CharField(max_length=20, blank=True, null=True)
+
+    bank_account_number = models.CharField(max_length=30, blank=True, null=True)
+
     is_approved = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.shop_name
+
 
     def __str__(self):
         return f"{self.shop_name} ({self.user.username if self.user else 'No User'})"
