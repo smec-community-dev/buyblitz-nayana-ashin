@@ -763,13 +763,19 @@
         </div>
 
         <nav>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="category.html" class="active">Categories</a></li>
-                <li><a href="trending.html">Trending</a></li>
-                <li><a href="deals.html">Deals</a></li>
-            </ul>
-        </nav>
+        <nav>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}" class="active">Home</a></li>
+
+            <!-- CATEGORIES -->
+            <li><a href="{% url 'category' %}">Categories</a></li>
+
+            <!-- PRODUCTS -->
+            <li><a href="{% url 'products' %}">Products</a></li>
+
+            <!-- TRENDING (NO VIEW YET) -->
+            <li><a href="#">Trending</a></li>
+        </ul>
     </header>
 
     <!-- Main Container -->
@@ -842,91 +848,114 @@
             </div>
 
             <!-- Product Grid -->
-            <div class="product-grid" id="productContainer">
-                <div class="product-card">
-                    <div class="product-image">📱</div>
-                    <div class="product-info">
-                        <div class="product-title">Premium Smartphone</div>
-                        <div class="product-category">Electronics</div>
-                        <div class="product-rating">
-                            <span class="star">★★★★★</span>
-                            <span>(245)</span>
-                        </div>
-                        <div class="product-price">$899.99</div>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
+            <h2 style="text-align:center; margin: 30px 0; font-size: 2rem;">
+    All Products
+</h2>
 
-                <div class="product-card">
-                    <div class="product-image">👕</div>
-                    <div class="product-info">
-                        <div class="product-title">Designer T-Shirt</div>
-                        <div class="product-category">Fashion</div>
-                        <div class="product-rating">
-                            <span class="star">★★★★☆</span>
-                            <span>(128)</span>
-                        </div>
-                        <div class="product-price">$49.99</div>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
+<div class="products-grid" style="
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+">
 
-                <div class="product-card">
-                    <div class="product-image">⌚</div>
-                    <div class="product-info">
-                        <div class="product-title">Smart Watch Pro</div>
-                        <div class="product-category">Electronics</div>
-                        <div class="product-rating">
-                            <span class="star">★★★★★</span>
-                            <span>(412)</span>
-                        </div>
-                        <div class="product-price">$299.99</div>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
+    {% for p in products %}
+    <a href="{% url 'single_view' p.slug %}" style="text-decoration:none; color:inherit;">
 
-                <div class="product-card">
-                    <div class="product-image">🎧</div>
-                    <div class="product-info">
-                        <div class="product-title">Wireless Headphones</div>
-                        <div class="product-category">Electronics</div>
-                        <div class="product-rating">
-                            <span class="star">★★★★☆</span>
-                            <span>(356)</span>
-                        </div>
-                        <div class="product-price">$179.99</div>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
 
-                <div class="product-card">
-                    <div class="product-image">👟</div>
-                    <div class="product-info">
-                        <div class="product-title">Running Shoes</div>
-                        <div class="product-category">Sports</div>
-                        <div class="product-rating">
-                            <span class="star">★★★★★</span>
-                            <span>(523)</span>
-                        </div>
-                        <div class="product-price">$129.99</div>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
+    <div class="product-card" style="
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        transition: 0.3s;
+    ">
 
-                <div class="product-card">
-                    <div class="product-image">📚</div>
-                    <div class="product-info">
-                        <div class="product-title">Best Seller Book Set</div>
-                        <div class="product-category">Books</div>
-                        <div class="product-rating">
-                            <span class="star">★★★★☆</span>
-                            <span>(189)</span>
-                        </div>
-                        <div class="product-price">$39.99</div>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
+        <!-- Product Image/Icon -->
+        <div class="product-image" style="
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+">
+    {% if p.images.all %}
+        <img src="{{ p.images.first.image.url }}"
+             style="width:100%; height:200px; object-fit:cover;">
+    {% else %}
+        <span style="font-size:4rem;">🛍</span>
+    {% endif %}
+</div>
+
+
+
+        <!-- Product Info -->
+        <div class="product-info" style="padding: 20px;">
+            <div class="product-category" style="
+                color: #667eea;
+                font-weight: 600;
+                margin-bottom: 5px;
+            ">
+                {{ p.category }}
             </div>
+
+            <h3 class="product-name" style="
+                font-size: 1.2rem;
+                font-weight: 700;
+                margin-bottom: 10px;
+                color: #1a1a2e;
+            ">
+                {{ p.name }}
+            </h3>
+
+            <p class="product-description" style="
+                color: #6c757d;
+                margin-bottom: 1rem;
+                font-size: 0.9rem;
+            ">
+                {{ p.description }}
+            </p>
+
+            <div class="product-footer" style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            ">
+                <div class="product-price" style="
+                    font-size: 1.3rem;
+                    font-weight: 800;
+                    color: #667eea;
+                ">
+                    ₹{{ p.price }}
+                </div>
+
+                <button class="add-to-cart" style="
+                    width: 45px;
+                    height: 45px;
+                    border: none;
+                    background: linear-gradient(135deg, #667eea, #764ba2);
+                    color: white;
+                    border-radius: 10px;
+                    font-size: 1.2rem;
+                    cursor: pointer;
+                    transition: 0.3s;
+                ">
+                    +
+                </button>
+            </div>
+        </div>
+    </div></a>
+
+    {% endfor %}
+
+</div>
+
+{% if products|length == 0 %}
+<p style="text-align:center; padding:20px; font-size:18px;">No products found</p>
+{% endif %}
+
 
             <!-- Pagination -->
             <div class="pagination">

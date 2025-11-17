@@ -930,41 +930,51 @@
 </head>
 <body>
     <!-- Header -->
-    <header>
-        <div class="header-wrapper">
-            <a href="home.html" class="logo">
-                🛍 ShopHub
+   <!-- Header -->
+<header>
+    <div class="header-wrapper">
+        <!-- Logo -->
+        <a href="{% url 'home' %}" class="logo">
+            🛍 ShopHub
+        </a>
+
+        <!-- WORKING DJANGO SEARCH BAR -->
+    <form method="get" action="{% url 'search' %}">
+    <input type="text" name="q" placeholder="Search items..." value="{{ query }}">
+    <button type="submit">Search</button>
+</form>
+
+
+        <!-- Header Actions -->
+        <div class="header-actions">
+            <a href="{% url 'register' %}">
+                <span>👤</span> Registration
             </a>
 
-            <div class="search-bar">
-                <input type="text" placeholder="Search for products, brands and more...">
-                <button class="search-btn">Search</button>
-            </div>
-
-            <div class="header-actions">
-                <a href="{% url 'register' %}">
-
-                    <span>👤</span> Registration
-                </a>
-
-                <a href="cart.html">
-                    <span>🛒</span> Cart
-                    <span class="badge">3</span>
-                </a>
-            </div>
+            <a href="#">
+                <span>🛒</span> Cart
+                <span class="badge">3</span>
+            </a>
         </div>
+    </div>
 
-        <nav>
-            <ul class="nav-links">
-                <li><a href="home.html" class="active">Home</a></li>
-                <li><a href="category.html">Categories</a></li>
-                <li><a href="deals.html">Deals</a></li>
-                <li><a href="trending.html">Trending</a></li>
-            </ul>
-        </nav>
-    </header>
+    <!-- Navigation -->
+    <nav>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}" class="active">Home</a></li>
 
-    <!-- Hero Section -->
+            <!-- CATEGORIES -->
+            <li><a href="{% url 'category' %}">Categories</a></li>
+
+            <!-- PRODUCTS -->
+            <li><a href="{% url 'products' %}">Products</a></li>
+
+            <!-- TRENDING (NO VIEW YET) -->
+            <li><a href="#">Trending</a></li>
+        </ul>
+    </nav>
+</header>
+
     <section class="hero">
         <div class="hero-content">
             <div class="hero-text">
@@ -1074,79 +1084,50 @@
     </section>
 
     <!-- Products Section -->
-    <section class="products">
-        <div class="products-header">
-            <h2 class="section-title">Featured Products</h2>
-            <a href="category.html" class="view-all">
-                View All <span>→</span>
-            </a>
-        </div>
+    <!-- Products Section -->
+<section class="products">
 
-        <div class="products-grid">
-            <div class="product-card">
-                <div class="product-image">
-                    <span>📱</span>
-                    <div class="product-badge">-20%</div>
-                </div>
-                <div class="product-info">
-                    <div class="product-category">Electronics</div>
-                    <h3 class="product-name">Premium Smartphone</h3>
-                    <p class="product-description">Latest flagship smartphone with advanced camera and performance.</p>
-                    <div class="product-footer">
-                        <div class="product-price">$899.99</div>
-                        <button class="add-to-cart">+</button>
-                    </div>
-                </div>
+    <div class="products-header">
+        <h2 class="section-title">
+            {% if query %}
+                Results for "{{ query }}"
+            {% else %}
+                Featured Products
+            {% endif %}
+        </h2>
+
+        <a href="{% url 'products' %}" class="view-all">
+            View All <span>→</span>
+        </a>
+    </div>
+
+    <div class="products-grid">
+
+        {% for p in products %}
+        <div class="product-card">
+            <div class="product-image">
+                <span>🛍</span>
             </div>
 
-            <div class="product-card">
-                <div class="product-image">
-                    <span>🎧</span>
-                    <div class="product-badge">New</div>
-                </div>
-                <div class="product-info">
-                    <div class="product-category">Audio</div>
-                    <h3 class="product-name">Wireless Headphones</h3>
-                    <p class="product-description">Premium sound quality with noise cancellation technology.</p>
-                    <div class="product-footer">
-                        <div class="product-price">$249.99</div>
-                        <button class="add-to-cart">+</button>
-                    </div>
-                </div>
-            </div>
+            <div class="product-info">
+                <div class="product-category">{{ p.category }}</div>
+                <h3 class="product-name">{{ p.name }}</h3>
+                <p class="product-description">{{ p.description }}</p>
 
-            <div class="product-card">
-                <div class="product-image">
-                    <span>⌚</span>
-                </div>
-                <div class="product-info">
-                    <div class="product-category">Wearables</div>
-                    <h3 class="product-name">Smart Watch Pro</h3>
-                    <p class="product-description">Track your health and stay connected with this advanced smartwatch.</p>
-                    <div class="product-footer">
-                        <div class="product-price">$299.99</div>
-                        <button class="add-to-cart">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">
-                    <span>💻</span>
-                    <div class="product-badge">-15%</div>
-                </div>
-                <div class="product-info">
-                    <div class="product-category">Computers</div>
-                    <h3 class="product-name">Ultra Laptop</h3>
-                    <p class="product-description">Powerful laptop for work and entertainment with long battery life.</p>
-                    <div class="product-footer">
-                        <div class="product-price">$1,299.99</div>
-                        <button class="add-to-cart">+</button>
-                    </div>
+                <div class="product-footer">
+                    <div class="product-price">₹{{ p.price }}</div>
+                    <button class="add-to-cart">+</button>
                 </div>
             </div>
         </div>
-    </section>
+        {% empty %}
+        <p style="padding: 20px; font-size: 18px;">No products found</p>
+        {% endfor %}
+
+    </div>
+
+</section>
+
 
     <!-- Deals Section -->
     <section class="deals">

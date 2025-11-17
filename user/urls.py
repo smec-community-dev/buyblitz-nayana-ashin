@@ -10,6 +10,12 @@ urlpatterns = [
     path("login/", views.login_user, name="login"),
     path("logout/", views.logout_user, name="logout"),
     # path("profile/", views.profile, name="profile"),
-    path("home/",views.home,name="home")
+    path("search/", views.search, name="search"),
+
+    path("home/",views.home,name="home"),
+    path("category/", views.category, name="category"),
+    path("products/", views.products, name="products"),
+    path("product/<slug:slug>/", views.single_view, name="single_view"),
+    path("trending/", views.trending, name="trending"),
 
 ]
