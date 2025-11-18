@@ -1,10 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% load static %}
 
-</body>
-</html>
+{% block content %}
+<div class="container" style="padding: 40px;">
+
+    <h2 style="margin-bottom: 20px;">Your Wishlist ❤️</h2>
+
+    {% if items %}
+        <div class="wishlist-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+
+            {% for item in items %}
+            <div class="card" style="border-radius: 10px; background: #fff; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+
+                <img src="{{ item.product.main_image }}"
+     alt="{{ item.product.title }}"
+     style="height:200px; width: auto; object-fit: cover; border-radius:10px; display:block; margin:auto;">
+
+
+
+                <h3 style="margin-top: 10px;">{{ item.product.title }}</h3>
+                <p style="color: gray;">₹{{ item.product.price }}</p>
+
+                <a href="{% url 'single_view' item.product.slug %}" class="btn" style="background:#667eea; color:white; padding:8px 12px; border-radius:5px; text-decoration:none;">
+                    View Product
+                </a>
+
+                <a href="/user/add_to_wishlist/{{ item.product.id }}/"
+                   class="btn"
+                   style="background:#ff4d4d; color:white; padding:8px 12px; border-radius:5px; text-decoration:none; margin-left:10px;">
+                    Remove
+                </a>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <h3>No items in your wishlist 😢</h3>
+        <a href="/user/products/" class="btn btn-primary">Browse Products</a>
+
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages,auth
 from core.models import User
 from seller.models import Product
+from user.models import Wishlist
+from django.http import JsonResponse
 
 
 def home(request):
@@ -64,8 +66,16 @@ def login_user(request):
 def category(request):
     return render(request,'user/category.html')
 def products(request):
+    if request.user.is_authenticated:
+        wishlist_count = Wishlist.objects.filter(user=request.user).count()
+    else:
+        wishlist_count = 0
+
+
+
+
     products=Product.objects.all()
-    return render(request,'user/product.html',{'products':products})
+    return render(request,'user/product.html',{'products':products,"wishlist_count": wishlist_count,})
 
 
 
@@ -102,6 +112,69 @@ def search(request):
         "products": results,
         "query": query
     })
+
+
+
+@login_required
+def add_to_cart(request, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return redirect("products")   # If product not found
+
+    user = request.user
+
+    cart_item, created = Cart.objects.get_or_create(
+        user=user,
+        product=product
+    )
+
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+
+    return redirect("cart")   # <-- GO TO CART PAGE
+def wishlist_page(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    items = Wishlist.objects.filter(user=request.user).select_related("product")
+
+    return render(request, "user/wishlist.html", {"items": items})
+
+
+@login_required
+def cart_page(request):
+    user = request.user
+
+    # Get all items for the logged-in user
+    cart_items = Cart.objects.filter(user=user).select_related("product")
+
+    # Calculate total
+    total_amount = sum(item.subtotal for item in cart_items)
+
+    return render(request, "user/cart.html", {
+        "cart_items": cart_items,
+        "total_amount": total_amount
+    })
+@login_required
+def add_to_wishlist(request, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Product not found"})
+
+    user = request.user
+
+    item, created = Wishlist.objects.get_or_create(user=user, product=product)
+
+    if not created:
+        item.delete()
+        count = Wishlist.objects.filter(user=user).count()
+        return JsonResponse({"status": "removed", "count": count})
+
+    count = Wishlist.objects.filter(user=user).count()
+    return JsonResponse({"status": "added", "count": count})
 
 
 def logout_user(request):

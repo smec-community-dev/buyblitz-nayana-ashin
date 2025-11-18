@@ -110,7 +110,9 @@
 </head>
 <body>
 
-<a href="{% url 'products' %}" class="back">← Back to Products</a>
+<a href="/user/add_to_cart/{{ product.id }}/" class="add-to-cart-btn">
+    + Add to Cart
+</a>
 
 <div class="container">
 
@@ -160,10 +162,30 @@
             {% endif %}
         </p>
 
-        <button class="add-cart">+ Add to Cart</button>
+        <button class="add-to-cart-btn" onclick="addToCart({{ product.id }})">
+    + Add to Cart
+</button>
+
     </div>
 
 </div>
+<script>
+function addToCart(productID) {
+    fetch(`/user/add_to_cart/${productID}/`)
+    .then(response => response.json())
+    .then(data => {
+
+        if (data.status === "added") {
+            // Update navbar count
+            document.getElementById("cart-count").innerText = data.count;
+
+            alert("Product added to your cart!");
+        }
+
+    });
+}
+</script>
+
 
 </body>
 </html>
