@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - ShopHub</title>
+
+    <!-- FontAwesome (Wishlist Icon) -->
+    <link rel="stylesheet"
+     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .wishlist-menu {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+}
+
+.wishlist-menu:hover {
+    color: #764ba2;
+}
+
+.wishlist-icon {
+    font-size: 18px;
+    color: #764ba2; /* Purple theme icon */
+}
+
+.wishlist-badge {
+    background: red;
+    color: white;
+    font-size: 12px;
+    padding: 2px 7px;
+    border-radius: 50%;
+    font-weight: bold;
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    display: inline-block;
+    min-width: 18px;
+    text-align: center;
+}
+
+        .
+
+
+
+
+
+
+        .wishlist-icon {
+    background: #f3e8ff;
+    color: #6b21a8;
+    padding: 8px 15px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    position: relative;
+    transition: 0.2s ease;
+}
+
+.wishlist-icon .fa-heart {
+    color: #d6005f;
+    font-size: 18px;
+}
+
+.wishlist-icon .count {
+    background: #ff2659;
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    margin-left: 5px;
+}
+
+.wishlist-icon:hover {
+    transform: scale(1.05);
+}
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        :root {
+            --primary:#667eea;
+            --secondary:#764ba2;
+            --danger:#dc3545;
+            --light:#f8f9fa;
+            --dark:#1a1a2e;
+            --shadow:0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma;
+            background: var(--light);
+        }
+
+        /* Header */
+        header {
+            background:white;
+            padding:1.2rem 0;
+            position:sticky;
+            top:0;
+            z-index:1000;
+            box-shadow:var(--shadow);
+        }
+
+        .header-wrapper {
+            max-width:1400px;
+            margin:auto;
+            padding:0 20px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap:wrap;
+            gap:20px;
+        }
+
+        .logo {
+            font-size:2rem;
+            font-weight:800;
+            background:linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            text-decoration:none;
+        }
+
+        .search-bar input {
+            width:100%;
+            padding:14px 20px;
+            border-radius:50px;
+            border:2px solid #ddd;
+        }
+
+        .search-btn {
+            position:absolute;
+            right:10px;
+            top:50%;
+            transform:translateY(-50%);
+            background:linear-gradient(135deg, var(--primary), var(--secondary));
+            color:white;
+            border:none;
+            padding:8px 20px;
+            border-radius:50px;
+            cursor:pointer;
+        }
+
+        .header-actions a {
+            background:rgba(102,126,234,0.1);
+            padding:10px 15px;
+            border-radius:10px;
+            text-decoration:none;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .badge {
+            background: var(--danger);
+            color:white;
+            border-radius:50%;
+            width:20px;
+            height:20px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+
+        /* CATEGORY NAV */
+        .nav-links {
+            display:flex;
+            justify-content:center;
+            gap:2rem;
+            list-style:none;
+        }
+
+        .nav-links a {
+            padding:10px 20px;
+            border-radius:10px;
+            text-decoration:none;
+            color:#333;
+        }
+
+        .nav-links a.active {
+            background:rgba(102,126,234,0.2);
+            color:var(--primary);
+        }
+
+        /* PRODUCT GRID */
+        .products-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fill, minmax(280px,1fr));
+            gap:2rem;
+            max-width:1400px;
+            margin:auto;
+            padding:20px;
+        }
+
+        .product-card {
+            background:white;
+            border-radius:15px;
+            overflow:hidden;
+            box-shadow:0 10px 20px rgba(0,0,0,0.1);
+            transition:0.3s;
+            position:relative;
+        }
+
+        .product-card:hover {
+            transform:translateY(-8px);
+        }
+
+        .product-image img {
+            width:100%;
+            height:200px;
+            object-fit:cover;
+        }
+
+        /* Wishlist Button */
+        .wishlist-btn {
+            position:absolute;
+            top:15px;
+            right:15px;
+            background:white;
+            border:none;
+            border-radius:50%;
+            padding:8px;
+            cursor:pointer;
+            box-shadow:0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .wishlist-btn i {
+            font-size:20px;
+            color:#333;
+        }
+
+        .wishlist-btn.liked i {
+            color:red;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-wrapper">
+        <a href="/" class="logo">🛍 ShopHub</a>
+
+        <div class="search-bar" style="position:relative; flex:1;">
+            <input type="text" placeholder="Search products...">
+            <button class="search-btn">Search</button>
+        </div>
+
+        <div class="header-actions">
+            <a href="#"><span>👤</span> Account</a>
+            <a href="/user/wishlist/" class="wishlist-menu">
+    <i class="fa fa-heart wishlist-icon"></i>
+    <span class="text">Wishlist</span>
+    <span class="wishlist-badge" id="wishlist-count">{{ wishlist_count }}</span>
+</a>
+
+
+
+            <a href="#"><span>🛒</span> Cart <span class="badge">3</span></a>
+        </div>
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="{% url 'home' %}" class="active">Home</a></li>
+        <li><a href="{% url 'category' %}">Categories</a></li>
+        <li><a href="{% url 'products' %}">Products</a></li>
+    </ul>
+</header>
+
+<h2 style="text-align:center; margin:30px 0;">All Products</h2>
+
+<!-- START PRODUCT GRID -->
+<div class="products-grid">
+{% for p in products %}
+<div class="product-card">
+
+    <!-- ❤️ Wishlist Button (Working) -->
+    <button class="wishlist-btn" onclick="toggleWishlist('{{ p.id }}')">
+        <i id="heart-{{ p.id }}" class="far fa-heart"></i>
+    </button>
+
+    <!-- Product Link -->
+    <a href="{% url 'single_view' p.slug %}" style="text-decoration:none; color:inherit;">
+
+        <!-- Product Image -->
+        <div class="product-image">
+            {% if p.images.all %}
+                <img src="{{ p.images.first.image.url }}" alt="{{ p.name }}">
+            {% else %}
+                <span style="font-size:4rem;">🛍</span>
+            {% endif %}
+        </div>
+
+        <!-- Product Info -->
+        <div class="product-info" style="padding:20px;">
+
+            <div class="product-category" style="color:#667eea; font-weight:600;">
+                {{ p.category }}
+            </div>
+
+            <h3 class="product-title" style="font-size:1.2rem; font-weight:700; margin:10px 0;">
+                {{ p.name }}
+            </h3>
+
+            <p style="color:#6c757d; font-size:0.9rem; margin-bottom:15px;">
+                {{ p.description }}
+            </p>
+
+            <div class="product-footer" style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="product-price" style="font-size:1.3rem; font-weight:800; color:#667eea;">
+                    ₹{{ p.price }}
+                </div>
+
+                <button class="add-to-cart"
+                    style="width:45px; height:45px; border:none; background:linear-gradient(135deg,#667eea,#764ba2);
+                    color:white; border-radius:10px; font-size:1.2rem; cursor:pointer; transition:0.3s;">
+                    +
+                </button>
+            </div>
+
+        </div>
+    </a>
+
+</div>
+{% endfor %}
+<!-- If no products -->
+{% if products|length == 0 %}
+<p style="text-align:center; padding:20px; font-size:18px;">No products found</p>
+{% endif %}
+
+<!-- FOOTER -->
+<footer style="background:#1a1a2e; color:white; padding:40px 0; margin-top:40px;">
+    <div style="max-width:1400px; margin:auto; padding:0 20px;">
+        <p style="text-align:center;">© 2025 ShopHub — Made with ❤</p>
+    </div>
+</footer>
+
+<!-- JAVASCRIPT -->
+<script>
+function toggleWishlist(pid) {
+
+    fetch(`/user/add_to_wishlist/${pid}/`, {   // <-- CORRECT URL
+        method: "GET"
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        let icon = document.getElementById("heart-" + pid);
+
+        if (data.status === "added") {
+            icon.classList.remove("fa-regular");
+            icon.classList.add("fa-solid");
+            icon.style.color = "red";
+        }
+        else if (data.status === "removed") {
+            icon.classList.remove("fa-solid");
+            icon.classList.add("fa-regular");
+            icon.style.color = "black";
+        }
+
+        // update navbar count
+        document.getElementById("wishlist-count").innerText = data.count;
+    });
+}
+
+/* Add-to-cart Animation */
+document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', function() {
+        this.style.background = "green";
+        this.textContent = "✓";
+
+        setTimeout(() => {
+            this.style.background = "";
+            this.textContent = "+";
+        }, 1200);
+    });
+});
+</script>
+
+</body>
+</html>

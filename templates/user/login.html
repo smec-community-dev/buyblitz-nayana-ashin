@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ShopHub</title>
+
+    <style>
+        /* your styles (unchanged) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --light: #f8f9fa;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        body { font-family: Segoe UI, sans-serif; background: var(--light); }
+
+        header { background: white; padding: 20px 0; border-bottom: 1px solid #eee; }
+        .header-wrapper { max-width: 1200px; margin: auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 2rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+
+        .search-bar { width: 400px; position: relative; }
+        .search-bar input { width: 100%; padding: 12px; border-radius: 25px; border: 1px solid #ddd; }
+        .search-btn { position: absolute; right: 5px; top: 5px; padding: 8px 15px; background: var(--primary); color: white; border: none; border-radius: 20px; }
+
+        .header-actions a { text-decoration: none; padding: 10px 15px; background: rgba(102,126,234,0.1); border-radius: 10px; color: #333; }
+
+        nav { background: white; border-top: 1px solid #eee; }
+        .nav-links { display: flex; justify-content: center; padding: 15px; list-style: none; gap: 25px; }
+        .nav-links a { text-decoration: none; font-weight: bold; color: #333; }
+
+        main { max-width: 1200px; margin: 40px auto; padding: 20px; }
+        .page-header { text-align: center; margin-bottom: 30px; }
+
+        .login-content { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+
+        .login-form-container {
+            background: white; padding: 40px; border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input {
+            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px;
+            transition: 0.3s;
+        }
+        .form-group input:focus { border-color: var(--primary); }
+
+        .password-input { position: relative; }
+        .toggle-password {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; cursor: pointer;
+        }
+
+        .login-btn {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none; border-radius: 6px; color: white; font-size: 1.2rem;
+            font-weight: bold; margin-top: 10px;
+        }
+
+        .benefit-item {
+            display: flex; gap: 15px; margin-bottom: 20px; padding: 15px;
+            background: white; border-radius: 10px; box-shadow: var(--shadow);
+        }
+
+        footer { background: #1a1a2e; padding: 40px; color: white; margin-top: 40px; }
+        .footer-bottom { text-align: center; margin-top: 20px; color: #999; }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-wrapper">
+        <a href="/user/home" class="logo">🛍 ShopHub</a>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Search for products...">
+            <button class="search-btn">Search</button>
+        </div>
+
+        <div class="header-actions">
+            <a href="/user/login/" style="color: var(--primary)">👤 Login</a>
+            <a href="#">❤ Wishlist</a>
+            <a href="#">🛒 Cart</a>
+        </div>
+    </div>
+
+    <nav>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="#">Categories</a></li>
+            <li><a href="#">Deals</a></li>
+            <li><a href="#">Trending</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <div class="page-header">
+        <h1>Welcome Back!</h1>
+        <p>Sign in to your ShopHub account</p>
+    </div>
+
+    <div class="login-content">
+
+        <!-- LOGIN FORM -->
+        <div class="login-form-container">
+
+            <h2 style="text-align:center; color:var(--primary)">Sign In</h2>
+            <p style="text-align:center; color:var(--gray)">Enter your credentials</p>
+            <br>
+
+            <!-- Django Login Form (fixed) -->
+            <form method="POST" action="">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="username">UserName</label>
+                    <input type="text" id="username" name="username"
+                           placeholder="Enter your username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-input">
+                        <input type="password" id="password" name="password"
+                               placeholder="Enter your password" required>
+                        <button type="button" class="toggle-password">👁</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn">Sign In</button>
+            </form>
+        </div>
+
+        <!-- BENEFITS -->
+        <div>
+            <h2 style="color:var(--primary)">Why Sign In?</h2>
+
+            <div class="benefit-item">
+                <div>🛒</div>
+                <div>
+                    <h3>Faster Checkout</h3>
+                    <p>Save payment details for quick purchases</p>
+                </div>
+            </div>
+
+            <div class="benefit-item">
+                <div>❤</div>
+                <div>
+                    <h3>Wishlist Access</h3>
+                    <p>Access saved items from any device</p>
+                </div>
+            </div>
+
+            <div class="benefit-item">
+                <div>📦</div>
+                <div>
+                    <h3>Order Tracking</h3>
+                    <p>Track your orders easily</p>
+                </div>
+            </div>
+
+            <div class="benefit-item">
+                <div>🎁</div>
+                <div>
+                    <h3>Exclusive Offers</h3>
+                    <p>Get personalized recommendations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-bottom">
+        © 2025 ShopHub. All rights reserved.
+    </div>
+</footer>
+
+<script>
+    // Show / Hide password
+    document.querySelector('.toggle-password').addEventListener('click', function () {
+        let input = document.getElementById('password');
+        input.type = input.type === "password" ? "text" : "password";
+        this.textContent = input.type === "password" ? "👁" : "🔒";
+    });
+</script>
+
+</body>
+</html>
