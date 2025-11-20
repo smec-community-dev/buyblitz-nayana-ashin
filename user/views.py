@@ -5,15 +5,41 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages,auth
-from core.models import User
+from core.models import User,Category
+from django.db.models import Q
 from seller.models import Product
-from user.models import Wishlist
+from user.models import Wishlist,Cart
 from django.http import JsonResponse
 
-
 def home(request):
+    categories = Category.objects.all()
 
-    return render(request, "user/home.html")
+
+    wishlist_count = 0
+    cart_count = 0
+
+    if request.user.is_authenticated:
+        wishlist_count = Wishlist.objects.filter(user=request.user).count()
+        cart_count = Cart.objects.filter(user=request.user).count()
+
+    return render(request, "user/home.html", {
+        "products": products,
+        "categories": categories,
+        "wishlist_count": wishlist_count,
+        "cart_count": cart_count,
+    })
+
+@login_required
+def orders(request):
+    # If you have an Order model you can fetch user's orders:
+    # orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    # return render(request, "user/orders.html", {"orders": orders})
+
+    # placeholder for now:
+    return render(request, "user/orders.html")
+def profile(request):
+    return render(request, "user/profile.html")
+
 
 
 
@@ -65,24 +91,144 @@ def login_user(request):
 
 def category(request):
     return render(request,'user/category.html')
+from django.db.models import Q
 def products(request):
+
+    # SEARCH
+    query = request.GET.get("q", "")
+    sort = request.GET.get("sort", "featured")
+
+    # MULTI-CATEGORY SUPPORT
+    selected_categories = request.GET.getlist("category")
+
+    # Base queryset
+    products = Product.objects.all()
+
+    # Apply MULTIPLE category filters
+    if selected_categories:
+        products = products.filter(category__name__in=selected_categories)
+
+    # Apply search
+    if query:
+        products = products.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(category__name__icontains=query)
+        )
+
+    # Sorting
+    if sort == "price-low":
+        products = products.order_by("price")
+    elif sort == "price-high":
+        products = products.order_by("-price")
+    elif sort == "newest":
+        products = products.order_by("-id")
+
+    # Wishlist + Cart
+    wishlist_ids = []
+    wishlist_count = 0
+    cart_count = 0
+
     if request.user.is_authenticated:
+        wishlist_ids = Wishlist.objects.filter(
+            user=request.user
+        ).values_list('product_id', flat=True)
+
         wishlist_count = Wishlist.objects.filter(user=request.user).count()
-    else:
-        wishlist_count = 0
+        cart_count = Cart.objects.filter(user=request.user).count()
+
+    # SEND NEW VARIABLES
+    categories = Category.objects.all()
+
+    return render(request, "user/product.html", {
+        "products": products,
+        "wishlist_ids": list(wishlist_ids),
+        "wishlist_count": wishlist_count,
+        "cart_count": cart_count,
+
+        "query": query,
+        "sort": sort,
+
+        # NEW
+        "categories": categories,
+        "selected_categories": selected_categories,
+    })
+
+
+
+def update_cart(request, item_id):
+    if request.method == "POST":
+        action = request.POST.get("action")
+        cart_item = get_object_or_404(Cart, id=item_id, user=request.user)
+
+        if action == "increment":
+            cart_item.quantity += 1
+        elif action == "decrement":
+            if cart_item.quantity > 1:
+                cart_item.quantity -= 1
+            else:
+                cart_item.delete()
+                return redirect("cart")
+
+        cart_item.save()
+    return redirect("cart")
+
+
+def deals(request):
+    # query whatever deals data you need
+    return render(request, 'user/deals.html', {})
+def about(request):
+    return render(request, 'user/about.html')
+def contact(request):
+    return render(request, 'user/contact.html')
+def trending(request):
+    return render(request, 'user/trending.html')
+
+def category_products(request, category_name):
+    products = Product.objects.filter(category__name__iexact=category_name)
+
+    return render(request, "user/category.html", {
+        "category_name": category_name,
+        "products": products,
+    })
+
+
+def toggle_wishlist(request, product_id):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    item, created = Wishlist.objects.get_or_create(
+        user=request.user,
+        product_id=product_id
+    )
+
+    if not created:
+        item.delete()  # If already exists → remove
+
+    return redirect("products")  # refresh page
 
 
 
 
-    products=Product.objects.all()
-    return render(request,'user/product.html',{'products':products,"wishlist_count": wishlist_count,})
-
-
-
-def single_view(request,slug):
+def single_view(request, slug):
     product = Product.objects.get(slug=slug)
 
-    return render(request,'user/product_view.html',{'product':product})
+    wishlist_ids = []
+    wishlist_count = 0
+    cart_count = 0
+
+    if request.user.is_authenticated:
+        wishlist_ids = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
+        wishlist_count = Wishlist.objects.filter(user=request.user).count()
+        cart_count = Cart.objects.filter(user=request.user).count()
+
+    return render(request, "user/product_view.html", {
+        "product": product,
+        "wishlist_ids": list(wishlist_ids),
+        "wishlist_count": wishlist_count,
+        "cart_count": cart_count
+    })
+
 
 
 
@@ -91,34 +237,30 @@ def single_view(request,slug):
 def trending(request):
     return render(request,'user/trending.html')
 
-
-
-
-
-
 def search(request):
-    query = request.GET.get("q", "").lower()
+    query = request.GET.get("q", "")
 
-    # Filter products
-    results = [
-        p for p in PRODUCTS
-        if query in p["name"].lower()
-        or query in p["category"].lower()
-        or query in p["description"].lower()
-    ]
+    results = Product.objects.filter(
+        Q(title__icontains=query) |
+        Q(description__icontains=query) |
+        Q(category__name__icontains=query)
+    )
 
-    # Return to HOME PAGE
-    return render(request, "user/home.html", {
-        "products": results,
-        "query": query
+    return render(request, "user/search.html", {
+        "query": query,
+        "results": results
     })
 
 
 
+
+
+
+
 @login_required
-def add_to_cart(request, product_id):
+def add_to_cart(request, id):
     try:
-        product = Product.objects.get(id=product_id)
+        product = Product.objects.get(id=id)
     except Product.DoesNotExist:
         return redirect("products")   # If product not found
 
@@ -135,50 +277,93 @@ def add_to_cart(request, product_id):
 
     return redirect("cart")   # <-- GO TO CART PAGE
 def wishlist_page(request):
-    if not request.user.is_authenticated:
-        return redirect("login")
+    items = Wishlist.objects.filter(user=request.user)
 
-    items = Wishlist.objects.filter(user=request.user).select_related("product")
+    wishlist_count = items.count()
+    # cart_count = Cart.objects.filter(user=request.user).count()
 
-    return render(request, "user/wishlist.html", {"items": items})
+    return render(request, "user/wishlist.html", {
+        "items": items,
+        "wishlist_count": wishlist_count,
+
+    })
+
 
 
 @login_required
 def cart_page(request):
     user = request.user
 
-    # Get all items for the logged-in user
+
     cart_items = Cart.objects.filter(user=user).select_related("product")
 
-    # Calculate total
     total_amount = sum(item.subtotal for item in cart_items)
+    # wishlist_count = Wishlist.objects.filter(user=request.user).count()
+    cart_count = cart_items.count()
 
     return render(request, "user/cart.html", {
         "cart_items": cart_items,
-        "total_amount": total_amount
+        "total_amount": total_amount,
+        # "wishlist_count": wishlist_count,
+        "cart_count": cart_count,
     })
 @login_required
 def add_to_wishlist(request, product_id):
-    try:
-        product = Product.objects.get(id=product_id)
-    except Product.DoesNotExist:
-        return JsonResponse({"status": "error", "message": "Product not found"})
+    product = Product.objects.get(id=product_id)
 
-    user = request.user
-
-    item, created = Wishlist.objects.get_or_create(user=user, product=product)
+    item, created = Wishlist.objects.get_or_create(user=request.user, product=product)
 
     if not created:
         item.delete()
-        count = Wishlist.objects.filter(user=user).count()
-        return JsonResponse({"status": "removed", "count": count})
 
-    count = Wishlist.objects.filter(user=user).count()
-    return JsonResponse({"status": "added", "count": count})
+    return redirect("products")
+
+
+
+@login_required
+def remove_from_wishlist(request, product_id):
+    Wishlist.objects.filter(user=request.user, product_id=product_id).delete()
+    return redirect('wishlist')   # or redirect("/user/wishlist/") if name differs
+def update_cart(request, cart_id):
+    action = request.GET.get("action")
+    item = Cart.objects.get(id=cart_id, user=request.user)
+
+    if action == "inc":
+        item.quantity += 1
+    elif action == "dec" and item.quantity > 1:
+        item.quantity -= 1
+
+    item.save()
+
+    return JsonResponse({"qty": item.quantity, "total": item.subtotal})
+
+
+
+def remove_cart(request, id):
+    if request.method == "POST":
+        try:
+            cart_item = Cart.objects.get(id=id, user=request.user)
+            cart_item.delete()
+        except Cart.DoesNotExist:
+            pass
+
+        return redirect("cart")   # FIXED URL NAME
+
+    return redirect("cart")
+
+
+def checkout_page(request):
+    return render(request, "user/checkout.html")
+
+
+
+
 
 
 def logout_user(request):
     logout(request)
     return redirect("login")
 
+def categories(request):
+    return render(request, 'user/category.html')
 

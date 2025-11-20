@@ -1,29 +1,418 @@
+{# templates/user/search_results.html #}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ShopHub - Search Results</title>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* (Styles taken from your provided product/search pages, slightly trimmed) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #667eea; --secondary: #764ba2; --dark: #1a1a2e;
+            --light: #f8f9fa; --gray: #6c757d; --shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --transition: all .28s ease;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: #333;
+            line-height: 1.5;
+            -webkit-font-smoothing:antialiased;
+        }
+
+        header {
+            background: rgba(255,255,255,0.95);
+            padding: 1rem 0;
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+        .header-wrapper {
+            max-width: 1400px; margin: 0 auto; padding: 0 20px;
+            display:flex; gap:20px; align-items:center; justify-content:space-between;
+        }
+        .logo { font-size:1.8rem; font-weight:800; text-decoration:none;
+            background: linear-gradient(135deg,var(--primary),var(--secondary));
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+            display:flex; gap:10px; align-items:center;
+        }
+        .search-bar { flex:1; max-width:640px; margin: 0 20px; position:relative; }
+        .search-bar input { width:100%; padding:12px 52px 12px 18px; border-radius:50px; border:1px solid #e6e6e6; }
+        .search-bar .search-btn { position:absolute; right:6px; top:50%; transform:translateY(-50%); padding:8px 16px; border-radius:40px; border:none;
+            background: linear-gradient(135deg,var(--primary),var(--secondary)); color:white; cursor:pointer; }
+
+        .header-actions { display:flex; gap:12px; align-items:center; }
+        .header-actions a { text-decoration:none; padding:8px 12px; border-radius:10px; background: rgba(102,126,234,0.06); color:#333; display:flex; gap:8px; align-items:center; }
+
+        nav { margin-top:0.75rem; }
+        .nav-links { display:flex; gap:18px; list-style:none; justify-content:center; padding:0; margin-top:6px; }
+        .nav-links a { text-decoration:none; padding:8px 14px; border-radius:8px; font-weight:600; color:#222; display:inline-block; }
+
+        /* Layout */
+        .search-results { max-width:1400px; margin: 1.5rem auto; padding: 0 20px; }
+        .search-header { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
+        .search-query { font-size:1.4rem; font-weight:700; color:var(--dark); }
+        .results-count { color:var(--gray); }
+
+        .search-layout { display:grid; grid-template-columns: 280px 1fr; gap: 20px; align-items:start; }
+
+        /* Filters sidebar */
+        .filters-sidebar { background:white; padding:16px; border-radius:12px; box-shadow:var(--shadow); position:sticky; top:110px; }
+        .filter-section { margin-bottom:14px; }
+        .filter-section h4 { font-size:1rem; margin-bottom:8px; font-weight:700; color:var(--dark); }
+        .filter-option { display:flex; gap:8px; align-items:center; padding:6px 0; cursor:pointer; }
+
+        /* Results area */
+        .results-section { background:white; border-radius:12px; box-shadow:var(--shadow); overflow:hidden; }
+        .results-header { padding:14px 18px; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+        .sort-select { padding:8px 10px; border-radius:8px; border:1px solid #e6e6e6; }
+
+        .products-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:18px; padding:18px; }
+        .product-card { background:white; border-radius:12px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); overflow:hidden; border:1px solid #f3f3f3; position:relative; }
+        .product-image { height:200px; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg,var(--primary),var(--secondary)); color:white; position:relative; }
+        .product-image img { width:100%; height:100%; object-fit:cover; display:block; }
+        .product-badge { position:absolute; top:12px; right:12px; background:var(--secondary); color:white; padding:6px 10px; border-radius:18px; font-size:0.8rem; }
+
+        .product-info { padding:14px; }
+        .product-category { color:var(--primary); font-size:0.85rem; margin-bottom:6px; font-weight:600; text-transform:capitalize; }
+        .product-name { font-weight:700; margin-bottom:8px; color:var(--dark); }
+        .product-description { color:var(--gray); font-size:0.9rem; margin-bottom:12px; min-height:40px; }
+        .product-footer { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+        .product-price { color:var(--danger, #d9534f); font-weight:800; font-size:1.1rem; color:var(--primary); }
+        .add-to-cart { border:none; padding:10px 12px; border-radius:8px; cursor:pointer; background: linear-gradient(135deg,var(--primary),var(--secondary)); color:white; }
+
+        /* wishlist heart button */
+        .wishlist-btn { position:absolute; top:12px; right:12px; background:white; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.08); border:none; cursor:pointer; z-index:6; }
+        .wishlist-btn.liked i { color: #e63946; }
+        .wishlist-btn i { font-size:18px; color:#333; }
+
+        .pagination { display:flex; justify-content:center; gap:8px; padding:16px; border-top:1px solid #f0f0f0; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .search-layout { grid-template-columns: 1fr; }
+            .filters-sidebar { position:static; top:auto; margin-bottom:12px; }
+        }
+    </style>
 </head>
 <body>
+    <!-- Header (same as your other templates) -->
+    <header>
+        <div class="header-wrapper">
+            <a href="{% url 'home' %}" class="logo">🛍 ShopHub</a>
 
-<h1>Results for "{{ query }}"</h1>
+            <div class="search-bar">
+                <form action="{% url 'products' %}" method="GET">
+                    <input type="text" name="q" placeholder="Search for products, brands and more..." value="{{ query|default:'' }}">
+                    <button type="submit" class="search-btn">Search</button>
+                </form>
+            </div>
 
-{% if results %}
-    <ul>
-        {% for p in results %}
-            <li>
-                <h2>{{ p.icon }} {{ p.name }}</h2>
-                <p>Category: {{ p.category }}</p>
-                <p>{{ p.description }}</p>
-                <p>₹{{ p.price }}</p>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No products found ❌</p>
-{% endif %}
+            <div class="header-actions">
+                {% if request.user.is_authenticated %}
+                    <a href="#">{{ request.user.first_name|default:request.user.username }}</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Account</a>
+                {% endif %}
 
+                <a href="{% url 'wishlist' %}">❤ Wishlist
+                    <span class="badge">{{ wishlist_count|default:0 }}</span>
+                </a>
 
+                <a href="{% url 'cart' %}">🛒 Cart
+                    <span class="badge">{{ cart_count|default:0 }}</span>
+                </a>
+            </div>
+        </div>
 
+        <nav>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'category' %}">Categories</a></li>
+                <li><a href="{% url 'products' %}" class="active">Products</a></li>
+                <li><a href="{% url 'trending' %}">Trending</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Search Results -->
+    <section class="search-results">
+        <div class="search-header">
+            <div>
+                <h2 class="search-query">Results for: <span style="color:var(--primary)">&quot;{{ query|default:'' }}&quot;</span></h2>
+                <p class="results-count">
+                    {% if results %}
+                        {{ results|length }} product{{ results|length|pluralize }} found
+                    {% else %}
+                        No products found
+                    {% endif %}
+                </p>
+            </div>
+
+            <div>
+                <!-- small filter toggle for mobile -->
+                <button class="btn btn-outline" onclick="document.querySelector('.filters-sidebar').classList.toggle('open')">
+                    🔍 Filters
+                </button>
+            </div>
+        </div>
+
+        <div class="search-layout">
+            <!-- Filters Sidebar -->
+            <aside class="filters-sidebar">
+                <div class="filter-section">
+                    <h4>Categories</h4>
+                    {# link to same view with ?category=Name - controller should read request.GET.category #}
+                    <label class="filter-option">
+                        <input type="checkbox" onclick="window.location='?category=Electronics'" {% if category_name == 'Electronics' %}checked{% endif %}>
+                        <span>Electronics</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" onclick="window.location='?category=Fashion'" {% if category_name == 'Fashion' %}checked{% endif %}>
+                        <span>Fashion</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" onclick="window.location='?category=Home & Garden'" {% if category_name == 'Home & Garden' %}checked{% endif %}>
+                        <span>Home & Garden</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" onclick="window.location='?category=Sports'" {% if category_name == 'Sports' %}checked{% endif %}>
+                        <span>Sports</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" onclick="window.location='?category=Books'" {% if category_name == 'Books' %}checked{% endif %}>
+                        <span>Books</span>
+                    </label>
+                </div>
+
+                <div class="filter-section">
+                    <h4>Price range</h4>
+                    <form method="get" action="">
+                        {# preserve existing query param if present #}
+                        <input type="hidden" name="q" value="{{ query|default:'' }}">
+                        <div style="display:flex; gap:8px;">
+                            <input name="min" placeholder="Min" style="flex:1; padding:8px; border-radius:6px; border:1px solid #eee;" value="{{ request.GET.min|default:'' }}">
+                            <input name="max" placeholder="Max" style="flex:1; padding:8px; border-radius:6px; border:1px solid #eee;" value="{{ request.GET.max|default:'' }}">
+                        </div>
+                        <button type="submit" style="margin-top:8px; width:100%; padding:8px; border-radius:8px; border:none; background:linear-gradient(135deg,var(--primary),var(--secondary)); color:#fff; cursor:pointer;">Apply</button>
+                    </form>
+                </div>
+
+                <div class="filter-section">
+                    <h4>Rating</h4>
+                    <label class="filter-option"><input type="checkbox" onclick="window.location='?rating=5'"> 5★ & up</label>
+                    <label class="filter-option"><input type="checkbox" onclick="window.location='?rating=4'"> 4★ & up</label>
+                    <label class="filter-option"><input type="checkbox" onclick="window.location='?rating=3'"> 3★ & up</label>
+                </div>
+            </aside>
+
+            <!-- Results -->
+            <div class="results-section">
+                <div class="results-header">
+                    <div>
+                        <label>
+                            Sort by:
+                            <select class="sort-select" onchange="location = updateQueryStringParameter(window.location.href, 'sort', this.value);">
+                                <option value="relevance" {% if request.GET.sort == 'relevance' or not request.GET.sort %}selected{% endif %}>Relevance</option>
+                                <option value="price-low" {% if request.GET.sort == 'price-low' %}selected{% endif %}>Price: Low to High</option>
+                                <option value="price-high" {% if request.GET.sort == 'price-high' %}selected{% endif %}>Price: High to Low</option>
+                                <option value="rating" {% if request.GET.sort == 'rating' %}selected{% endif %}>Customer Rating</option>
+                                <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div>
+                        <span style="color:var(--gray); font-size:0.95rem;">View:</span>
+                        <button class="view-btn" onclick="setGridCols('auto-fill')">Grid</button>
+                        <button class="view-btn" onclick="setGridCols('1')">List</button>
+                    </div>
+                </div>
+
+                <div class="products-grid" id="productsGrid">
+                    {# results is expected to be a queryset/list of Product objects #}
+                    {% if results %}
+                        {% for p in results %}
+                        <div class="product-card">
+                            {# wishlist button #}
+                            {% if request.user.is_authenticated %}
+                                <button class="wishlist-btn {% if p.id in wishlist_ids %}liked{% endif %}" onclick="toggleWishlist(event, {{ p.id }})" title="Add to wishlist">
+                                    <i class="{% if p.id in wishlist_ids %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                                </button>
+                            {% else %}
+                                <a class="wishlist-btn" href="{% url 'login' %}" title="Login to wishlist">
+                                    <i class="fa-regular fa-heart"></i>
+                                </a>
+                            {% endif %}
+
+                            <a href="{% url 'single_view' p.slug %}" style="text-decoration:none; color:inherit;">
+                                <div class="product-image">
+                                    {% if p.images.exists %}
+                                        <img src="{{ p.images.first.image.url }}" alt="{{ p.title }}">
+                                    {% else %}
+                                        {# developer: included uploaded file path as default image url per instructions #}
+                                        <img src="/mnt/data/2025-11-20T05-40-34.063Z.png" alt="{{ p.title }}">
+                                    {% endif %}
+                                    {% comment %} optional badge examples {% endcomment %}
+                                    {% if p.stock == 0 %}
+                                        <div class="product-badge">Out of stock</div>
+                                    {% elif p.created_at|date:"U" > now|date:"U"|add:"-604800" %}
+                                        <div class="product-badge">New</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="product-info">
+                                    <div class="product-category">{{ p.category.name }}</div>
+                                    <div class="product-name">{{ p.title }}</div>
+                                    <div class="product-description">
+                                        {{ p.description|truncatewords:18 }}
+                                    </div>
+
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <div>
+                                            <div class="product-price">₹{{ p.price }}</div>
+                                        </div>
+                                        <div>
+                                            {% if request.user.is_authenticated %}
+                                                <button class="add-to-cart" onclick="event.preventDefault(); addToCart({{ p.id }});">+</button>
+                                            {% else %}
+                                                <a href="{% url 'login' %}" class="add-to-cart" style="text-decoration:none; display:inline-block; padding:8px 10px; border-radius:8px;">+</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div style="grid-column:1/-1; padding:40px; text-align:center;">
+                            <h3>No products found ❌</h3>
+                            <p>Try removing filters or search for something else.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- pagination placeholder -->
+                <div class="pagination">
+                    {# If you use Django Paginator, replace these with real links #}
+                    {% if page_obj %}
+                        {% if page_obj.has_previous %}
+                            <a class="page-btn" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">←</a>
+                        {% else %}
+                            <span class="page-btn" style="opacity:0.4;">←</span>
+                        {% endif %}
+
+                        <span style="display:flex; gap:6px; align-items:center;">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+
+                        {% if page_obj.has_next %}
+                            <a class="page-btn" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">→</a>
+                        {% else %}
+                            <span class="page-btn" style="opacity:0.4;">→</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="margin-top:28px; background:#111; color:#fff; padding:40px 0;">
+        <div style="max-width:1400px; margin:0 auto; padding:0 20px; display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:20px;">
+            <div>
+                <h3 style="color:var(--primary)">ShopHub</h3>
+                <p style="opacity:0.8;">Your trusted online shopping destination for quality products.</p>
+            </div>
+            <div>
+                <h4 style="color:var(--primary)">Shop</h4>
+                <ul style="list-style:none; margin-top:8px;">
+                    <li><a href="{% url 'products' %}" style="color:#fff; opacity:0.8; text-decoration:none;">All Products</a></li>
+                    <li><a href="{% url 'trending' %}" style="color:#fff; opacity:0.8; text-decoration:none;">Trending</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color:var(--primary)">Support</h4>
+                <ul style="list-style:none; margin-top:8px;">
+                    <li><a href="{% url 'contact' %}" style="color:#fff; opacity:0.8; text-decoration:none;">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div style="text-align:center; color:rgba(255,255,255,0.6); margin-top:24px;">&copy; {{ now.year }} ShopHub</div>
+    </footer>
+
+    <script>
+        // helper to update querystring param (used for sort select)
+        function updateQueryStringParameter(uri, key, value) {
+            var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+            var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+            if (uri.match(re)) {
+                return uri.replace(re, '$1' + key + "=" + value + '$2');
+            } else {
+                return uri + separator + key + "=" + value;
+            }
+        }
+
+        function setGridCols(mode) {
+            const grid = document.getElementById('productsGrid');
+            if (!grid) return;
+            if (mode === '1') {
+                grid.style.gridTemplateColumns = '1fr';
+            } else {
+                grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
+            }
+        }
+
+        // Add-to-cart (example - replace with real AJAX endpoint)
+        function addToCart(productId) {
+            // conservative approach: navigate to add-to-cart endpoint or use fetch
+            fetch(`/user/add_to_cart/${productId}/`, { method:'GET', headers:{ 'X-Requested-With':'XMLHttpRequest' } })
+                .then(res => {
+                    if (res.redirected) window.location.href = res.url;
+                    return res.json();
+                })
+                .then(data => {
+                    if (data && data.status === 'added') {
+                        const cartBadge = document.querySelector('.header-actions .badge');
+                        if (cartBadge) cartBadge.textContent = data.count || (parseInt(cartBadge.textContent||0)+1);
+                        alert('Added to cart');
+                    } else {
+                        alert('Could not add to cart');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Error adding to cart');
+                });
+        }
+
+        // Wishlist toggle (example)
+        function toggleWishlist(e, productId) {
+            e.preventDefault(); e.stopPropagation();
+            const btn = e.currentTarget || e.target.closest('button');
+            fetch(`/user/add_to_wishlist/${productId}/`, { method:'GET', headers:{ 'X-Requested-With':'XMLHttpRequest' } })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'added') {
+                        btn.classList.add('liked');
+                        const i = btn.querySelector('i');
+                        i.classList.remove('fa-regular'); i.classList.add('fa-solid');
+                    } else if (data.status === 'removed') {
+                        btn.classList.remove('liked');
+                        const i = btn.querySelector('i');
+                        i.classList.remove('fa-solid'); i.classList.add('fa-regular');
+                    }
+                    // update header wishlist count if returned
+                    if (data.count !== undefined) {
+                        const wishBadge = document.querySelector('.header-actions a[href*="wishlist"] .badge');
+                        if (wishBadge) wishBadge.textContent = data.count;
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+    </script>
 </body>
 </html>

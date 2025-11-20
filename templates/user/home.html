@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShopHub - Premium Online Shopping</title>
     <style>
@@ -604,6 +605,68 @@
             transform: scale(1.1);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
+        .profile-dropdown {
+    position: relative;
+}
+
+.profile-btn {
+    background: rgba(102, 126, 234, 0.1);
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+.profile-btn:hover {
+    background: rgba(102, 126, 234, 0.2);
+}
+
+.profile-menu {
+    position: absolute;
+    right: 0;
+    top: 50px;
+    width: 180px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    padding: 10px 0;
+    display: none;
+    animation: fadeInMenu 0.2s ease-out;
+    z-index: 10000;
+}
+
+.profile-menu a {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+
+.profile-menu a:hover {
+    background: rgba(102, 126, 234, 0.1);
+    padding-left: 20px;
+}
+
+.profile-menu hr {
+    border: none;
+    height: 1px;
+    background: #eee;
+    margin: 8px 0;
+}
+
+@keyframes fadeInMenu {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 
         /* Deals Section */
         .deals {
@@ -926,67 +989,111 @@
                 min-width: 100%;
             }
         }
+
+        /* Custom styles for Django integration */
+        .nav-btn {
+            background: #f3e8ff;
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            color: #4b0082;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.05);
+            background: #eaddff;
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
-   <!-- Header -->
-<header>
-    <div class="header-wrapper">
-        <!-- Logo -->
-        <a href="{% url 'home' %}" class="logo">
-            🛍 ShopHub
-        </a>
-
-        <!-- WORKING DJANGO SEARCH BAR -->
-    <form method="get" action="{% url 'search' %}">
-    <input type="text" name="q" placeholder="Search items..." value="{{ query }}">
-    <button type="submit">Search</button>
-</form>
-
-
-        <!-- Header Actions -->
-        <div class="header-actions">
-            <a href="{% url 'register' %}">
-                <span>👤</span> Registration
+    <header>
+        <div class="header-wrapper">
+            <!-- Logo -->
+            <a href="{% url 'home' %}" class="logo">
+                🛍 ShopHub
             </a>
 
-            <a href="#">
-                <span>🛒</span> Cart
-                <span class="badge">3</span>
-            </a>
-        </div>
+            <!-- Django Search Form -->
+            <form action="{% url 'search' %}" method="GET" class="search-bar">
+                <input type="text" name="q" placeholder="Search for products, brands and more..." value="{{ request.GET.q }}">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+
+            <!-- Header Actions -->
+            <div class="header-actions">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'wishlist' %}">
+                        <span>❤</span> Wishlist
+                        {% if wishlist_count > 0 %}
+                            <span class="badge">{{ wishlist_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'cart' %}">
+                        <span>🛒</span> Cart
+                        {% if cart_count > 0 %}
+                            <span class="badge">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                    <div class="profile-dropdown">
+    <button class="profile-btn">
+        <i class="fa-solid fa-user"></i> {{ user.username }}
+        <i class="fa-solid fa-chevron-down arrow-icon"></i>
+    </button>
+
+    <div class="profile-menu">
+        <a href="{% url 'profile' %}"><i class="fa-solid fa-user-circle"></i> My Profile</a>
+        <a href="{% url 'orders' %}"><i class="fa-solid fa-box"></i> My Orders</a>
+        <a href="{% url 'wishlist' %}"><i class="fa-solid fa-heart"></i> Wishlist</a>
+        <a href="{% url 'cart' %}"><i class="fa-solid fa-cart-shopping"></i> Cart</a>
+        <hr>
+        <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
     </div>
+</div>
 
-    <!-- Navigation -->
-    <nav>
-        <ul class="nav-links">
-            <li><a href="{% url 'home' %}" class="active">Home</a></li>
+                {% else %}
+                    <a href="{% url 'register' %}" class="nav-btn">
+                        <i class="fa-solid fa-user"></i> Registration
+                    </a>
+                    <a href="{% url 'login' %}" class="nav-btn">
+                        <i class="fa-solid fa-right-to-bracket"></i> Login
+                    </a>
+                {% endif %}
+            </div>
+        </div>
 
-            <!-- CATEGORIES -->
-            <li><a href="{% url 'category' %}">Categories</a></li>
+        <!-- Navigation -->
+        <nav>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+<!--                <li><a href="{% url 'category' %}">Categories</a></li>-->
+                <li><a href="{% url 'products' %}">Products</a></li>
+                <li><a href="{% url 'deals' %}">Deals</a></li>
+                <li><a href="{% url 'trending' %}">Trending</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
 
-            <!-- PRODUCTS -->
-            <li><a href="{% url 'products' %}">Products</a></li>
-
-            <!-- TRENDING (NO VIEW YET) -->
-            <li><a href="#">Trending</a></li>
-        </ul>
-    </nav>
-</header>
-
+    <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
             <div class="hero-text">
                 <h1 class="hero-title">Premium Shopping Experience</h1>
                 <p class="hero-subtitle">Discover the latest trends and exclusive deals on thousands of products. Fast shipping, easy returns, and exceptional customer service.</p>
                 <div class="hero-buttons">
-                    <button class="btn btn-primary">
+                    <a href="{% url 'products' %}" class="btn btn-primary">
                         <span>🛍</span> Shop Now
-                    </button>
-                    <button class="btn btn-secondary">
+                    </a>
+                    <a href="{% url 'deals' %}" class="btn btn-secondary">
                         <span>🔍</span> Explore Deals
-                    </button>
+                    </a>
                 </div>
             </div>
             <div class="hero-image">
@@ -1033,101 +1140,75 @@
         <p class="section-subtitle">Browse through our wide range of product categories</p>
 
         <div class="categories-grid">
-            <a href="category.html" class="category-card">
-                <div class="category-image">📱</div>
-                <div class="category-info">
-                    <h3 class="category-name">Electronics</h3>
-                    <p class="category-count">1,245 products</p>
-                </div>
-            </a>
 
-            <a href="category.html" class="category-card">
-                <div class="category-image">👕</div>
-                <div class="category-info">
-                    <h3 class="category-name">Fashion</h3>
-                    <p class="category-count">2,367 products</p>
-                </div>
-            </a>
+    {% for cat in categories %}
+    <a href="{% url 'category_products' cat.name %}" class="category-card">
 
-            <a href="category.html" class="category-card">
-                <div class="category-image">🏠</div>
-                <div class="category-info">
-                    <h3 class="category-name">Home & Kitchen</h3>
-                    <p class="category-count">1,892 products</p>
-                </div>
-            </a>
-
-            <a href="category.html" class="category-card">
-                <div class="category-image">💄</div>
-                <div class="category-info">
-                    <h3 class="category-name">Beauty</h3>
-                    <p class="category-count">956 products</p>
-                </div>
-            </a>
-
-            <a href="category.html" class="category-card">
-                <div class="category-image">⚽</div>
-                <div class="category-info">
-                    <h3 class="category-name">Sports</h3>
-                    <p class="category-count">743 products</p>
-                </div>
-            </a>
-
-            <a href="category.html" class="category-card">
-                <div class="category-image">🎮</div>
-                <div class="category-info">
-                    <h3 class="category-name">Gaming</h3>
-                    <p class="category-count">512 products</p>
-                </div>
-            </a>
+        <div class="category-image">
+            {% if cat.icon %}
+                {{ cat.icon }}
+            {% else %}
+                📦
+            {% endif %}
         </div>
+
+        <div class="category-info">
+            <h3 class="category-name">{{ cat.name }}</h3>
+            <p class="category-count">{{ cat.products.count }} products</p>
+        </div>
+
+    </a>
+    {% endfor %}
+
+</div>
+
     </section>
 
     <!-- Products Section -->
-    <!-- Products Section -->
-<section class="products">
+    <section class="products">
+        <div class="products-header">
+            <h2 class="section-title">
+                {% if query %}
+                    Results for "{{ query }}"
+                {% else %}
+                    Featured Products
+                {% endif %}
+            </h2>
+            <a href="{% url 'products' %}" class="view-all">
+                View All <span>→</span>
+            </a>
+        </div>
 
-    <div class="products-header">
-        <h2 class="section-title">
-            {% if query %}
-                Results for "{{ query }}"
-            {% else %}
-                Featured Products
-            {% endif %}
-        </h2>
-
-        <a href="{% url 'products' %}" class="view-all">
-            View All <span>→</span>
-        </a>
-    </div>
-
-    <div class="products-grid">
-
-        {% for p in products %}
-        <div class="product-card">
-            <div class="product-image">
-                <span>🛍</span>
-            </div>
-
-            <div class="product-info">
-                <div class="product-category">{{ p.category }}</div>
-                <h3 class="product-name">{{ p.name }}</h3>
-                <p class="product-description">{{ p.description }}</p>
-
-                <div class="product-footer">
-                    <div class="product-price">₹{{ p.price }}</div>
-                    <button class="add-to-cart">+</button>
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-image">
+                    <span>🛍</span>
+                    {% if forloop.counter0 == 0 %}
+                        <div class="product-badge">-20%</div>
+                    {% elif forloop.counter0 == 1 %}
+                        <div class="product-badge">New</div>
+                    {% elif forloop.counter0 == 3 %}
+                        <div class="product-badge">-15%</div>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <div class="product-category">{{ product.category }}</div>
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-description">{{ product.description|truncatewords:15 }}</p>
+                    <div class="product-footer">
+                        <div class="product-price">₹{{ product.price }}</div>
+                        <button class="add-to-cart" data-product-id="{{ product.id }}">+</button>
+                    </div>
                 </div>
             </div>
+            {% empty %}
+            <div class="no-products">
+                <p>No products found{% if query %} for "{{ query }}"{% endif %}.</p>
+            </div>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p style="padding: 20px; font-size: 18px;">No products found</p>
-        {% endfor %}
-
-    </div>
-
-</section>
-
+    </section>
 
     <!-- Deals Section -->
     <section class="deals">
@@ -1154,9 +1235,9 @@
                 </div>
             </div>
 
-            <button class="btn btn-primary">
+            <a href="{% url 'deals' %}" class="btn btn-primary">
                 <span>🔥</span> Shop Flash Sale
-            </button>
+            </a>
         </div>
     </section>
 
@@ -1231,20 +1312,18 @@
             <div class="footer-section">
                 <h3>Shop</h3>
                 <ul class="footer-links">
-                    <li><a href="category.html">All Products</a></li>
-                     <li><a href="deals.html">Deals</a></li>
-
-                    <li><a href="trending.html">Trending</a></li>
-
-                    <li><a href="category.html">New Arrivals</a></li>
-                    <li><a href="category.html">Best Sellers</a></li>
+                    <li><a href="{% url 'products' %}">All Products</a></li>
+                    <li><a href="{% url 'deals' %}">Deals</a></li>
+                    <li><a href="{% url 'trending' %}">Trending</a></li>
+                    <li><a href="{% url 'products' %}">New Arrivals</a></li>
+                    <li><a href="{% url 'products' %}">Best Sellers</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
                 <h3>Customer Service</h3>
                 <ul class="footer-links">
-                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
                     <li><a href="#">Shipping Information</a></li>
                     <li><a href="#">Returns & Exchanges</a></li>
                     <li><a href="#">FAQ</a></li>
@@ -1255,7 +1334,7 @@
             <div class="footer-section">
                 <h3>Company</h3>
                 <ul class="footer-links">
-                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
                     <li><a href="#">Careers</a></li>
                     <li><a href="#">Privacy Policy</a></li>
                     <li><a href="#">Terms of Service</a></li>
@@ -1312,6 +1391,7 @@
         // Add to Cart Functionality
         document.querySelectorAll('.add-to-cart').forEach(button => {
             button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
                 const productCard = this.closest('.product-card');
                 const productName = productCard.querySelector('.product-name').textContent;
                 const productPrice = productCard.querySelector('.product-price').textContent;
@@ -1325,8 +1405,17 @@
                     this.style.background = '';
                 }, 2000);
 
-                // In a real app, this would add to cart
-                console.log(Added to cart: ${productName} - ${productPrice});
+                // In a real app, this would add to cart via AJAX
+                console.log(`Added to cart: ${productName} - ${productPrice}`);
+
+                // You can add AJAX call here to add product to cart
+                // fetch(`/add-to-cart/${productId}/`, {method: 'POST'})
+                // .then(response => response.json())
+                // .then(data => {
+                //     if(data.status === 'success') {
+                //         // Update cart count
+                //     }
+                // });
             });
         });
 
@@ -1334,17 +1423,8 @@
         document.querySelector('.newsletter-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const email = this.querySelector('.newsletter-input').value;
-            alert(Thank you for subscribing with ${email}! You'll receive our latest updates soon.);
+            alert(`Thank you for subscribing with ${email}! You'll receive our latest updates soon.`);
             this.reset();
-        });
-
-        // Search Functionality
-        document.querySelector('.search-btn').addEventListener('click', function() {
-            const searchTerm = document.querySelector('.search-bar input').value;
-            if (searchTerm.trim() !== '') {
-                alert(Searching for: ${searchTerm});
-                // In a real app, this would redirect to search results
-            }
         });
 
         // Animate elements on scroll
@@ -1369,6 +1449,24 @@
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(el);
         });
+        // Profile Dropdown Toggle
+const profileBtn = document.querySelector(".profile-btn");
+const profileMenu = document.querySelector(".profile-menu");
+
+if (profileBtn) {
+    profileBtn.addEventListener("click", () => {
+        profileMenu.style.display =
+            profileMenu.style.display === "block" ? "none" : "block";
+    });
+
+    // Hide dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+        if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
+            profileMenu.style.display = "none";
+        }
+    });
+}
+
     </script>
 </body>
 </html>

@@ -24,11 +24,11 @@
                     View Product
                 </a>
 
-                <a href="/user/add_to_wishlist/{{ item.product.id }}/"
-                   class="btn"
-                   style="background:#ff4d4d; color:white; padding:8px 12px; border-radius:5px; text-decoration:none; margin-left:10px;">
-                    Remove
-                </a>
+                <a href="{% url 'remove_from_wishlist' item.product.id %}"
+   class="btn"
+   style="background:#ff4d4d; color:white; padding:8px 12px; border-radius:5px; text-decoration:none; margin-left:10px;">
+    Remove
+</a>
 
             </div>
             {% endfor %}
