@@ -24,6 +24,8 @@ class Order(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     ORDER_STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("PROCESSING", "Processing"),
         ("PLACED", "Placed"),
         ("SHIPPED", "Shipped"),
         ("DELIVERED", "Delivered"),

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Profile - ShopHub</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f6fa; margin:0; padding:0; }
+        .container { width: 90%; margin: auto; padding: 30px 0; }
+        .profile-box { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h2 { margin-bottom: 10px; }
+        label { font-weight: bold; margin-bottom: 6px; display:block; }
+        input, select { width: 100%; padding: 12px; border:1px solid #ccc; border-radius:8px; margin-bottom:20px; }
+        input[readonly] { background:#e9ecef; cursor:not-allowed; }
+        .row { display: flex; gap: 20px; }
+        .col { flex:1; }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color:white; padding:12px 20px; border:none; border-radius:8px;
+            cursor:pointer; font-size:16px; font-weight:bold; width:200px;
+        }
+        .btn-primary:hover { opacity:0.9; }
+        .btn-secondary {
+            background:white; border:2px solid #764ba2; color:#764ba2;
+            padding:12px 20px; border-radius:8px; cursor:pointer;
+        }
+        .msg { padding: 12px; background:#d4edda; color:#155724; border-radius:8px;
+               border:1px solid #c3e6cb; margin-bottom:20px; }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>My Profile</h2>
+        <p>Manage your seller account information</p>
+
+        <!-- SUCCESS MESSAGE -->
+        {% if messages %}
+            {% for message in messages %}
+            <div class="msg">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="profile-box">
+            <form method="POST" action="{% url 'seller_profile' %}">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col">
+                        <label>First Name</label>
+                        <input type="text" name="firstName" value="{{ user.first_name }}" required>
+                    </div>
+
+                    <div class="col">
+                        <label>Last Name</label>
+                        <input type="text" name="lastName" value="{{ user.last_name }}" required>
+                    </div>
+                </div>
+
+                <label>Username</label>
+                <input type="text" value="{{ user.username }}" readonly>
+
+                <label>Email</label>
+                <input type="email" name="email" value="{{ user.email }}" required>
+
+                <label>Phone</label>
+                <input type="text" name="phone" value="{{ phone }}">
+
+                <div class="row">
+                    <div class="col">
+                        <label>Date of Birth</label>
+                        <input type="date" name="birthDate" value="{{ birth_date }}">
+                    </div>
+                    <div class="col">
+                        <label>Gender</label>
+                        <select name="gender">
+                            <option value="">Select Gender</option>
+                            <option value="male" {% if gender == 'male' %}selected{% endif %}>Male</option>
+                            <option value="female" {% if gender == 'female' %}selected{% endif %}>Female</option>
+                            <option value="other" {% if gender == 'other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <button type="button" class="btn-secondary" onclick="window.location.reload()">Cancel</button>
+
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

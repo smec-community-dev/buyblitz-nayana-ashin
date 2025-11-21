@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - ShopHub</title>
+
+    <!-- KEEP YOUR EXISTING CSS (same as your submitted file) -->
+    <style>
+        /* Your entire CSS goes here exactly as given */
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-wrapper">
+        <a href="{% url 'seller_dashboard' %}" class="logo">🛍️ ShopHub</a>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Search...">
+            <button class="search-btn">Search</button>
+        </div>
+
+        <div class="header-actions">
+            <a href="#"><span>👤</span>{{ request.user.username }}</a>
+        </div>
+    </div>
+</header>
+
+<section class="order-details">
+
+    <div class="page-header">
+        <h1 class="page-title">Order Details</h1>
+
+        <a href="{% url 'seller_orders' %}" class="back-btn">
+            <span>←</span> Back to Orders
+        </a>
+    </div>
+
+    <div class="order-container">
+
+        <!-- ORDER SUMMARY -->
+        <div class="order-card">
+            <div class="card-header">
+                <h2 class="card-title">Order Summary</h2>
+
+                {% if order.status == "PLACED" %}
+                    <div class="status-badge status-processing">Placed</div>
+                {% elif order.status == "SHIPPED" %}
+                    <div class="status-badge status-shipped">Shipped</div>
+                {% elif order.status == "DELIVERED" %}
+                    <div class="status-badge status-delivered">Delivered</div>
+                {% elif order.status == "CANCELLED" %}
+                    <div class="status-badge status-cancelled">Cancelled</div>
+                {% endif %}
+            </div>
+
+            <div class="order-summary">
+                <div class="summary-item">
+                    <span class="summary-label">Order ID</span>
+                    <span class="summary-value">{{ order.order_number }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Order Date</span>
+                    <span class="summary-value">{{ order.created_at|date:"M d, Y" }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Total Amount</span>
+                    <span class="summary-value">₹{{ order.total_amount }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Payment Method</span>
+                    <span class="summary-value">{{ order.payment_method }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ORDER ITEMS -->
+        <div class="order-card">
+            <div class="card-header">
+                <h2 class="card-title">Order Items</h2>
+            </div>
+
+            <div class="order-items">
+                {% for item in items %}
+                <div class="order-item">
+                    <div class="item-image">🛒</div>
+
+                    <div class="item-details">
+                        <h3 class="item-name">{{ item.product.name }}</h3>
+                        <p class="item-category">{{ item.product.category.name }}</p>
+                        <p class="item-price">₹{{ item.price }}</p>
+                        <p class="item-quantity">Quantity: {{ item.quantity }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No items found.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- DELIVERY ADDRESS -->
+        <div class="order-card">
+            <div class="card-header">
+                <h2 class="card-title">Delivery Address</h2>
+            </div>
+
+            <div class="address-details">
+                <p class="address-line"><strong>{{ order.address.full_name }}</strong></p>
+                <p class="address-line">{{ order.address.street }}</p>
+                <p class="address-line">{{ order.address.city }}, {{ order.address.state }}</p>
+                <p class="address-line">{{ order.address.country }}</p>
+                <p class="address-line">Phone: {{ order.address.phone }}</p>
+            </div>
+        </div>
+
+        <!-- PAYMENT DETAILS -->
+        <div class="order-card">
+            <div class="card-header">
+                <h2 class="card-title">Payment Details</h2>
+            </div>
+
+            <div class="payment-details">
+                <div class="payment-method">
+                    <div class="payment-icon">💳</div>
+
+                    <div class="payment-info">
+                        <p class="payment-type">{{ order.payment_method }}</p>
+                        <p class="payment-number">Transaction ID: {{ order.transaction_id }}</p>
+                    </div>
+                </div>
+
+                <div class="order-summary">
+                    <div class="summary-item"><span class="summary-label">Subtotal</span><span class="summary-value">₹{{ order.subtotal }}</span></div>
+                    <div class="summary-item"><span class="summary-label">Shipping</span><span class="summary-value">₹{{ order.shipping_charge }}</span></div>
+                    <div class="summary-item"><span class="summary-label">Tax</span><span class="summary-value">₹{{ order.tax }}</span></div>
+                    <div class="summary-item"><span class="summary-label">Total</span>
+                        <span class="summary-value" style="color: var(--primary); font-size: 1.3rem;">₹{{ order.total_amount }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+</body>
+</html>

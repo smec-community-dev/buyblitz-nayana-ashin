@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.title }} - Product Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-8">
+
+<div class="max-w-5xl mx-auto bg-white shadow-lg rounded-lg p-8">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">{{ product.title }}</h1>
+
+        <a href="{% url 'seller_products' %}"
+           class="text-blue-600 hover:underline text-lg">
+            ← Back to Products
+        </a>
+    </div>
+
+    <!-- Product Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Main Image -->
+        <div>
+            {% if product.main_image %}
+                <img src="{{ product.main_image }}" class="rounded-lg shadow-md w-full">
+            {% else %}
+                <div class="bg-gray-200 h-64 flex items-center justify-center text-gray-600 rounded-lg">
+                    No Image Available
+                </div>
+            {% endif %}
+
+            <!-- Gallery -->
+            {% if product.images.all %}
+            <div class="flex gap-3 mt-4 overflow-x-auto">
+                {% for img in product.images.all %}
+                    <img src="{{ img.image.url }}" class="h-20 w-20 rounded border shadow">
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Product Info -->
+        <div class="space-y-4">
+
+            <!-- Category -->
+            <div>
+                <p class="font-semibold text-gray-600">Category</p>
+                <p class="text-xl">{{ product.category.name }}</p>
+            </div>
+
+            <!-- Price -->
+            <div>
+                <p class="font-semibold text-gray-600">Price</p>
+                <p class="text-xl">₹ {{ product.price }}</p>
+            </div>
+
+            <!-- Stock -->
+            <div>
+                <p class="font-semibold text-gray-600">Stock</p>
+                <p class="text-xl">{{ product.stock }} units</p>
+            </div>
+
+            <!-- Status -->
+            <div>
+                <p class="font-semibold text-gray-600">Status</p>
+                {% if product.is_active %}
+                    <span class="text-green-600 font-semibold">Active</span>
+                {% else %}
+                    <span class="text-red-600 font-semibold">Inactive</span>
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div>
+                <p class="font-semibold text-gray-600">Description</p>
+                <p class="text-gray-800 leading-relaxed">{{ product.description }}</p>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-4 mt-6">
+                <a href="{% url 'update_product' product.slug %}"
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                    Edit Product
+                </a>
+
+                <a href="{% url 'delete_product' product.slug %}"
+                   class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+                   onclick="return confirm('Are you sure you want to delete this product?')">
+                    Delete
+                </a>
+            </div>
+            <!-- PRODUCT REVIEWS SECTION -->
+<div class="max-w-5xl mx-auto bg-white shadow-lg rounded-lg p-8 mt-8">
+
+    <h2 class="text-2xl font-bold mb-4">Customer Reviews</h2>
+
+    {% if reviews %}
+        <div class="space-y-4">
+            {% for r in reviews %}
+                <div class="border p-4 rounded-lg bg-gray-50">
+                    <div class="flex justify-between">
+                        <p class="font-semibold">{{ r.user.username }}</p>
+                        <span class="text-yellow-500 font-bold">⭐ {{ r.rating }}/5</span>
+                    </div>
+                    <p class="text-gray-700 mt-2">{{ r.comment }}</p>
+                    <p class="text-gray-400 text-sm mt-1">Reviewed on {{ r.created_at|date:"M d, Y" }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-gray-500">No reviews yet for this product.</p>
+    {% endif %}
+</div>
+
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

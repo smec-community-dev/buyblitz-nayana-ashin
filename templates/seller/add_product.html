@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if edit %}Update Product{% else %}Add Product{% endif %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-10">
+
+<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6">
+
+    <h2 class="text-2xl font-bold mb-6 text-center">
+        {% if edit %} Update Product {% else %} Add New Product {% endif %}
+    </h2>
+
+    <!-- FORM -->
+    <form method="POST" enctype="multipart/form-data"
+          action="{% if edit %}{% url 'update_product' product.slug %}{% else %}{% url 'add_product' %}{% endif %}">
+        {% csrf_token %}
+
+        <div class="grid grid-cols-1 gap-4">
+
+            <!-- Category -->
+            <div>
+                <label class="font-semibold">Category</label>
+                <select name="category" class="mt-1 w-full p-2 border rounded-md" required>
+                    <option value="">Select Category</option>
+                    {% for c in categories %}
+                        <option value="{{ c.id }}"
+                            {% if edit and product.category.id == c.id %}selected{% endif %}>
+                            {{ c.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Title -->
+            <div>
+                <label class="font-semibold">Product Name</label>
+                <input type="text" name="title"
+                       value="{% if edit %}{{ product.title }}{% endif %}"
+                       class="mt-1 p-2 w-full border rounded-md" required>
+            </div>
+
+            <!-- Price -->
+            <div>
+                <label class="font-semibold">Price</label>
+                <input type="number" step="0.01" name="price"
+                       value="{% if edit %}{{ product.price }}{% endif %}"
+                       class="mt-1 p-2 w-full border rounded-md" required>
+            </div>
+
+            <!-- Stock -->
+            <div>
+                <label class="font-semibold">Stock</label>
+                <input type="number" name="stock"
+                       value="{% if edit %}{{ product.stock }}{% endif %}"
+                       class="mt-1 p-2 w-full border rounded-md" required>
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label class="font-semibold">Description</label>
+                <textarea name="description" rows="3"
+                          class="mt-1 p-2 w-full border rounded-md">{% if edit %}{{ product.description }}{% endif %}</textarea>
+            </div>
+
+        </div>
+
+        <!-- BUTTON -->
+        <div class="mt-6 flex justify-end">
+            {% if edit %}
+                <button type="submit"
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
+                    Update Product
+                </button>
+            {% else %}
+                <button type="submit"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md">
+                    Add Product
+                </button>
+            {% endif %}
+        </div>
+
+    </form>
+
+    <!-- BACK BUTTON -->
+    <div class="mt-4 text-center">
+        <a href="{% url 'seller_products' %}"
+           class="text-blue-600 hover:underline">Back to Products</a>
+    </div>
+
+</div>
+
+</body>
+</html>

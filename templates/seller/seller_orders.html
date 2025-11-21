@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Seller Orders - ShopHub</title>
+    <style>
+        /* Add all the CSS from your order page here */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Styles - Same as dashboard */
+        .header {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .notification-icon {
+            position: relative;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .notification-icon:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .profile-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .profile-dropdown:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .dropdown-arrow {
+            font-size: 0.8rem;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        .profile-dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 200px;
+            padding: 0.5rem 0;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+        }
+
+        .profile-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: #333;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #eaeaea;
+            margin: 0.5rem 0;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 50;
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .seller-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .seller-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 1.5rem 0;
+            flex: 1;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 12px 1.5rem;
+            text-decoration: none;
+            color: #333;
+            transition: var(--transition);
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(102, 126, 234, 0.15);
+            color: var(--primary);
+            font-weight: 600;
+            border-left: 3px solid var(--primary);
+        }
+
+        .sidebar-nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #eaeaea;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 8px 16px;
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 53, 69, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .dashboard-subtitle {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Order Page Styles */
+        .filter-tabs {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            color: var(--gray);
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: transparent;
+        }
+
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+
+        }
+
+        .order-info h3 {
+            font-size: 1.3rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .order-date {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .order-status {
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-processing {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-shipped {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .order-items {
+            margin-bottom: 1.5rem;
+        }
+
+        .order-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-image {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .item-qty {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .item-price {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .order-total {
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+
+        .order-total span {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .empty-orders {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .empty-orders-icon {
+            font-size: 6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-orders h3 {
+            color: var(--dark);
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .empty-orders p {
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                top: auto;
+            }
+
+            .sidebar-nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 1rem 0;
+            }
+
+            .sidebar-nav li {
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+
+            .sidebar-nav a {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                flex-direction: column;
+                padding: 10px 15px;
+                text-align: center;
+                min-width: 100px;
+            }
+
+            .sidebar-nav a.active {
+                border-left: none;
+                border-bottom: 3px solid var(--primary);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .order-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .order-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .order-actions {
+                flex-direction: column;
+            }
+
+            .filter-tabs {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .order-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .item-image {
+                align-self: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="{% url 'seller_dashboard' %}" class="header-logo">🛍️ ShopHub Seller</a>
+        </div>
+        <div class="header-right">
+            <div class="notification-icon">
+                <span>🔔</span>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="profile-dropdown">
+                <div class="profile-avatar">{{ user.username|first|upper }}</div>
+                <div class="profile-info">
+                    <span class="profile-name">{{ user.username }}</span>
+                </div>
+                <span class="dropdown-arrow">▼</span>
+                <div class="dropdown-menu">
+                    <a href="{% url 'seller_profile' %}" class="dropdown-item">
+                        <span>👤</span> My Profile
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span>⚙️</span> Account Settings
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span>💳</span> Billing
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{% url 'logout_seller' %}" class="dropdown-item">
+                        <span>🚪</span> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="seller-avatar">{{ user.username|first|upper }}</div>
+                <div class="seller-info">
+                    <h3>{{ user.username }}</h3>
+                </div>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li><a href="{% url 'seller_dashboard' %}">
+                    <span class="sidebar-nav-icon">📊</span>
+                    Dashboard
+                </a></li>
+                <li><a href="{% url 'seller_products' %}">
+                    <span class="sidebar-nav-icon">📦</span>
+                    Products
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">📋</span>
+                    Categories
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">📊</span>
+                    Inventory
+                </a></li>
+                <li><a href="{% url 'seller_orders' %}" class="active">
+                    <span class="sidebar-nav-icon">💰</span>
+                    Orders
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">👥</span>
+                    Customers
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">📈</span>
+                    Analytics
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">🎯</span>
+                    Promotions
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">⭐</span>
+                    Reviews
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">⚙️</span>
+                    Settings
+                </a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <a href="{% url 'logout_seller' %}" class="logout-btn">
+                    <span>🚪</span> Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <div class="dashboard-header">
+                    <div>
+                        <h1 class="dashboard-title">Order Management</h1>
+                        <p class="dashboard-subtitle">Manage and track your customer orders</p>
+                    </div>
+                </div>
+
+                <div class="filter-tabs">
+    <a href="{% url 'seller_orders' %}" class="tab-btn {% if not status_filter %}active{% endif %}">All Orders</a>
+    <a href="{% url 'seller_orders' %}?status=pending" class="tab-btn {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
+    <a href="{% url 'seller_orders' %}?status=processing" class="tab-btn {% if status_filter == 'processing' %}active{% endif %}">Processing</a>
+    <a href="{% url 'seller_orders' %}?status=shipped" class="tab-btn {% if status_filter == 'shipped' %}active{% endif %}">Shipped</a>
+    <a href="{% url 'seller_orders' %}?status=delivered" class="tab-btn {% if status_filter == 'delivered' %}active{% endif %}">Delivered</a>
+    <a href="{% url 'seller_orders' %}?status=cancelled" class="tab-btn {% if status_filter == 'cancelled' %}active{% endif %}">Cancelled</a>
+</div>
+
+
+                <div class="orders-list">
+    {% for order in orders %}
+    <div class="order-card">
+
+        <div class="order-header">
+            <div class="order-info">
+                <h3>Order {{ order.id }}</h3>
+                <div class="order-date">Placed on {{ order.created_at|date:"M d, Y" }}</div>
+                <div class="order-date">Customer: {{ order.user.username }}</div>
+            </div>
+
+            <!-- Corrected status -->
+            <div class="order-status status-{{ order.order_status|lower }}">
+                {{ order.order_status|title }}
+            </div>
+        </div>
+
+        <div class="order-items">
+            {% for item in order.orderitem_set.all %}
+            <div class="order-item">
+                <div class="item-image">{{ item.product.title|first|upper }}</div>
+                <div class="item-details">
+                    <div class="item-name">{{ item.product.title }}</div>
+                    <div class="item-qty">Quantity: {{ item.quantity }}</div>
+                </div>
+                <div class="item-price">${{ item.price|floatformat:2 }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="order-footer">
+            <div class="order-total">
+                Total: <span>${{ order.total_amount|floatformat:2 }}</span>
+            </div>
+
+            <div class="order-actions">
+                <a href="{% url 'order_detail' order.id %}" class="btn btn-primary">
+                    View Details
+                </a>
+
+                <!-- Pending / Processing can be cancelled -->
+                {% if order.order_status == 'PLACED' %}
+                    <button class="btn btn-secondary" onclick="updateOrderStatus({{ order.id }}, 'CANCELLED')">
+                        Cancel Order
+                    </button>
+                {% endif %}
+
+                <!-- Processing → Shipped -->
+                {% if order.order_status == 'PLACED' %}
+                    <button class="btn btn-secondary" onclick="updateOrderStatus({{ order.id }}, 'SHIPPED')">
+                        Mark Shipped
+                    </button>
+                {% endif %}
+
+                <!-- Shipped → Delivered -->
+                {% if order.order_status == 'SHIPPED' %}
+                    <button class="btn btn-secondary" onclick="updateOrderStatus({{ order.id }}, 'DELIVERED')">
+                        Mark Delivered
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+    {% empty %}
+    <div class="empty-orders">
+        <div class="empty-orders-icon">📦</div>
+        <h3>No orders found</h3>
+        <p>You haven't received any orders yet.</p>
+    </div>
+    {% endfor %}
+</div>
+
+
+    <script>
+
+        function updateOrderStatus(orderId, newStatus) {
+    if (confirm("Are you sure you want to update this order status?")) {
+        alert(`Order #${orderId} status updated to: ${newStatus}`);
+        location.reload();
+    }
+}
+
+
+        // Profile dropdown functionality
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        if (profileDropdown) {
+            profileDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function() {
+                profileDropdown.classList.remove('active');
+            });
+
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            if (dropdownMenu) {
+                dropdownMenu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            if (confirm('Are you sure you want to update this order status?')) {
+                // In a real application, you would make an AJAX call to update the order status
+                // For now, we'll just show an alert
+                const statusText = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                alert(`Order #${orderId} status updated to: ${statusText}`);
+                // Reload the page to see the changes
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

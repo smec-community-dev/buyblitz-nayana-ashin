@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
     <title>Seller Dashboard - ShopHub</title>
+    <!-- Add Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -46,7 +49,7 @@
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 50;
+            z-index: 100;
             width: 100%;
         }
 
@@ -141,11 +144,6 @@
             font-size: 0.95rem;
         }
 
-        .profile-role {
-            color: var(--gray);
-            font-size: 0.8rem;
-        }
-
         .dropdown-arrow {
             font-size: 0.8rem;
             color: var(--gray);
@@ -203,6 +201,7 @@
         .main-layout {
             display: flex;
             flex: 1;
+            position: relative;
         }
 
         /* Sidebar Styles */
@@ -213,7 +212,11 @@
             display: flex;
             flex-direction: column;
             transition: var(--transition);
-            z-index: 100;
+            z-index: 50;
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
         }
 
         .sidebar-header {
@@ -222,18 +225,6 @@
             display: flex;
             align-items: center;
             gap: 1rem;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .seller-avatar {
@@ -252,11 +243,6 @@
         .seller-info h3 {
             font-size: 1.1rem;
             margin-bottom: 0.25rem;
-        }
-
-        .seller-info p {
-            color: var(--gray);
-            font-size: 0.85rem;
         }
 
         .sidebar-nav {
@@ -583,6 +569,12 @@
             border-radius: 20px;
             font-weight: 600;
             font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #856404;
         }
 
         .status-processing {
@@ -625,7 +617,6 @@
         .product-image {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -633,6 +624,14 @@
             font-size: 1.5rem;
             color: white;
             flex-shrink: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .product-info {
@@ -660,12 +659,13 @@
             flex-direction: column;
         }
 
-        .stat-value {
+        .stat .stat-value {
             font-size: 1rem;
             font-weight: 700;
+            margin-bottom: 0;
         }
 
-        .stat-label {
+        .stat .stat-label {
             font-size: 0.75rem;
             margin-bottom: 0;
         }
@@ -697,6 +697,7 @@
             font-size: 1.2rem;
             color: white;
             flex-shrink: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
         }
 
         .activity-info {
@@ -713,6 +714,74 @@
             font-size: 0.85rem;
         }
 
+        /* Chart Styles */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Messages */
+        .messages {
+            margin-bottom: 1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-error {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .main-layout {
@@ -722,6 +791,8 @@
             .sidebar {
                 width: 100%;
                 height: auto;
+                position: static;
+                top: auto;
             }
 
             .sidebar-nav {
@@ -773,6 +844,10 @@
             .profile-info {
                 display: none;
             }
+
+            .chart-container {
+                height: 250px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -792,6 +867,10 @@
             .header-right {
                 gap: 1rem;
             }
+
+            .chart-container {
+                height: 200px;
+            }
         }
     </style>
 </head>
@@ -799,7 +878,7 @@
     <!-- Header -->
     <header class="header">
         <div class="header-left">
-            <a href="#" class="header-logo">🛍️ ShopHub Seller</a>
+            <a href="{% url 'seller_dashboard' %}" class="header-logo">🛍️ ShopHub Seller</a>
         </div>
         <div class="header-right">
             <div class="notification-icon">
@@ -807,14 +886,13 @@
                 <span class="notification-badge">3</span>
             </div>
             <div class="profile-dropdown">
-                <div class="profile-avatar">JS</div>
+                <div class="profile-avatar">{{ user.username|first|upper }}</div>
                 <div class="profile-info">
-                    <span class="profile-name">John Smith</span>
-                    <span class="profile-role">Premium Seller</span>
+                    <span class="profile-name">{{ user.username }}</span>
                 </div>
                 <span class="dropdown-arrow">▼</span>
                 <div class="dropdown-menu">
-                    <a href="#" class="dropdown-item">
+                    <a href="{% url 'seller_profile' %}" class="dropdown-item">
                         <span>👤</span> My Profile
                     </a>
                     <a href="#" class="dropdown-item">
@@ -824,7 +902,7 @@
                         <span>💳</span> Billing
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">
+                    <a href="{% url 'logout' %}" class="dropdown-item">
                         <span>🚪</span> Logout
                     </a>
                 </div>
@@ -832,28 +910,38 @@
         </div>
     </header>
 
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <!-- Main Layout -->
     <div class="main-layout">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="seller-avatar">JS</div>
+                <div class="seller-avatar">{{ user.username|first|upper }}</div>
                 <div class="seller-info">
-                    <h3>John Smith</h3>
-                    <p>Premium Seller</p>
+                    <h3>{{ user.username }}</h3>
+                    <span style="color: var(--gray); font-size: 0.9rem;">Seller Account</span>
                 </div>
             </div>
 
             <ul class="sidebar-nav">
-                <li><a href="seller_dashboard.html" class="active">
+                <li><a href="{% url 'seller_dashboard' %}" class="active">
                     <span class="sidebar-nav-icon">📊</span>
                     Dashboard
                 </a></li>
-                <li><a href="seller_products.html">
-    <span class="sidebar-nav-icon">📦</span>
-    Products
-</a></li>
-
+                <li><a href="{% url 'seller_products' %}">
+                    <span class="sidebar-nav-icon">📦</span>
+                    Products
+                </a></li>
                 <li><a href="#">
                     <span class="sidebar-nav-icon">📋</span>
                     Categories
@@ -862,7 +950,7 @@
                     <span class="sidebar-nav-icon">📊</span>
                     Inventory
                 </a></li>
-                <li><a href="#">
+                <li><a href="{% url 'seller_orders' %}">
                     <span class="sidebar-nav-icon">💰</span>
                     Orders
                 </a></li>
@@ -889,15 +977,14 @@
             </ul>
 
             <div class="sidebar-footer">
-                <button class="logout-btn">
+                <a href="{% url 'logout' %}" class="logout-btn">
                     <span>🚪</span> Logout
-                </button>
+                </a>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Content Wrapper -->
             <div class="content-wrapper">
                 <div class="dashboard-header">
                     <div>
@@ -905,13 +992,13 @@
                         <p class="dashboard-subtitle">Manage your products, track sales, and monitor performance</p>
                     </div>
                     <div class="date-filter">
-                        <select class="filter-select">
-                            <option>Last 7 days</option>
-                            <option>Last 30 days</option>
-                            <option selected>Last 90 days</option>
-                            <option>This year</option>
+                        <select class="filter-select" id="chartPeriod">
+                            <option value="7">Last 7 days</option>
+                            <option value="30" selected>Last 30 days</option>
+                            <option value="90">Last 90 days</option>
+                            <option value="365">This year</option>
                         </select>
-                        <button class="btn btn-primary">
+                        <button class="btn btn-primary" onclick="updateChart()">
                             <span>📊</span> Generate Report
                         </button>
                     </div>
@@ -922,51 +1009,78 @@
                     <div class="stat-card">
                         <div class="stat-icon stat-icon-revenue">💰</div>
                         <div class="stat-info">
-                            <div class="stat-value">$12,458</div>
+                            <div class="stat-value">₹{{ total_revenue|floatformat:2 }}</div>
                             <div class="stat-label">Total Revenue</div>
-                            <div class="stat-change change-positive">↑ 12.5% from last period</div>
+                            <div class="stat-change change-positive">↑ From delivered orders</div>
                         </div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-icon stat-icon-orders">📦</div>
                         <div class="stat-info">
-                            <div class="stat-value">247</div>
+                            <div class="stat-value">{{ total_orders }}</div>
                             <div class="stat-label">Total Orders</div>
-                            <div class="stat-change change-positive">↑ 8.3% from last period</div>
+                            <div class="stat-change change-positive">↑ All time orders</div>
                         </div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-icon stat-icon-products">📱</div>
                         <div class="stat-info">
-                            <div class="stat-value">42</div>
+                            <div class="stat-value">{{ active_products }}</div>
                             <div class="stat-label">Active Products</div>
-                            <div class="stat-change change-positive">↑ 5.0% from last period</div>
+                            <div class="stat-change change-positive">↑ Currently listed</div>
                         </div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-icon stat-icon-customers">👥</div>
                         <div class="stat-info">
-                            <div class="stat-value">1,842</div>
+                            <div class="stat-value">{{ total_customers }}</div>
                             <div class="stat-label">Total Customers</div>
-                            <div class="stat-change change-positive">↑ 3.2% from last period</div>
+                            <div class="stat-change change-positive">↑ Unique buyers</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="dashboard-grid">
-                    <!-- Recent Orders -->
+                    <!-- Left Column -->
                     <div>
+                        <!-- Sales Chart -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">Sales Overview</h2>
+                                <div class="card-actions">
+                                    <button class="btn btn-outline" onclick="toggleChartType()">
+                                        <span>📈</span> Switch View
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="salesChart"></canvas>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #667eea;"></div>
+                                    <span>Revenue</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #764ba2;"></div>
+                                    <span>Orders</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Orders -->
                         <div class="dashboard-card">
                             <div class="card-header">
                                 <h2 class="card-title">Recent Orders</h2>
                                 <div class="card-actions">
-                                    <a href="orders.html" class="btn btn-outline">View All</a>
+                                    <a href="{% url 'seller_orders' %}" class="btn btn-outline">View All</a>
                                 </div>
                             </div>
 
+                            {% if recent_orders %}
                             <table class="orders-table">
                                 <thead>
                                     <tr>
@@ -978,43 +1092,28 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for order in recent_orders %}
                                     <tr>
-                                        <td><a href="order-details.html" class="order-id">#SH987654321</a></td>
-                                        <td class="customer-name">Sarah Johnson</td>
-                                        <td>Mar 18, 2025</td>
-                                        <td>$149.99</td>
-                                        <td><span class="status-badge status-delivered">Delivered</span></td>
+                                        <td><a href="#" class="order-id">#{{ order.order_number }}</a></td>
+                                        <td class="customer-name">{{ order.user.username }}</td>
+                                        <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                        <td>₹{{ order.total_amount|floatformat:2 }}</td>
+                                        <td>
+                                            <span class="status-badge status-{{ order.order_status|lower }}">
+                                                {{ order.order_status }}
+                                            </span>
+                                        </td>
                                     </tr>
-                                    <tr>
-                                        <td><a href="order-details.html" class="order-id">#SH987654320</a></td>
-                                        <td class="customer-name">Michael Chen</td>
-                                        <td>Mar 17, 2025</td>
-                                        <td>$89.50</td>
-                                        <td><span class="status-badge status-shipped">Shipped</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="order-details.html" class="order-id">#SH987654319</a></td>
-                                        <td class="customer-name">Emily Rodriguez</td>
-                                        <td>Mar 16, 2025</td>
-                                        <td>$234.75</td>
-                                        <td><span class="status-badge status-processing">Processing</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="order-details.html" class="order-id">#SH987654318</a></td>
-                                        <td class="customer-name">David Wilson</td>
-                                        <td>Mar 15, 2025</td>
-                                        <td>$67.25</td>
-                                        <td><span class="status-badge status-delivered">Delivered</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="order-details.html" class="order-id">#SH987654317</a></td>
-                                        <td class="customer-name">Lisa Thompson</td>
-                                        <td>Mar 14, 2025</td>
-                                        <td>$189.99</td>
-                                        <td><span class="status-badge status-cancelled">Cancelled</span></td>
-                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
+                            {% else %}
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📦</div>
+                                <p>No orders yet</p>
+                                <small>Orders will appear here once customers start purchasing</small>
+                            </div>
+                            {% endif %}
                         </div>
 
                         <!-- Product Performance -->
@@ -1022,154 +1121,84 @@
                             <div class="card-header">
                                 <h2 class="card-title">Product Performance</h2>
                                 <div class="card-actions">
-                                    <a href="products.html" class="btn btn-outline">Manage Products</a>
+                                    <a href="{% url 'seller_products' %}" class="btn btn-outline">Manage Products</a>
                                 </div>
                             </div>
 
+                            {% if product_performance %}
                             <div class="product-performance">
+                                {% for product in product_performance %}
                                 <div class="performance-item">
-                                    <div class="product-image">📱</div>
+                                    <div class="product-image">
+                                        {% if product.product_image %}
+                                        <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}">
+                                        {% else %}
+                                        📦
+                                        {% endif %}
+                                    </div>
                                     <div class="product-info">
-                                        <div class="product-name">Premium Smartphone</div>
-                                        <div class="product-category">Electronics</div>
+                                        <div class="product-name">{{ product.product_name }}</div>
+                                        <div class="product-category">
+                                            {% if product.category %}
+                                                {{ product.category.category_name }}
+                                            {% else %}
+                                                Uncategorized
+                                            {% endif %}
+                                        </div>
                                         <div class="product-stats">
                                             <div class="stat">
-                                                <div class="stat-value">$8,450</div>
+                                                <div class="stat-value">₹{{ product.revenue|default:0|floatformat:0 }}</div>
                                                 <div class="stat-label">Revenue</div>
                                             </div>
                                             <div class="stat">
-                                                <div class="stat-value">42</div>
+                                                <div class="stat-value">{{ product.sold|default:0 }}</div>
                                                 <div class="stat-label">Sold</div>
-                                            </div>
-                                            <div class="stat">
-                                                <div class="stat-value">4.8</div>
-                                                <div class="stat-label">Rating</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="performance-item">
-                                    <div class="product-image">🎧</div>
-                                    <div class="product-info">
-                                        <div class="product-name">Wireless Headphones</div>
-                                        <div class="product-category">Audio</div>
-                                        <div class="product-stats">
-                                            <div class="stat">
-                                                <div class="stat-value">$3,120</div>
-                                                <div class="stat-label">Revenue</div>
-                                            </div>
-                                            <div class="stat">
-                                                <div class="stat-value">78</div>
-                                                <div class="stat-label">Sold</div>
-                                            </div>
-                                            <div class="stat">
-                                                <div class="stat-value">4.6</div>
-                                                <div class="stat-label">Rating</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="performance-item">
-                                    <div class="product-image">⌚</div>
-                                    <div class="product-info">
-                                        <div class="product-name">Smart Watch Pro</div>
-                                        <div class="product-category">Wearables</div>
-                                        <div class="product-stats">
-                                            <div class="stat">
-                                                <div class="stat-value">$2,850</div>
-                                                <div class="stat-label">Revenue</div>
-                                            </div>
-                                            <div class="stat">
-                                                <div class="stat-value">38</div>
-                                                <div class="stat-label">Sold</div>
-                                            </div>
-                                            <div class="stat">
-                                                <div class="stat-value">4.7</div>
-                                                <div class="stat-label">Rating</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                {% endfor %}
                             </div>
+                            {% else %}
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📊</div>
+                                <p>No product performance data yet</p>
+                                <small>Product performance will appear after sales</small>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
 
-                    <!-- Recent Activity -->
+                    <!-- Right Column -->
                     <div>
+                        <!-- Recent Activity -->
                         <div class="dashboard-card">
                             <div class="card-header">
                                 <h2 class="card-title">Recent Activity</h2>
                             </div>
 
+                            {% if recent_activity %}
                             <div class="recent-activity">
+                                {% for activity in recent_activity %}
                                 <div class="activity-item">
-                                    <div class="activity-icon" style="background: linear-gradient(135deg, #ff9a9e, #fad0c4);">💰</div>
+                                    <div class="activity-icon">{{ activity.icon }}</div>
                                     <div class="activity-info">
-                                        <div class="activity-title">New order received</div>
-                                        <div class="activity-desc">Order #SH987654322 for $124.99</div>
+                                        <div class="activity-title">{{ activity.title }}</div>
+                                        <div class="activity-desc">{{ activity.desc }}</div>
                                     </div>
                                 </div>
-
-                                <div class="activity-item">
-                                    <div class="activity-icon" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">📦</div>
-                                    <div class="activity-info">
-                                        <div class="activity-title">Product restocked</div>
-                                        <div class="activity-desc">Wireless Headphones (25 units)</div>
-                                    </div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div class="activity-icon" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);">⭐</div>
-                                    <div class="activity-info">
-                                        <div class="activity-title">New review received</div>
-                                        <div class="activity-desc">Premium Smartphone rated 5 stars</div>
-                                    </div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div class="activity-icon" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">📊</div>
-                                    <div class="activity-info">
-                                        <div class="activity-title">Inventory alert</div>
-                                        <div class="activity-desc">Smart Watch Pro running low (5 left)</div>
-                                    </div>
-                                </div>
+                                {% endfor %}
                             </div>
+                            {% else %}
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📋</div>
+                                <p>No recent activity</p>
+                            </div>
+                            {% endif %}
                         </div>
 
                         <!-- Top Categories -->
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 class="card-title">Top Categories</h2>
-                            </div>
 
-                            <div class="product-performance">
-                                <div class="performance-item">
-                                    <div class="product-image" style="background: linear-gradient(135deg, #ff9a9e, #fad0c4);">📱</div>
-                                    <div class="product-info">
-                                        <div class="product-name">Electronics</div>
-                                        <div class="product-category">$8,450 revenue</div>
-                                    </div>
-                                </div>
-
-                                <div class="performance-item">
-                                    <div class="product-image" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">👕</div>
-                                    <div class="product-info">
-                                        <div class="product-name">Fashion</div>
-                                        <div class="product-category">$3,120 revenue</div>
-                                    </div>
-                                </div>
-
-                                <div class="performance-item">
-                                    <div class="product-image" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);">🏠</div>
-                                    <div class="product-info">
-                                        <div class="product-name">Home & Garden</div>
-                                        <div class="product-category">$2,850 revenue</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1177,145 +1206,155 @@
     </div>
 
     <script>
-        // DOM Elements
-        const addProductBtn = document.getElementById('addProductBtn');
-        const productForm = document.getElementById('productForm');
-        const cancelBtn = document.getElementById('cancelBtn');
-        const formTitle = document.getElementById('formTitle');
-        const submitBtn = document.getElementById('submitBtn');
-        const deleteModal = document.getElementById('deleteModal');
-        const closeModal = document.querySelector('.close-modal');
-        const cancelDelete = document.getElementById('cancelDelete');
-        const confirmDelete = document.getElementById('confirmDelete');
+        // Chart initialization
+        let salesChart;
+        let chartType = 'line'; // 'line' or 'bar'
 
-        // Form fields
-        const productName = document.getElementById('productName');
-        const productCategory = document.getElementById('productCategory');
-        const productPrice = document.getElementById('productPrice');
-        const productStock = document.getElementById('productStock');
-        const productDescription = document.getElementById('productDescription');
+        function initializeChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
 
-        // State variables
-        let currentProductId = null;
-        let isEditing = false;
+            // Sample data - in a real app, this would come from your Django backend
+            const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+            const revenueData = [12000, 19000, 15000, 25000, 22000, 30000, 28000];
+            const ordersData = [45, 78, 56, 90, 85, 120, 110];
 
-        // Add Product Button Click
-        addProductBtn.addEventListener('click', () => {
-            resetForm();
-            formTitle.textContent = 'Add New Product';
-            submitBtn.textContent = 'Add Product';
-            isEditing = false;
-        });
-
-        // Edit Product Button Click
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const productId = this.getAttribute('data-id');
-                const productItem = this.closest('.product-item');
-                const productNameText = productItem.querySelector('.product-name').textContent;
-                const productCategoryText = productItem.querySelector('.product-category').textContent;
-                const productPriceText = productItem.querySelector('.product-price').textContent;
-
-                // Populate form with product data
-                productName.value = productNameText;
-                productCategory.value = productCategoryText.toLowerCase();
-                productPrice.value = parseFloat(productPriceText.replace('$', ''));
-                productStock.value = Math.floor(Math.random() * 100) + 1; // Random stock for demo
-                productDescription.value = `Description for ${productNameText}`;
-
-                // Update form state
-                formTitle.textContent = 'Edit Product';
-                submitBtn.textContent = 'Update Product';
-                isEditing = true;
-                currentProductId = productId;
-
-                // Scroll to form
-                document.querySelector('.product-form-container').scrollIntoView({ behavior: 'smooth' });
+            salesChart = new Chart(ctx, {
+                type: chartType,
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Revenue (₹)',
+                            data: revenueData,
+                            borderColor: '#667eea',
+                            backgroundColor: chartType === 'bar' ? '#667eea' : 'transparent',
+                            borderWidth: 3,
+                            fill: chartType === 'line',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Orders',
+                            data: ordersData,
+                            borderColor: '#764ba2',
+                            backgroundColor: chartType === 'bar' ? '#764ba2' : 'transparent',
+                            borderWidth: 3,
+                            fill: chartType === 'line',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
             });
-        });
+        }
 
-        // Delete Product Button Click
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const productId = this.getAttribute('data-id');
-                currentProductId = productId;
-                deleteModal.classList.add('active');
-            });
-        });
-
-        // Form Submission
-        productForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            if (isEditing) {
-                // Update existing product
-                alert(`Product ${currentProductId} updated successfully!`);
-            } else {
-                // Add new product
-                alert('New product added successfully!');
+        function toggleChartType() {
+            chartType = chartType === 'line' ? 'bar' : 'line';
+            if (salesChart) {
+                salesChart.destroy();
             }
+            initializeChart();
+        }
 
-            resetForm();
-        });
+        function updateChart() {
+            const period = document.getElementById('chartPeriod').value;
+            // In a real app, you would make an AJAX call to update chart data based on period
+            alert(`Updating chart for last ${period} days...`);
 
-        // Cancel Button Click
-        cancelBtn.addEventListener('click', resetForm);
-
-        // Close Modal
-        closeModal.addEventListener('click', () => {
-            deleteModal.classList.remove('active');
-        });
-
-        // Cancel Delete
-        cancelDelete.addEventListener('click', () => {
-            deleteModal.classList.remove('active');
-        });
-
-        // Confirm Delete
-        confirmDelete.addEventListener('click', () => {
-            alert(`Product ${currentProductId} deleted successfully!`);
-            deleteModal.classList.remove('active');
-            // In a real app, you would remove the product from the list here
-        });
-
-        // Reset Form Function
-        function resetForm() {
-            productForm.reset();
-            formTitle.textContent = 'Add New Product';
-            submitBtn.textContent = 'Add Product';
-            isEditing = false;
-            currentProductId = null;
+            if (salesChart) {
+                salesChart.destroy();
+            }
+            initializeChart();
         }
 
         // Profile dropdown functionality
         const profileDropdown = document.querySelector('.profile-dropdown');
-        profileDropdown.addEventListener('click', function(e) {
-            e.stopPropagation();
-            this.classList.toggle('active');
-        });
+        if (profileDropdown) {
+            profileDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('active');
+            });
+        }
 
         // Close dropdown when clicking outside
         document.addEventListener('click', function() {
-            profileDropdown.classList.remove('active');
+            if (profileDropdown) {
+                profileDropdown.classList.remove('active');
+            }
         });
 
         // Prevent dropdown from closing when clicking inside
-        document.querySelector('.dropdown-menu').addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+        if (dropdownMenu) {
+            dropdownMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
 
         // Logout button functionality
-        document.querySelector('.logout-btn').addEventListener('click', function() {
-            if(confirm('Are you sure you want to logout?')) {
-                alert('Logging out...');
-                // In a real app, this would redirect to login page
+        const logoutBtns = document.querySelectorAll('.logout-btn, a[href*="logout"]');
+        logoutBtns.forEach(btn => {
+            if (btn.classList.contains('logout-btn')) {
+                btn.addEventListener('click', function(e) {
+                    if(!confirm('Are you sure you want to logout?')) {
+                        e.preventDefault();
+                    }
+                });
             }
         });
 
         // Notification icon functionality
-        document.querySelector('.notification-icon').addEventListener('click', function() {
-            alert('You have 3 new notifications');
-            // In a real app, this would show a dropdown with notifications
+        const notificationIcon = document.querySelector('.notification-icon');
+        if (notificationIcon) {
+            notificationIcon.addEventListener('click', function() {
+                alert('You have 3 new notifications');
+            });
+        }
+
+        // Auto-hide messages after 5 seconds
+        setTimeout(function() {
+            const messages = document.querySelector('.messages');
+            if (messages) {
+                messages.style.transition = 'opacity 0.5s ease';
+                messages.style.opacity = '0';
+                setTimeout(function() {
+                    messages.remove();
+                }, 500);
+            }
+        }, 5000);
+
+        // Initialize chart when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChart();
         });
     </script>
 </body>

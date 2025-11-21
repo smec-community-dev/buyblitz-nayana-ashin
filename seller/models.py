@@ -1,6 +1,5 @@
 from django.db import models
-from core.models import Category
-
+from core.models import Category, SubCategory
 
 
 class Seller(models.Model):
@@ -43,10 +42,13 @@ class Seller(models.Model):
         ordering = ['-created_at']
         verbose_name = "Seller"
         verbose_name_plural = "Sellers"
-
 class Product(models.Model):
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, related_name="products")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products")
+
+    sub_category = models.ForeignKey(
+        SubCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name="products"
+    )
 
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
@@ -63,7 +65,6 @@ class Product(models.Model):
 
     @property
     def main_image(self):
-
         return self.images.first().image.url if self.images.exists() else None
 
 
