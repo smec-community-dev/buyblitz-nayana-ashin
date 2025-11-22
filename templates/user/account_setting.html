@@ -3,204 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Dashboard - ShopHub</title>
+    <title>Account Settings - ShopHub</title>
     <style>
-
-
-        .quick-actions-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1.2rem;
-    margin-top: 1rem;
-}
-
-.quick-action {
-    text-decoration: none;
-    background: white;
-    border: 2px solid #6a11cb;
-    padding: 1rem;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-weight: 600;
-    font-size: 1rem;
-    color: #6a11cb;
-    transition: 0.25s;
-}
-
-.quick-action:hover {
-    background: linear-gradient(135deg, #6a11cb20, #2575fc20);
-    transform: translateY(-4px);
-    border-color: #2575fc;
-}
-
-.qa-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-}
-
-
-
-
-        .sidebar-container {
-    width: 260px;
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-    position: sticky;
-    top: 120px;
-    height: fit-content;
-    transition: 0.3s;
-}
-
-/* Avatar */
-.avatar-circle {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
-    border-radius: 50%;
-    font-size: 32px;
-    font-weight: bold;
-    color: white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    margin: 0 auto;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
-
-.sidebar-name {
-    text-align: center;
-    margin: 15px 0 2px;
-    font-size: 20px;
-    font-weight: 700;
-}
-
-.sidebar-email {
-    text-align: center;
-    color: #777;
-    font-size: 14px;
-}
-
-.member-badge {
-    display: block;
-    margin: 10px auto 20px;
-    width: fit-content;
-    background: #ffce00;
-    padding: 5px 12px;
-    font-size: 13px;
-    border-radius: 20px;
-    font-weight: 600;
-}
-
-/* Menu */
-.sidebar-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.menu-item {
-    margin-bottom: 12px;
-}
-
-.menu-item a {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 15px;
-    background: #f6f7ff;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #444;
-    text-decoration: none;
-    transition: 0.2s;
-}
-
-.menu-item a i {
-    font-size: 18px;
-    color: #6a11cb;
-}
-
-/* Hover effect */
-.menu-item a:hover {
-    background: linear-gradient(135deg, #6a11cb10, #2575fc10);
-    color: #6a11cb;
-    transform: translateX(4px);
-}
-
-.menu-item a:hover i {
-    color: #2575fc;
-}
-
-
-
-
-        .section { margin: 30px 0; }
-.section h3 { margin-bottom: 15px; }
-
-.profile-card {
-    padding: 20px;
-    background: linear-gradient(90deg, #6a11cb, #2575fc);
-    color: white;
-    border-radius: 12px;
-}
-.profile-card .tag {
-    background: rgba(255,255,255,0.2);
-    padding: 5px 15px;
-    border-radius: 20px;
-    display: inline-block;
-}
-
-.section-form label {
-    font-weight: 600;
-    margin-top: 15px;
-}
-.section-form input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-.btn-save {
-    margin-top: 20px;
-    width: 100%;
-    padding: 12px;
-    background: #6a11cb;
-    color: white;
-    border-radius: 8px;
-    border: none;
-}
-
-.order-list .order-item {
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:15px;
-    background:white;
-    border-radius:10px;
-    margin-bottom:12px;
-    box-shadow:0 3px 8px rgba(0,0,0,0.08);
-}
-.order-item img {
-    width:70px;
-    height:70px;
-    border-radius:8px;
-    object-fit:cover;
-}
-.status {
-    padding:4px 10px;
-    border-radius:20px;
-    font-size:13px;
-}
-.status.delivered { background:#d4edda; color:#155724; }
-.status.shipped { background:#cce5ff; color:#004085; }
-.status.processing { background:#fff3cd; color:#856404; }
-.price { font-weight:600; }
-
+        /* All the existing CSS from your dashboard */
         * {
             margin: 0;
             padding: 0;
@@ -558,87 +363,6 @@
             color: var(--gray);
         }
 
-        /* Dashboard Overview */
-        .dashboard-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            border-left: 4px solid var(--primary);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow);
-        }
-
-        .stat-card.orders {
-            border-left-color: var(--success);
-        }
-
-        .stat-card.wishlist {
-            border-left-color: var(--warning);
-        }
-
-        .stat-card.cart {
-            border-left-color: var(--info);
-        }
-
-        .stat-card.points {
-            border-left-color: var(--accent);
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-        }
-
-        .stat-card.orders .stat-icon {
-            background: linear-gradient(135deg, var(--success), #20c997);
-        }
-
-        .stat-card.wishlist .stat-icon {
-            background: linear-gradient(135deg, var(--warning), #fd7e14);
-        }
-
-        .stat-card.cart .stat-icon {
-            background: linear-gradient(135deg, var(--info), #0dcaf0);
-        }
-
-        .stat-card.points .stat-icon {
-            background: linear-gradient(135deg, var(--accent), #e64980);
-        }
-
-        .stat-info h3 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-info p {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
         /* Profile Layout */
         .profile-layout {
             display: grid;
@@ -749,152 +473,24 @@
             gap: 0.5rem;
         }
 
-        /* Dashboard Section */
-        .dashboard-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+        /* Account Settings Specific Styles */
+        .settings-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
         }
 
-        .dashboard-card {
-            background: white;
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
+        .settings-section:last-child {
+            border-bottom: none;
         }
 
-        .dashboard-card:hover {
-            box-shadow: var(--shadow);
-        }
-
-        .dashboard-card h3 {
+        .settings-section h3 {
             font-size: 1.2rem;
             color: var(--dark);
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        .recent-orders {
-            grid-column: 1 / -1;
-        }
-
-        .order-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .order-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            border-radius: var(--radius-sm);
-            background: var(--gray-light);
-            transition: var(--transition);
-        }
-
-        .order-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-        }
-
-        .order-image {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        .order-details {
-            flex: 1;
-        }
-
-        .order-details h4 {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .order-details p {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        .order-status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-delivered {
-            background: var(--success-light);
-            color: var(--success);
-        }
-
-        .status-processing {
-            background: var(--warning-light);
-            color: var(--warning);
-        }
-
-        .status-shipped {
-            background: var(--info-light);
-            color: var(--info);
-        }
-
-        /* Personal Information Form */
-        .form-group {
             margin-bottom: 1.5rem;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
             font-weight: 600;
-            color: var(--dark);
         }
 
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: var(--radius-sm);
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .readonly-field {
-            background: #f8f9fa;
-            color: var(--gray);
-            cursor: not-allowed;
-        }
-
-        /* Change Password */
-        .password-form {
-            max-width: 500px;
-        }
-
-        /* Account Settings */
         .settings-list {
             display: flex;
             flex-direction: column;
@@ -1002,6 +598,17 @@
             background: rgba(102, 126, 234, 0.1);
         }
 
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(220, 53, 69, 0.3);
+        }
+
         .form-actions {
             display: flex;
             gap: 1rem;
@@ -1102,13 +709,104 @@
             font-size: 0.9rem;
         }
 
-        /* Profile Section */
-        .profile-section {
-            display: none;
+        /* Sidebar Styles */
+        .sidebar-container {
+            width: 260px;
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+            transition: 0.3s;
         }
 
-        .profile-section.active {
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border-radius: 50%;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-name {
+            text-align: center;
+            margin: 15px 0 2px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .sidebar-email {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .member-badge {
             display: block;
+            margin: 10px auto 20px;
+            width: fit-content;
+            background: #ffce00;
+            padding: 5px 12px;
+            font-size: 13px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-item {
+            margin-bottom: 12px;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background: #f6f7ff;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #444;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .menu-item a i {
+            font-size: 18px;
+            color: #6a11cb;
+        }
+
+        .menu-item a:hover {
+            background: linear-gradient(135deg, #6a11cb10, #2575fc10);
+            color: #6a11cb;
+            transform: translateX(4px);
+        }
+
+        .menu-item a:hover i {
+            color: #2575fc;
+        }
+
+        .menu-item a.active {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+        }
+
+        .menu-item a.active i {
+            color: white;
         }
 
         /* Responsive Design */
@@ -1119,10 +817,6 @@
 
             .profile-sidebar {
                 position: static;
-            }
-
-            .dashboard-section {
-                grid-template-columns: 1fr;
             }
         }
 
@@ -1141,20 +835,12 @@
                 gap: 1rem;
             }
 
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
             .form-actions {
                 flex-direction: column;
             }
 
             .profile-info {
                 display: none;
-            }
-
-            .dashboard-overview {
-                grid-template-columns: 1fr 1fr;
             }
         }
 
@@ -1170,15 +856,6 @@
             .profile-sidebar,
             .profile-content {
                 padding: 1.5rem;
-            }
-
-            .dashboard-overview {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-card {
-                flex-direction: column;
-                text-align: center;
             }
         }
     </style>
@@ -1197,7 +874,7 @@
             </form>
 
             <div class="header-actions">
-               <a href="{% url 'wishlist' %}">
+                <a href="{% url 'wishlist' %}">
                     <span>❤</span> Wishlist
                     <span class="badge">{{ wishlist_count }}</span>
                 </a>
@@ -1224,7 +901,7 @@
                         <a href="{% url 'orders' %}" class="dropdown-item">
                             <span>📦</span> My Orders
                         </a>
-                        <a href="{% url 'profile' %}" class="dropdown-item">
+                        <a href="{% url 'account_settings' %}" class="dropdown-item">
                             <span>⚙</span> Account Settings
                         </a>
                         <div class="dropdown-divider"></div>
@@ -1244,7 +921,6 @@
                 <li><a href="{% url 'trending' %}">Trending</a></li>
                 <li><a href="{% url 'about' %}">About</a></li>
                 <li><a href="{% url 'contact' %}">Contact</a></li>
-
             </ul>
         </nav>
     </header>
@@ -1252,216 +928,203 @@
     <!-- Main Container -->
     <div class="container">
         <div class="page-header">
-            <h2>My Dashboard</h2>
-            <p>Welcome back, {{ user.first_name }}! Here's your account overview</p>
-        </div>
-
-        <!-- Dashboard Overview -->
-        <div class="dashboard-overview">
-            <div class="stat-card orders">
-                <div class="stat-icon">📦</div>
-                <div class="stat-info">
-                    <h3>12</h3>
-                    <p>Total Orders</p>
-                </div>
-            </div>
-            <div class="stat-card wishlist">
-                <div class="stat-icon">❤</div>
-                <div class="stat-info">
-                    <h3>{{ wishlist_count }}</h3>
-                    <p>Wishlist Items</p>
-                </div>
-            </div>
-            <div class="stat-card cart">
-                <div class="stat-icon">🛒</div>
-                <div class="stat-info">
-                    <h3>{{ cart_count }}</h3>
-                    <p>Cart Items</p>
-                </div>
-            </div>
-            <div class="stat-card points">
-                <div class="stat-icon">⭐</div>
-                <div class="stat-info">
-                    <h3>1,250</h3>
-                    <p>Reward Points</p>
-                </div>
-            </div>
+            <h2>Account Settings</h2>
+            <p>Manage your account preferences and privacy settings</p>
         </div>
 
         <div class="profile-layout">
             <!-- Profile Sidebar -->
             <div class="profile-sidebar">
-                <div class="user-profile">
-<!--                    <div class="profile-avatar-large">-->
-<!--                        {{ user.first_name|first }}{{ user.last_name|first }}-->
-<!--                    </div>-->
-<!--                    <div class="profile-name-large">{{ user.first_name }} {{ user.last_name }}</div>-->
-<!--                    <div class="profile-email">{{ user.email }}</div>-->
-<!--                    <div class="profile-tier">Gold Member</div>-->
+                <div class="sidebar-container">
+                    <div class="sidebar-top">
+                        <div class="avatar-circle">
+                            {{ user.first_name|first }}{{ user.last_name|first }}
+                        </div>
+                        <h3 class="sidebar-name">{{ user.first_name }} {{ user.last_name }}</h3>
+                        <p class="sidebar-email">{{ user.email }}</p>
+                        <span class="member-badge">Gold Member</span>
+                    </div>
+
+                    <ul class="sidebar-menu">
+                        <li class="menu-item"><a href="{% url 'profile' %}">
+                            <i class="fa-solid fa-gauge-high"></i> Dashboard
+                        </a></li>
+
+                        <li class="menu-item"><a href="{% url 'personal_info' %}">
+                            <i class="fa-solid fa-user"></i> Personal Information
+                        </a></li>
+
+                        <li class="menu-item"><a href="{% url 'change_password' %}">
+                            <i class="fa-solid fa-lock"></i> Change Password
+                        </a></li>
+
+                        <li class="menu-item"><a href="{% url 'account_settings' %}" class="active">
+                            <i class="fa-solid fa-gear"></i> Account Settings
+                        </a></li>
+
+                        <li class="menu-item"><a href="{% url 'order_history' %}">
+                            <i class="fa-solid fa-box"></i> Order History
+                        </a></li>
+
+                        <li class="menu-item"><a href="{% url 'wishlist' %}">
+                            <i class="fa-solid fa-heart"></i> Wishlist
+                        </a></li>
+                    </ul>
                 </div>
-
-               <div class="sidebar-container">
-
-    <div class="sidebar-top">
-        <div class="avatar-circle">
-            {{ user.first_name|first }}{{ user.last_name|first }}
-        </div>
-        <h3 class="sidebar-name">{{ user.first_name }} {{ user.last_name }}</h3>
-        <p class="sidebar-email">{{ user.email }}</p>
-        <span class="member-badge">Gold Member</span>
-    </div>
-
-    <ul class="sidebar-menu">
-        <li class="menu-item"><a href="{% url 'profile' %}">
-            <i class="fa-solid fa-gauge-high"></i> Dashboard
-        </a></li>
-
-        <li class="menu-item"><a href="{% url 'personal_info' %}">
-            <i class="fa-solid fa-user"></i> Personal Information
-        </a></li>
-
-        <li class="menu-item"><a href="{% url 'change_password' %}">
-            <i class="fa-solid fa-lock"></i> Change Password
-        </a></li>
-
-        <li class="menu-item"><a href="{% url 'account_settings' %}">
-            <i class="fa-solid fa-gear"></i> Account Settings
-        </a></li>
-
-        <li class="menu-item"><a href="{% url 'order_history' %}">
-            <i class="fa-solid fa-box"></i> Order History
-        </a></li>
-
-        <li class="menu-item"><a href="{% url 'wishlist' %}">
-            <i class="fa-solid fa-heart"></i> Wishlist
-        </a></li>
-    </ul>
-
-</div>
-
             </div>
 
             <!-- Profile Content -->
             <div class="profile-content">
-                <!-- Dashboard Section -->
-                <div id="dashboard" class="profile-section active">
-                    <h3 class="section-title">📊 Dashboard Overview</h3>
-
-                    <div class="dashboard-section">
-                        <div class="dashboard-card">
-                            <h3>Recent Activity</h3>
-                            <div class="activity-list">
-                                <div class="order-item">
-                                    <div class="order-image">📱</div>
-                                    <div class="order-details">
-                                        <h4>Order #SH12567</h4>
-                                        <p>Smartphone Pro Max</p>
-                                    </div>
-                                    <div class="order-status status-delivered">Delivered</div>
-                                </div>
-                                <div class="order-item">
-                                    <div class="order-image">🎧</div>
-                                    <div class="order-details">
-                                        <h4>Order #SH12568</h4>
-                                        <p>Wireless Headphones</p>
-                                    </div>
-                                    <div class="order-status status-shipped">Shipped</div>
-                                </div>
-                                <div class="order-item">
-                                    <div class="order-image">👕</div>
-                                    <div class="order-details">
-                                        <h4>Order #SH12569</h4>
-                                        <p>Premium T-Shirt</p>
-                                    </div>
-                                    <div class="order-status status-processing">Processing</div>
-                                </div>
+                <!-- Notification Settings -->
+                <div class="settings-section">
+                    <h3 class="section-title">🔔 Notification Preferences</h3>
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Email Notifications</h4>
+                                <p>Receive order updates, promotions, and newsletters via email</p>
                             </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
                         </div>
 
-                        <div class="dashboard-card">
-                            <h3>Rewards & Benefits</h3>
-                            <div class="rewards-info">
-                                <div style="margin-bottom: 1rem;">
-                                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">Gold Member Benefits</h4>
-                                    <ul style="color: var(--gray); padding-left: 1.2rem;">
-                                        <li>Free shipping on all orders</li>
-                                        <li>Early access to sales</li>
-                                        <li>Double reward points</li>
-                                        <li>Priority customer support</li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">Your Reward Points</h4>
-                                    <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 1rem; border-radius: var(--radius-sm); text-align: center;">
-                                        <h3 style="font-size: 2rem; margin-bottom: 0.5rem;">1,250</h3>
-                                        <p>Points available</p>
-                                    </div>
-                                </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>SMS Notifications</h4>
+                                <p>Get order updates and special offers via text message</p>
                             </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
                         </div>
 
-                        <div class="dashboard-card recent-orders">
-                            <h3 style="margin-bottom: 1rem; font-size: 1.4rem; font-weight: 600; color: #444;">
-    Quick Actions
-</h3>
-
-<div style="
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1.2rem;
-">
-    <!-- Orders -->
-    <a href="{% url 'orders' %}" style="
-        background: rgba(255,255,255,0.4);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 1.5rem 1rem;
-        text-decoration: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255,255,255,0.3);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    "
-    onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.2)'"
-    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.1)'">
-        <span style="font-size: 2rem; margin-bottom: 0.5rem;">📦</span>
-        <span style="font-weight: 600; color: #333;">View Orders</span>
-    </a>
-
-    <!-- Wishlist -->
-    <a href="{% url 'wishlist' %}" style="
-        background: rgba(255,255,255,0.4);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 1.5rem 1rem;
-        text-decoration: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255,255,255,0.3);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    "
-    onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.2)'"
-    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.1)'">
-        <span style="font-size: 2rem; margin-bottom: 0.5rem; color: red;">❤️</span>
-        <span style="font-weight: 600; color: #333;">Wishlist</span>
-    </a>
-</div>
-
-<!--                                <a href="#" class="btn btn-secondary" style="display: flex; flex-direction: column; align-items: center; padding: 1rem; text-decoration: none;">-->
-<!--                                    <span style="font-size: 1.5rem; margin-bottom: 0.5rem;">📍</span>-->
-<!--                                    <span>Addresses</span>-->
-<!--                                </a>-->
-<!--                                <a href="{% url 'profile' %}" class="btn btn-secondary" style="display: flex; flex-direction: column; align-items: center; padding: 1rem; text-decoration: none;">-->
-<!--                                    <span style="font-size: 1.5rem; margin-bottom: 0.5rem;">👤</span>-->
-<!--                                    <span>Edit Profile</span>-->
-                                </a>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Push Notifications</h4>
+                                <p>Receive real-time updates on your mobile device</p>
                             </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
                         </div>
                     </div>
+                </div>
+
+                <!-- Privacy Settings -->
+                <div class="settings-section">
+                    <h3 class="section-title">🔒 Privacy & Security</h3>
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Two-Factor Authentication</h4>
+                                <p>Add an extra layer of security to your account</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Data Sharing</h4>
+                                <p>Allow us to use your data to improve your shopping experience</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Personalized Recommendations</h4>
+                                <p>Show personalized product recommendations based on your activity</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Communication Preferences -->
+                <div class="settings-section">
+                    <h3 class="section-title">📧 Communication Preferences</h3>
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Marketing Emails</h4>
+                                <p>Receive emails about new products, sales, and exclusive offers</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Product Updates</h4>
+                                <p>Get notified about updates to products you've purchased or shown interest in</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Partner Offers</h4>
+                                <p>Receive special offers from our trusted partners</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Actions -->
+                <div class="settings-section">
+                    <h3 class="section-title">⚙️ Account Actions</h3>
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Download Your Data</h4>
+                                <p>Request a copy of all the data we have about you</p>
+                            </div>
+                            <button class="btn btn-secondary">Request Data</button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Deactivate Account</h4>
+                                <p>Temporarily deactivate your account. You can reactivate it anytime</p>
+                            </div>
+                            <button class="btn btn-secondary">Deactivate</button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Delete Account</h4>
+                                <p>Permanently delete your account and all associated data</p>
+                            </div>
+                            <button class="btn btn-danger">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary">Save Changes</button>
+                    <button class="btn btn-secondary">Cancel</button>
                 </div>
             </div>
         </div>
@@ -1519,5 +1182,33 @@
             <p>&copy; 2025 ShopHub. All rights reserved. Made with ❤ for amazing shopping experiences</p>
         </div>
     </footer>
+
+    <script>
+        // Profile dropdown functionality
+        document.querySelector('.profile-dropdown').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.profile-dropdown');
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Toggle switch functionality
+        document.querySelectorAll('.toggle-switch input').forEach(switchInput => {
+            switchInput.addEventListener('change', function() {
+                // In a real application, you would send an AJAX request to update the setting
+                console.log(`Setting ${this.checked ? 'enabled' : 'disabled'}`);
+            });
+        });
+
+        // Save settings button
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+            alert('Your settings have been saved successfully!');
+        });
+    </script>
 </body>
 </html>

@@ -828,37 +828,48 @@
     <!-- Header -->
     <header>
         <div class="header-wrapper">
-            <a href="home.html" class="logo">
+            <a href="{% url 'home' %}" class="logo">
                 🛍 ShopHub
             </a>
 
-            <div class="search-bar">
-                <input type="text" placeholder="Search for products, brands and more...">
-                <button class="search-btn">Search</button>
-            </div>
+            <form action="{% url 'search' %}" method="get" class="search-bar">
+                <input type="text" name="q" placeholder="Search for products, brands and more...">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
 
             <div class="header-actions">
-                <a href="login.html">
-                    <span>👤</span> Login
-                </a>
-                <a href="wishlist.html">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}">
+                        <span>👤</span> {{ user.first_name|default:user.username }}
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}">
+                        <span>👤</span> Account
+                    </a>
+                {% endif %}
+                <a href="{% url 'wishlist' %}">
                     <span>❤</span> Wishlist
-                    <span class="badge">5</span>
+                    {% if wishlist_count > 0 %}
+                        <span class="badge">{{ wishlist_count }}</span>
+                    {% endif %}
                 </a>
-                <a href="cart.html">
+                <a href="{% url 'cart' %}">
                     <span>🛒</span> Cart
-                    <span class="badge">3</span>
+                    {% if cart_count > 0 %}
+                        <span class="badge">{{ cart_count }}</span>
+                    {% endif %}
                 </a>
             </div>
         </div>
 
         <nav>
             <ul class="nav-links">
-                <li><a href="home.html">Home</a></li>
-<!--                <li><a href="category.html">Categories</a></li>-->
-                  <li><a href="deals.html" class="active">Deals</a></li>
-                <li><a href="trending.html">Trending</a></li>
-
+                <li><a href="{% url 'home' %}">Home</a></li>
+               <li><a href="{% url 'products' %}">Products</a></li>
+                <li><a href="{% url 'deals' %}">Deals</a></li>
+                <li><a href="{% url 'trending' %}">Trending</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
             </ul>
         </nav>
     </header>
@@ -867,13 +878,13 @@
     <main>
         <div class="page-header">
             <h1>💰 Amazing Deals</h1>
-            <p>Limited time offers on your favorite products - Don't miss out!</p>
+            <p> Upcoming limited offers on your favorite products - Don't miss out!</p>
         </div>
 
         <!-- Flash Deal Banner -->
         <div class="flash-deal-banner">
             <h2>🔥 FLASH SALE NOW LIVE! 🔥</h2>
-            <p>Grab these incredible deals before they're gone</p>
+            <p>Wait for the incredible deals before they're gone</p>
             <div class="countdown">
                 <div class="countdown-item">
                     <div class="countdown-value" id="hours">05</div>
@@ -891,14 +902,14 @@
         </div>
 
         <!-- Deal Categories -->
-        <div class="deal-categories">
-            <button class="deal-cat-btn active">All Deals</button>
-            <button class="deal-cat-btn">Electronics</button>
-            <button class="deal-cat-btn">Fashion</button>
-            <button class="deal-cat-btn">Home</button>
-            <button class="deal-cat-btn">Beauty</button>
-            <button class="deal-cat-btn">Books</button>
-        </div>
+<!--        <div class="deal-categories">-->
+<!--            <button class="deal-cat-btn active">All Deals</button>-->
+<!--            <button class="deal-cat-btn">Electronics</button>-->
+<!--            <button class="deal-cat-btn">Fashion</button>-->
+<!--            <button class="deal-cat-btn">Home</button>-->
+<!--            <button class="deal-cat-btn">Beauty</button>-->
+<!--            <button class="deal-cat-btn">Books</button>-->
+<!--        </div>-->
 
         <!-- Deals Grid -->
         <div class="deals-grid">
@@ -915,12 +926,12 @@
                         <div class="deal-price">$319</div>
                         <div class="savings">Save $480 (60%)</div>
                     </div>
-                    <div class="deal-timer">⏰ 2h 15min left</div>
+                    <div class="deal-timer">⏰ 2h 15min more</div>
                     <div class="progress-bar">
                         <div class="progress-fill"></div>
                     </div>
                     <div class="stock-info">📦 Only 12 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="buy-now-btn">Coming Soon</button>
                 </div>
             </div>
 
@@ -937,12 +948,12 @@
                         <div class="deal-price">$649</div>
                         <div class="savings">Save $650 (50%)</div>
                     </div>
-                    <div class="deal-timer">⏰ 1h 30min left</div>
+                    <div class="deal-timer">⏰ 1h 30min more</div>
                     <div class="progress-bar">
                         <div class="progress-fill"></div>
                     </div>
                     <div class="stock-info">📦 Only 5 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="buy-now-btn">Coming Soon</button>
                 </div>
             </div>
 
@@ -959,12 +970,12 @@
                         <div class="deal-price">$164</div>
                         <div class="savings">Save $135 (45%)</div>
                     </div>
-                    <div class="deal-timer">⏰ 3h 45min left</div>
+                    <div class="deal-timer">⏰ 3h 45min more</div>
                     <div class="progress-bar">
                         <div class="progress-fill"></div>
                     </div>
                     <div class="stock-info">📦 Only 28 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="buy-now-btn">Coming Soon</button>
                 </div>
             </div>
 
@@ -981,12 +992,12 @@
                         <div class="deal-price">$134</div>
                         <div class="savings">Save $165 (55%)</div>
                     </div>
-                    <div class="deal-timer">⏰ 2h 20min left</div>
+                    <div class="deal-timer">⏰ 2h 20min more</div>
                     <div class="progress-bar">
                         <div class="progress-fill"></div>
                     </div>
                     <div class="stock-info">📦 Only 35 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="buy-now-btn">Coming Soon</button>
                 </div>
             </div>
 
@@ -1003,12 +1014,12 @@
                         <div class="deal-price">$899</div>
                         <div class="savings">Save $600 (40%)</div>
                     </div>
-                    <div class="deal-timer">⏰ 4h 10min left</div>
+                    <div class="deal-timer">⏰ 4h 10min more</div>
                     <div class="progress-bar">
                         <div class="progress-fill"></div>
                     </div>
                     <div class="stock-info">📦 Only 8 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="buy-now-btn">Coming Soon</button>
                 </div>
             </div>
 
@@ -1025,12 +1036,12 @@
                         <div class="deal-price">$244</div>
                         <div class="savings">Save $455 (65%)</div>
                     </div>
-                    <div class="deal-timer">⏰ 1h 50min left</div>
+                    <div class="deal-timer">⏰ 1h 50min more</div>
                     <div class="progress-bar">
                         <div class="progress-fill"></div>
                     </div>
                     <div class="stock-info">📦 Only 3 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="buy-now-btn">Coming Soon</button>
                 </div>
             </div>
 
@@ -1047,12 +1058,12 @@
                         <div class="deal-price">$29</div>
                         <div class="savings">Save $70 (70%)</div>
                     </div>
-                    <div class="deal-timer">⏰ 3h 25min left</div>
+                    <div class="deal-timer">⏰ 3h 25min more</div>
                     <div class="progress-bar">
                         <div class="progress-fill"></div>
                     </div>
                     <div class="stock-info">📦 Only 45 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="buy-now-btn">Coming Soon</button>
                 </div>
             </div>
 
@@ -1069,12 +1080,12 @@
                         <div class="deal-price">$779</div>
                         <div class="savings">Save $420 (35%)</div>
                     </div>
-                    <div class="deal-timer">⏰ 5h 00min left</div>
+                    <div class="deal-timer">⏰ 5h 00min more</div>
                     <div class="progress-bar">
                         <div class="progress-fill"></div>
                     </div>
                     <div class="stock-info">📦 Only 7 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="buy-now-btn">Coming Soon</button>
                 </div>
             </div>
         </div>
@@ -1097,19 +1108,18 @@
             <div class="footer-section">
                 <h3>Shop</h3>
                 <ul class="footer-links">
-                    <li><a href="category.html">All Products</a></li>
-                      <li><a href="deals.html">Deals</a></li>
-                    <li><a href="trending.html">Trending</a></li>
-
-                    <li><a href="category.html">New Arrivals</a></li>
-                    <li><a href="category.html">Best Sellers</a></li>
+                    <li><a href="{% url 'products' %}">All Products</a></li>
+                    <li><a href="{% url 'deals' %}">Deals</a></li>
+                    <li><a href="{% url 'trending' %}">Trending</a></li>
+                    <li><a href="{% url 'products' %}">New Arrivals</a></li>
+                    <li><a href="{% url 'products' %}">Best Sellers</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
                 <h3>Customer Service</h3>
                 <ul class="footer-links">
-                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
                     <li><a href="#">Shipping Information</a></li>
                     <li><a href="#">Returns & Exchanges</a></li>
                     <li><a href="#">FAQ</a></li>
@@ -1120,7 +1130,7 @@
             <div class="footer-section">
                 <h3>Company</h3>
                 <ul class="footer-links">
-                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
                     <li><a href="#">Careers</a></li>
                     <li><a href="#">Privacy Policy</a></li>
                     <li><a href="#">Terms of Service</a></li>
@@ -1179,7 +1189,7 @@
                 e.preventDefault();
                 const dealName = this.parentElement.querySelector('.deal-name').textContent;
                 const dealPrice = this.parentElement.querySelector('.deal-price').textContent;
-                alert(✓ ${dealName} (${dealPrice}) added to cart!\n\nHurry, limited stock available!);
+                alert(`✓ ${dealName} (${dealPrice}) added to cart!\n\nHurry, limited stock available!`);
             });
         });
 
@@ -1187,7 +1197,7 @@
         document.querySelector('.search-btn').addEventListener('click', function() {
             const searchTerm = document.querySelector('.search-bar input').value;
             if (searchTerm.trim() !== '') {
-                alert(Searching for: ${searchTerm});
+                alert(`Searching for: ${searchTerm}`);
                 // In a real app, this would redirect to search results
             }
         });

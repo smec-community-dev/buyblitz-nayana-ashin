@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deals - ShopHub</title>
+    <title>Trending - ShopHub</title>
     <style>
         * {
             margin: 0;
@@ -231,89 +231,74 @@
             font-weight: 400;
         }
 
-        /* Flash Deal Banner */
-        .flash-deal-banner {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            color: white;
-            padding: 30px 20px;
-            border-radius: 12px;
+        /* Sort & Filter Section */
+        .sort-filter-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 40px;
-            text-align: center;
+            gap: 20px;
+            flex-wrap: wrap;
             animation: slideInUp 0.6s ease-out;
-            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
         }
 
-        .flash-deal-banner h2 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .flash-deal-banner .countdown {
-            font-size: 1.1rem;
-            font-weight: 600;
+        .sort-options {
             display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 15px;
-        }
-
-        .countdown-item {
-            display: flex;
-            flex-direction: column;
+            gap: 15px;
             align-items: center;
         }
 
-        .countdown-value {
-            font-size: 1.8rem;
-            font-weight: 700;
+        .sort-options label {
+            font-weight: 600;
+            color: #333;
         }
 
-        .countdown-label {
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-
-        /* Deal Categories */
-        .deal-categories {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-            justify-content: center;
-            animation: slideInUp 0.6s ease-out 0.1s both;
-        }
-
-        .deal-cat-btn {
-            padding: 10px 22px;
+        .sort-options select {
+            padding: 8px 12px;
             border: 2px solid #ddd;
-            background: white;
-            border-radius: 25px;
+            border-radius: 6px;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 500;
-            color: #333;
-            font-size: 0.95rem;
+            background: white;
         }
 
-        .deal-cat-btn:hover,
-        .deal-cat-btn.active {
-            background-color: var(--primary);
-            color: white;
+        .sort-options select:hover {
             border-color: var(--primary);
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
         }
 
-        /* Deals Grid */
-        .deals-grid {
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+        }
+
+        .view-btn {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .view-btn:hover,
+        .view-btn.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        /* Products Grid */
+        .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 25px;
             animation: fadeIn 0.8s ease-out 0.2s both;
         }
 
-        .deal-card {
+        .product-card {
             background: white;
             border-radius: 12px;
             overflow: hidden;
@@ -324,25 +309,23 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            border: 2px solid transparent;
         }
 
-        .deal-card:nth-child(1) { animation-delay: 0s; }
-        .deal-card:nth-child(2) { animation-delay: 0.1s; }
-        .deal-card:nth-child(3) { animation-delay: 0.2s; }
-        .deal-card:nth-child(4) { animation-delay: 0.3s; }
-        .deal-card:nth-child(5) { animation-delay: 0.4s; }
-        .deal-card:nth-child(6) { animation-delay: 0.5s; }
-        .deal-card:nth-child(7) { animation-delay: 0.6s; }
-        .deal-card:nth-child(8) { animation-delay: 0.7s; }
+        .product-card:nth-child(1) { animation-delay: 0s; }
+        .product-card:nth-child(2) { animation-delay: 0.1s; }
+        .product-card:nth-child(3) { animation-delay: 0.2s; }
+        .product-card:nth-child(4) { animation-delay: 0.3s; }
+        .product-card:nth-child(5) { animation-delay: 0.4s; }
+        .product-card:nth-child(6) { animation-delay: 0.5s; }
+        .product-card:nth-child(7) { animation-delay: 0.6s; }
+        .product-card:nth-child(8) { animation-delay: 0.7s; }
 
-        .deal-card:hover {
+        .product-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 12px 32px rgba(102, 126, 234, 0.25);
-            border-color: var(--primary);
         }
 
-        .deal-badge {
+        .product-badge {
             position: absolute;
             top: 12px;
             right: 12px;
@@ -356,20 +339,6 @@
             animation: pulse 2s ease-in-out infinite;
         }
 
-        .limited-badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: #ffd700;
-            color: #333;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            z-index: 10;
-            animation: bounce 2s ease-in-out infinite;
-        }
-
         @keyframes pulse {
             0%, 100% {
                 transform: scale(1);
@@ -379,16 +348,7 @@
             }
         }
 
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-5px);
-            }
-        }
-
-        .deal-image {
+        .product-image {
             height: 220px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             display: flex;
@@ -401,11 +361,11 @@
             overflow: hidden;
         }
 
-        .deal-card:hover .deal-image {
+        .product-card:hover .product-image {
             transform: scale(1.08);
         }
 
-        .deal-image::before {
+        .product-image::before {
             content: '';
             position: absolute;
             width: 100%;
@@ -415,11 +375,11 @@
             transition: opacity 0.4s ease;
         }
 
-        .deal-card:hover .deal-image::before {
+        .product-card:hover .product-image::before {
             opacity: 1;
         }
 
-        .deal-content {
+        .product-content {
             padding: 20px;
             flex: 1;
             display: flex;
@@ -427,7 +387,7 @@
             justify-content: space-between;
         }
 
-        .deal-name {
+        .product-name {
             font-size: 1.1rem;
             font-weight: 700;
             color: var(--dark);
@@ -436,81 +396,38 @@
             min-height: 32px;
         }
 
-        .deal-description {
+        .product-description {
             font-size: 0.85rem;
             color: var(--gray);
             margin-bottom: 12px;
             line-height: 1.4;
+            min-height: 34px;
         }
 
-        .price-section {
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 12px;
         }
 
-        .original-price {
-            font-size: 0.9rem;
-            color: #999;
-            text-decoration: line-through;
-            margin-right: 10px;
-        }
-
-        .deal-price {
-            font-size: 1.5rem;
+        .product-price {
+            font-size: 1.4rem;
             font-weight: 700;
-            color: #ff6b6b;
+            color: var(--primary);
         }
 
-        .savings {
-            font-size: 0.85rem;
-            color: #27ae60;
-            font-weight: 600;
-            margin-top: 4px;
+        .product-rating {
+            font-size: 0.9rem;
+            color: #f39c12;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .deal-timer {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            font-size: 0.85rem;
-            color: #666;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #e0e0e0;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            animation: fillProgress 3s ease-in-out infinite;
-        }
-
-        @keyframes fillProgress {
-            0%, 100% {
-                width: 60%;
-            }
-            50% {
-                width: 85%;
-            }
-        }
-
-        .stock-info {
-            font-size: 0.85rem;
-            color: #666;
-            margin-bottom: 12px;
-        }
-
-        .buy-now-btn {
+        .add-to-cart-btn {
             padding: 10px 20px;
-            background-color: #ff6b6b;
+            background-color: var(--primary);
             color: white;
             border: none;
             border-radius: 6px;
@@ -521,13 +438,13 @@
             width: 100%;
         }
 
-        .buy-now-btn:hover {
-            background-color: #ee5a6f;
+        .add-to-cart-btn:hover {
+            background-color: var(--secondary);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
         }
 
-        .buy-now-btn:active {
+        .add-to-cart-btn:active {
             transform: translateY(0);
         }
 
@@ -647,21 +564,13 @@
 
         /* Responsive Design */
         @media (max-width: 1024px) {
-            .deals-grid {
+            .products-grid {
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
                 gap: 20px;
             }
 
             .page-header h1 {
                 font-size: 2rem;
-            }
-
-            .flash-deal-banner {
-                padding: 20px;
-            }
-
-            .flash-deal-banner h2 {
-                font-size: 1.6rem;
             }
 
             main {
@@ -684,7 +593,7 @@
                 gap: 1rem;
             }
 
-            .deals-grid {
+            .products-grid {
                 grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
                 gap: 15px;
             }
@@ -697,16 +606,16 @@
                 font-size: 0.9rem;
             }
 
-            .flash-deal-banner .countdown {
-                gap: 15px;
-                flex-wrap: wrap;
+            .sort-filter-section {
+                flex-direction: column;
+                align-items: stretch;
             }
 
-            .countdown-value {
-                font-size: 1.4rem;
+            .sort-options {
+                justify-content: center;
             }
 
-            .deal-categories {
+            .view-toggle {
                 justify-content: center;
             }
 
@@ -715,22 +624,18 @@
                 gap: 20px;
             }
 
-            .deal-image {
+            .product-image {
                 font-size: 60px;
                 height: 180px;
             }
 
-            .deal-content {
+            .product-content {
                 padding: 16px 12px;
             }
 
-            .buy-now-btn {
+            .add-to-cart-btn {
                 padding: 8px 16px;
                 font-size: 0.85rem;
-            }
-
-            .deal-price {
-                font-size: 1.2rem;
             }
         }
 
@@ -762,38 +667,31 @@
                 font-size: 0.85rem;
             }
 
-            .deals-grid {
+            .products-grid {
                 grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 12px;
             }
 
-            .deal-categories {
-                gap: 8px;
-                margin-bottom: 25px;
-            }
-
-            .deal-cat-btn {
-                padding: 8px 16px;
-                font-size: 0.85rem;
-            }
-
-            .flash-deal-banner {
-                padding: 15px 10px;
+            .sort-filter-section {
+                gap: 12px;
                 margin-bottom: 30px;
             }
 
-            .flash-deal-banner h2 {
-                font-size: 1.3rem;
-                margin-bottom: 8px;
+            .sort-options {
+                flex-direction: column;
+                width: 100%;
             }
 
-            .flash-deal-banner .countdown {
-                gap: 10px;
-                font-size: 0.8rem;
+            .sort-options select {
+                width: 100%;
             }
 
-            .countdown-value {
-                font-size: 1.2rem;
+            .view-toggle {
+                width: 100%;
+            }
+
+            .view-btn {
+                flex: 1;
             }
 
             main {
@@ -805,21 +703,17 @@
                 gap: 20px;
             }
 
-            .deal-name {
+            .product-name {
                 font-size: 0.95rem;
             }
 
-            .deal-price {
-                font-size: 1rem;
+            .product-price {
+                font-size: 1.1rem;
             }
 
-            .deal-image {
+            .product-image {
                 font-size: 48px;
                 height: 140px;
-            }
-
-            .original-price {
-                font-size: 0.8rem;
             }
         }
     </style>
@@ -837,27 +731,48 @@
                 <button class="search-btn">Search</button>
             </div>
 
-            <div class="header-actions">
-                <a href="login.html">
-                    <span>👤</span> Login
-                </a>
-                <a href="wishlist.html">
-                    <span>❤</span> Wishlist
-                    <span class="badge">5</span>
-                </a>
-                <a href="cart.html">
-                    <span>🛒</span> Cart
-                    <span class="badge">3</span>
-                </a>
+             <div class="header-actions">
+                {% if request.user.is_authenticated %}
+                    <a href="#">
+                        <span>👤</span> {{ request.user.first_name|default:request.user.username }}
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}">
+                        <span>👤</span> Account
+                    </a>
+                {% endif %}
+
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'wishlist' %}">
+                        <span>❤</span> Wishlist
+                        <span class="badge">{{ wishlist_count }}</span>
+                    </a>
+                    <a href="{% url 'cart' %}">
+                        <span>🛒</span> Cart
+                        <span class="badge">{{ cart_count }}</span>
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}">
+                        <span>❤</span> Wishlist
+                        <span class="badge">0</span>
+                    </a>
+                    <a href="{% url 'login' %}">
+                        <span>🛒</span> Cart
+                        <span class="badge">0</span>
+                    </a>
+                {% endif %}
             </div>
+        </div>
         </div>
 
         <nav>
             <ul class="nav-links">
-                <li><a href="home.html">Home</a></li>
-<!--                <li><a href="category.html">Categories</a></li>-->
-                  <li><a href="deals.html" class="active">Deals</a></li>
-                <li><a href="trending.html">Trending</a></li>
+                         <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'products' %}">Products</a></li>
+                <li><a href="{% url 'deals' %}">Deals</a></li>
+                <li><a href="{% url 'trending' %}">Trending</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
 
             </ul>
         </nav>
@@ -866,215 +781,149 @@
     <!-- Main Content -->
     <main>
         <div class="page-header">
-            <h1>💰 Amazing Deals</h1>
-            <p>Limited time offers on your favorite products - Don't miss out!</p>
+            <h1>🔥 Trending Now</h1>
+            <p>Discover the hottest and most popular products right now</p>
         </div>
 
-        <!-- Flash Deal Banner -->
-        <div class="flash-deal-banner">
-            <h2>🔥 FLASH SALE NOW LIVE! 🔥</h2>
-            <p>Grab these incredible deals before they're gone</p>
-            <div class="countdown">
-                <div class="countdown-item">
-                    <div class="countdown-value" id="hours">05</div>
-                    <div class="countdown-label">Hours</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-value" id="minutes">45</div>
-                    <div class="countdown-label">Minutes</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-value" id="seconds">32</div>
-                    <div class="countdown-label">Seconds</div>
-                </div>
+        <!-- Sort & Filter Section -->
+        <div class="sort-filter-section">
+            <div class="sort-options">
+                <label for="sort">Sort by:</label>
+                <select id="sort">
+                    <option value="trending">Trending</option>
+                    <option value="popular">Most Popular</option>
+                    <option value="newest">Newest</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Highest Rated</option>
+                </select>
+            </div>
+
+            <div class="view-toggle">
+                <button class="view-btn active" title="Grid View">⊞</button>
+                <button class="view-btn" title="List View">≡</button>
             </div>
         </div>
 
-        <!-- Deal Categories -->
-        <div class="deal-categories">
-            <button class="deal-cat-btn active">All Deals</button>
-            <button class="deal-cat-btn">Electronics</button>
-            <button class="deal-cat-btn">Fashion</button>
-            <button class="deal-cat-btn">Home</button>
-            <button class="deal-cat-btn">Beauty</button>
-            <button class="deal-cat-btn">Books</button>
-        </div>
-
-        <!-- Deals Grid -->
-        <div class="deals-grid">
-            <!-- Deal 1 -->
-            <div class="deal-card">
-                <div class="limited-badge">LIMITED</div>
-                <div class="deal-badge">-60%</div>
-                <div class="deal-image">📱</div>
-                <div class="deal-content">
-                    <div class="deal-name">Premium Smartphone</div>
-                    <div class="deal-description">Latest flagship model</div>
-                    <div class="price-section">
-                        <span class="original-price">$799</span>
-                        <div class="deal-price">$319</div>
-                        <div class="savings">Save $480 (60%)</div>
+        <!-- Products Grid -->
+        <div class="products-grid">
+            <!-- Product 1 -->
+            <div class="product-card">
+                <div class="product-badge">-25%</div>
+                <div class="product-image">📱</div>
+                <div class="product-content">
+                    <div class="product-name">Premium Smartphone</div>
+                    <div class="product-description">Latest tech with amazing features</div>
+                    <div class="product-footer">
+                        <div class="product-price">$599</div>
+                        <div class="product-rating">★★★★★ (328)</div>
                     </div>
-                    <div class="deal-timer">⏰ 2h 15min left</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <div class="stock-info">📦 Only 12 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="add-to-cart-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <!-- Deal 2 -->
-            <div class="deal-card">
-                <div class="limited-badge">LIMITED</div>
-                <div class="deal-badge">-50%</div>
-                <div class="deal-image">💻</div>
-                <div class="deal-content">
-                    <div class="deal-name">Gaming Laptop</div>
-                    <div class="deal-description">High performance laptop</div>
-                    <div class="price-section">
-                        <span class="original-price">$1,299</span>
-                        <div class="deal-price">$649</div>
-                        <div class="savings">Save $650 (50%)</div>
+            <!-- Product 2 -->
+            <div class="product-card">
+                <div class="product-badge">-40%</div>
+                <div class="product-image">💻</div>
+                <div class="product-content">
+                    <div class="product-name">Ultra Laptop</div>
+                    <div class="product-description">Powerful performance laptop</div>
+                    <div class="product-footer">
+                        <div class="product-price">$899</div>
+                        <div class="product-rating">★★★★☆ (245)</div>
                     </div>
-                    <div class="deal-timer">⏰ 1h 30min left</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <div class="stock-info">📦 Only 5 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="add-to-cart-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <!-- Deal 3 -->
-            <div class="deal-card">
-                <div class="limited-badge">LIMITED</div>
-                <div class="deal-badge">-45%</div>
-                <div class="deal-image">⌚</div>
-                <div class="deal-content">
-                    <div class="deal-name">Smart Watch Pro</div>
-                    <div class="deal-description">Fitness tracking watch</div>
-                    <div class="price-section">
-                        <span class="original-price">$299</span>
-                        <div class="deal-price">$164</div>
-                        <div class="savings">Save $135 (45%)</div>
+            <!-- Product 3 -->
+            <div class="product-card">
+                <div class="product-badge">-15%</div>
+                <div class="product-image">⌚</div>
+                <div class="product-content">
+                    <div class="product-name">Smart Watch Pro</div>
+                    <div class="product-description">Track your health & fitness</div>
+                    <div class="product-footer">
+                        <div class="product-price">$249</div>
+                        <div class="product-rating">★★★★★ (562)</div>
                     </div>
-                    <div class="deal-timer">⏰ 3h 45min left</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <div class="stock-info">📦 Only 28 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="add-to-cart-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <!-- Deal 4 -->
-            <div class="deal-card">
-                <div class="limited-badge">LIMITED</div>
-                <div class="deal-badge">-55%</div>
-                <div class="deal-image">🎧</div>
-                <div class="deal-content">
-                    <div class="deal-name">Premium Headphones</div>
-                    <div class="deal-description">Noise cancelling audio</div>
-                    <div class="price-section">
-                        <span class="original-price">$299</span>
-                        <div class="deal-price">$134</div>
-                        <div class="savings">Save $165 (55%)</div>
+            <!-- Product 4 -->
+            <div class="product-card">
+                <div class="product-badge">-30%</div>
+                <div class="product-image">🎧</div>
+                <div class="product-content">
+                    <div class="product-name">Wireless Headphones</div>
+                    <div class="product-description">Premium sound quality</div>
+                    <div class="product-footer">
+                        <div class="product-price">$149</div>
+                        <div class="product-rating">★★★★★ (891)</div>
                     </div>
-                    <div class="deal-timer">⏰ 2h 20min left</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <div class="stock-info">📦 Only 35 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="add-to-cart-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <!-- Deal 5 -->
-            <div class="deal-card">
-                <div class="limited-badge">LIMITED</div>
-                <div class="deal-badge">-40%</div>
-                <div class="deal-image">📷</div>
-                <div class="deal-content">
-                    <div class="deal-name">4K Camera</div>
-                    <div class="deal-description">Professional video camera</div>
-                    <div class="price-section">
-                        <span class="original-price">$1,499</span>
-                        <div class="deal-price">$899</div>
-                        <div class="savings">Save $600 (40%)</div>
+            <!-- Product 5 -->
+            <div class="product-card">
+                <div class="product-badge">-20%</div>
+                <div class="product-image">📷</div>
+                <div class="product-content">
+                    <div class="product-name">4K Camera</div>
+                    <div class="product-description">Professional photography camera</div>
+                    <div class="product-footer">
+                        <div class="product-price">$1,299</div>
+                        <div class="product-rating">★★★★☆ (134)</div>
                     </div>
-                    <div class="deal-timer">⏰ 4h 10min left</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <div class="stock-info">📦 Only 8 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="add-to-cart-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <!-- Deal 6 -->
-            <div class="deal-card">
-                <div class="limited-badge">LIMITED</div>
-                <div class="deal-badge">-65%</div>
-                <div class="deal-image">🎮</div>
-                <div class="deal-content">
-                    <div class="deal-name">Gaming Console</div>
-                    <div class="deal-description">Next-gen gaming system</div>
-                    <div class="price-section">
-                        <span class="original-price">$699</span>
-                        <div class="deal-price">$244</div>
-                        <div class="savings">Save $455 (65%)</div>
+            <!-- Product 6 -->
+            <div class="product-card">
+                <div class="product-badge">-35%</div>
+                <div class="product-image">🎮</div>
+                <div class="product-content">
+                    <div class="product-name">Gaming Console</div>
+                    <div class="product-description">Next-gen gaming experience</div>
+                    <div class="product-footer">
+                        <div class="product-price">$499</div>
+                        <div class="product-rating">★★★★★ (754)</div>
                     </div>
-                    <div class="deal-timer">⏰ 1h 50min left</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <div class="stock-info">📦 Only 3 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="add-to-cart-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <!-- Deal 7 -->
-            <div class="deal-card">
-                <div class="limited-badge">LIMITED</div>
-                <div class="deal-badge">-70%</div>
-                <div class="deal-image">👕</div>
-                <div class="deal-content">
-                    <div class="deal-name">Designer T-Shirts</div>
-                    <div class="deal-description">Premium quality clothing</div>
-                    <div class="price-section">
-                        <span class="original-price">$99</span>
-                        <div class="deal-price">$29</div>
-                        <div class="savings">Save $70 (70%)</div>
+            <!-- Product 7 -->
+            <div class="product-card">
+                <div class="product-badge">-50%</div>
+                <div class="product-image">📕</div>
+                <div class="product-content">
+                    <div class="product-name">Best Seller Book</div>
+                    <div class="product-description">Top rated bestselling novel</div>
+                    <div class="product-footer">
+                        <div class="product-price">$15</div>
+                        <div class="product-rating">★★★★★ (1,203)</div>
                     </div>
-                    <div class="deal-timer">⏰ 3h 25min left</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <div class="stock-info">📦 Only 45 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="add-to-cart-btn">Add to Cart</button>
                 </div>
             </div>
 
-            <!-- Deal 8 -->
-            <div class="deal-card">
-                <div class="limited-badge">LIMITED</div>
-                <div class="deal-badge">-35%</div>
-                <div class="deal-image">🛋</div>
-                <div class="deal-content">
-                    <div class="deal-name">Comfort Sofa</div>
-                    <div class="deal-description">Luxury home furniture</div>
-                    <div class="price-section">
-                        <span class="original-price">$1,199</span>
-                        <div class="deal-price">$779</div>
-                        <div class="savings">Save $420 (35%)</div>
+            <!-- Product 8 -->
+            <div class="product-card">
+                <div class="product-badge">-12%</div>
+                <div class="product-image">👟</div>
+                <div class="product-content">
+                    <div class="product-name">Running Shoes</div>
+                    <div class="product-description">Comfortable athletic shoes</div>
+                    <div class="product-footer">
+                        <div class="product-price">$120</div>
+                        <div class="product-rating">★★★★☆ (456)</div>
                     </div>
-                    <div class="deal-timer">⏰ 5h 00min left</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <div class="stock-info">📦 Only 7 left in stock</div>
-                    <button class="buy-now-btn">Buy Now</button>
+                    <button class="add-to-cart-btn">Add to Cart</button>
                 </div>
             </div>
         </div>
@@ -1135,51 +984,26 @@
     </footer>
 
     <script>
-        // Countdown timer
-        function updateCountdown() {
-            let hours = parseInt(document.getElementById('hours').textContent);
-            let minutes = parseInt(document.getElementById('minutes').textContent);
-            let seconds = parseInt(document.getElementById('seconds').textContent);
+        // Sort functionality
+        document.getElementById('sort').addEventListener('change', function(e) {
+            const sortType = e.target.value;
+            alert(Sorting by: ${this.options[this.selectedIndex].text});
+        });
 
-            setInterval(() => {
-                seconds--;
-                if (seconds < 0) {
-                    seconds = 59;
-                    minutes--;
-                    if (minutes < 0) {
-                        minutes = 59;
-                        hours--;
-                        if (hours < 0) {
-                            hours = 5;
-                            minutes = 0;
-                            seconds = 0;
-                        }
-                    }
-                }
-
-                document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-                document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-                document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-            }, 1000);
-        }
-
-        updateCountdown();
-
-        // Deal category filter
-        document.querySelectorAll('.deal-cat-btn').forEach(btn => {
+        // View toggle
+        document.querySelectorAll('.view-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                document.querySelectorAll('.deal-cat-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
             });
         });
 
-        // Buy now button
-        document.querySelectorAll('.buy-now-btn').forEach(btn => {
+        // Add to cart
+        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
-                const dealName = this.parentElement.querySelector('.deal-name').textContent;
-                const dealPrice = this.parentElement.querySelector('.deal-price').textContent;
-                alert(✓ ${dealName} (${dealPrice}) added to cart!\n\nHurry, limited stock available!);
+                const productName = this.parentElement.querySelector('.product-name').textContent;
+                alert(✓ ${productName} added to cart!);
             });
         });
 
@@ -1207,8 +1031,8 @@
             });
         }, observerOptions);
 
-        // Observe all deal cards
-        document.querySelectorAll('.deal-card').forEach(el => {
+        // Observe all product cards
+        document.querySelectorAll('.product-card').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(20px)';
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';

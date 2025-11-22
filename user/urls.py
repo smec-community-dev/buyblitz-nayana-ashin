@@ -10,7 +10,11 @@ urlpatterns = [
     path("login/", views.login_user, name="login"),
     path("logout/", views.logout_user, name="logout"),
     # path("profile/", views.profile, name="profile"),
-    path("search/", views.search, name="search"),
+    path("search/", views.search_results, name="search"),
+
+
+path("search/results/", views.search_results, name="search_results"),
+
 
     path("home/",views.home,name="home"),
     path("category/", views.category, name="category"),
@@ -23,7 +27,21 @@ path('contact/', views.contact, name='contact'),
 path('trending/', views.trending, name='trending'),
 path('categories/', views.categories, name='category'),
 path("profile/", views.profile, name="profile"),
+    path('profile/dashboard/', views.profile_dashboard, name='profile_dashboard'),
+path('profile/personal-info/', views.personal_info, name='personal_info'),
+path("profile/personal-info/update/", views.update_personal_info, name="update_personal_info"),
+
+    path('profile/change-password/', views.change_password, name='change_password'),
+    path('profile/account-settings/', views.account_settings, name='account_settings'),
+    path('profile/orders/', views.order_history, name='order_history'),
+
+
+
+
+
 path('orders/', views.orders, name='orders'),
+path('buy-now/<int:product_id>/', views.buy_now, name='buy_now'),
+
 
 
 

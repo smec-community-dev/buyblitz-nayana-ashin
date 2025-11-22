@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="profile-card">
+    <h2>Welcome, {{ user.username }}</h2>
+    <p class="tag">Premium Member</p>
+</div>
+
+<div class="section">
+    <h3>Your Recent Orders</h3>
+    <div class="card-list">
+        {% for order in orders %}
+        <div class="order-card">
+            <h4>#{{ order.order_id }}</h4>
+            <p>{{ order.product_name }}</p>
+            <span class="status {{ order.status|lower }}">{{ order.status }}</span>
+        </div>
+        {% empty %}
+        <p>No recent orders.</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+</body>
+</html>

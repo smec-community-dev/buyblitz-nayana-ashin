@@ -616,37 +616,58 @@
     <!-- Header -->
     <header>
         <div class="header-wrapper">
-            <a href="index.html" class="logo">
+            <a href="{% url 'home' %}" class="logo">
                 🛍 ShopHub
             </a>
 
-            <div class="search-bar">
-                <input type="text" placeholder="Search for products, brands and more...">
-                <button class="search-btn">Search</button>
-            </div>
+            <form action="{% url 'search' %}" method="GET" class="search-bar">
+                <input type="text" name="q" placeholder="Search for products, brands and more...">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
 
             <div class="header-actions">
-                <a href="login.html">
-                    <span>👤</span> Account
-                </a>
-                <a href="wishlist.html">
-                    <span>❤</span> Wishlist
-                    <span class="badge">5</span>
-                </a>
-                <a href="cart.html">
-                    <span>🛒</span> Cart
-                    <span class="badge">3</span>
-                </a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}">
+                        <span>👤</span> {{ user.first_name|default:user.username }}
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}">
+                        <span>👤</span> Account
+                    </a>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'wishlist' %}">
+                        <span>❤</span> Wishlist
+                        {% if wishlist_count > 0 %}
+                            <span class="badge">{{ wishlist_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'cart' %}">
+                        <span>🛒</span> Cart
+                        {% if cart_count > 0 %}
+                            <span class="badge">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}">
+                        <span>❤</span> Wishlist
+                    </a>
+                    <a href="{% url 'login' %}">
+                        <span>🛒</span> Cart
+                    </a>
+                {% endif %}
             </div>
         </div>
 
         <nav>
             <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="category.html">Categories</a></li>
-                <li><a href="trending.html">Trending</a></li>
-                <li><a href="deals.html">Deals</a></li>
-                <li><a href="about.html" class="active">About</a></li>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                 <li><a href="{% url 'products' %}">Products</a></li>
+                <li><a href="{% url 'deals' %}">Deals</a></li>
+                <li><a href="{% url 'trending' %}">Trending</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
             </ul>
         </nav>
     </header>
@@ -778,18 +799,18 @@
             <div class="footer-section">
                 <h3>Shop</h3>
                 <ul class="footer-links">
-                    <li><a href="category.html">All Products</a></li>
-                    <li><a href="trending.html">Trending</a></li>
-                    <li><a href="deals.html">Deals</a></li>
-                    <li><a href="category.html">New Arrivals</a></li>
-                    <li><a href="category.html">Best Sellers</a></li>
+                    <li><a href="{% url 'category' %}">All Products</a></li>
+                    <li><a href="{% url 'trending' %}">Trending</a></li>
+                    <li><a href="{% url 'deals' %}">Deals</a></li>
+                    <li><a href="{% url 'category' %}">New Arrivals</a></li>
+                    <li><a href="{% url 'category' %}">Best Sellers</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
                 <h3>Customer Service</h3>
                 <ul class="footer-links">
-                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
                     <li><a href="#">Shipping Information</a></li>
                     <li><a href="#">Returns & Exchanges</a></li>
                     <li><a href="#">FAQ</a></li>
@@ -800,7 +821,7 @@
             <div class="footer-section">
                 <h3>Company</h3>
                 <ul class="footer-links">
-                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
                     <li><a href="#">Careers</a></li>
                     <li><a href="#">Privacy Policy</a></li>
                     <li><a href="#">Terms of Service</a></li>
@@ -816,10 +837,12 @@
 
     <script>
         // Search Functionality
-        document.querySelector('.search-btn').addEventListener('click', function() {
+        document.querySelector('.search-btn').addEventListener('click', function(e) {
+            const searchForm = document.querySelector('.search-bar');
             const searchValue = document.querySelector('.search-bar input').value;
-            if (searchValue.trim() !== '') {
-                alert('Searching for: ' + searchValue);
+            if (searchValue.trim() === '') {
+                e.preventDefault();
+                alert('Please enter a search term');
             }
         });
 

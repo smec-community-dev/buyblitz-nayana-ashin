@@ -7,6 +7,11 @@
     <title>Your Cart - ShopHub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
+
+        a {
+    text-decoration: none !important;
+}
+
         * {
             margin: 0;
             padding: 0;
@@ -548,9 +553,10 @@
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url 'products' %}">Products</a></li>
-                <li><a href="{% url 'trending' %}">Trending</a></li>
                 <li><a href="{% url 'deals' %}">Deals</a></li>
-                <li><a href="{% url 'cart' %}" class="active">Cart</a></li>
+                <li><a href="{% url 'trending' %}">Trending</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
             </ul>
         </nav>
     </header>

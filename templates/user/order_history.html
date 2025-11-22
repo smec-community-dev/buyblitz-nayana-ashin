@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Your Orders</h2>
+
+<div class="order-list">
+    {% for order in orders %}
+    <div class="order-item">
+        <img src="{{ order.product.image.url }}">
+        <div>
+            <h4>{{ order.product.name }}</h4>
+            <p>Qty: {{ order.quantity }}</p>
+            <p class="status {{ order.status|lower }}">{{ order.status }}</p>
+        </div>
+        <span class="price">₹{{ order.total }}</span>
+    </div>
+    {% endfor %}
+</div>
+
+
+</body>
+</html>

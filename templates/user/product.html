@@ -9,6 +9,68 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
+
+
+        /* Pagination Container */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0;
+    gap: 8px;
+}
+
+/* Buttons */
+.pagination .page-btn {
+    display: inline-block;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: #f3f3f3;
+    color: #333;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    border: 1px solid #ddd;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+    transition: all 0.25s ease-in-out;
+}
+
+/* Hover Effect */
+.pagination .page-btn:hover {
+    background: #667eea;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Active Page */
+.pagination .page-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    cursor: default;
+    box-shadow: 0 6px 14px rgba(102, 126, 234, 0.5);
+}
+
+/* Arrow Buttons */
+.pagination .page-btn:first-child,
+.pagination .page-btn:last-child {
+    font-size: 18px;
+    padding: 8px 14px;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Hover for arrows */
+.pagination .page-btn:first-child:hover,
+.pagination .page-btn:last-child:hover {
+    transform: translateY(-4px) scale(1.08);
+}
+
         * {
             margin: 0;
             padding: 0;
@@ -464,8 +526,15 @@
         }
 
         .product-info {
+
             padding: 1.5rem;
+            text-decoration: none !important;
         }
+        .product-card a {
+    text-decoration: none !important;
+    border-bottom: none !important;
+}
+
 
         .product-title {
             font-size: 1.1rem;
@@ -836,6 +905,13 @@
                 <form action="{% url 'products' %}" method="GET">
                     <i class="fa fa-search"></i>
                     <input type="text" name="q" placeholder="Search products..." value="{{ request.GET.q }}">
+                    {% for cat in selected_categories %}
+                        <input type="hidden" name="category" value="{{ cat }}">
+                    {% endfor %}
+
+                   <input type="hidden" name="sort" value="{{ sort }}">
+
+
                     <button type="submit" class="search-btn">Search</button>
                 </form>
             </div>
@@ -941,81 +1017,90 @@
                 </form>
             </div>
 
-            <!-- Product Grid -->
-            <div class="product-grid" id="productContainer">
-                {% for p in products %}
-                <div class="product-card">
-                    <!-- Wishlist Button -->
+           <!-- Product Grid -->
+<div class="product-grid" id="productContainer">
+
+    {% if page_obj.object_list %}
+
+        {% for p in page_obj %}
+        <div class="product-card">
+
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'add_to_wishlist' p.id %}" class="wishlist-btn {% if p.id in wishlist_ids %}liked{% endif %}">
+                    <i class="{% if p.id in wishlist_ids %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="wishlist-btn">
+                    <i class="fa-regular fa-heart"></i>
+                </a>
+            {% endif %}
+
+            <a href="{% url 'single_view' p.slug %}" style="text-decoration:none; color:inherit;">
+                <div class="product-image">
+                    {% if p.images.all %}
+                        <img src="{{ p.images.first.image.url }}" alt="{{ p.title }}">
+                    {% else %}
+                        <span style="font-size:4rem;">🛍</span>
+                    {% endif %}
+                </div>
+
+                <div class="product-info">
+                    <div class="product-category">{{ p.category.name }}</div>
+                    <div class="product-title">{{ p.title }}</div>
+                    <div class="product-rating">
+                        <span class="star">★★★★★</span>
+                        <span>({{ p.reviews.count }})</span>
+                    </div>
+                    <div class="product-price">₹{{ p.price }}</div>
+
                     {% if request.user.is_authenticated %}
-                    <a href="{% url 'add_to_wishlist' p.id %}" class="wishlist-btn {% if p.id in wishlist_ids %}liked{% endif %}">
-                        <i class="{% if p.id in wishlist_ids %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
-                    </a>
+                        <a href="{% url 'add_to_cart' p.id %}" class="add-to-cart">Add to Cart</a>
                     {% else %}
-                    <a href="{% url 'login' %}" class="wishlist-btn">
-                        <i class="fa-regular fa-heart"></i>
-                    </a>
-                    {% endif %}
-
-                    <!-- Product Link -->
-                    <a href="{% url 'single_view' p.slug %}" style="text-decoration:none; color:inherit;">
-                        <!-- Product Image -->
-                        <div class="product-image">
-                            {% if p.images.all %}
-                                <img src="{{ p.images.first.image.url }}" alt="{{ p.title }}">
-                            {% else %}
-                                <span style="font-size:4rem;">🛍</span>
-                            {% endif %}
-                        </div>
-
-                        <!-- Product Info -->
-                        <div class="product-info">
-                            <div class="product-category">{{ p.category.name }}</div>
-                            <div class="product-title">{{ p.title }}</div>
-                            <div class="product-rating">
-                                <span class="star">★★★★★</span>
-                                <span>({{ p.reviews.count }})</span>
-                            </div>
-                            <div class="product-price">₹{{ p.price }}</div>
-                            {% if request.user.is_authenticated %}
-                            <a href="{% url 'add_to_cart' p.id %}" class="add-to-cart" style="display:block; text-align:center; text-decoration:none;">Add to Cart</a>
-                            {% else %}
-                            <a href="{% url 'login' %}" class="add-to-cart" style="display:block; text-align:center; text-decoration:none;">Add to Cart</a>
-                            {% endif %}
-                        </div>
-                    </a>
-                </div>
-                {% endfor %}
-
-                <!-- If no products -->
-                {% if products|length == 0 %}
-                <div style="grid-column: 1 / -1; text-align:center; padding:40px; font-size:18px;">
-                    {% if query %}
-                        No products found for "{{ query }}"
-                    {% else %}
-                        No products available
+                        <a href="{% url 'login' %}" class="add-to-cart">Add to Cart</a>
                     {% endif %}
                 </div>
-                {% endif %}
-            </div>
+            </a>
+        </div>
+        {% endfor %}
+
+    {% else %}
+        <div style="grid-column: 1 / -1; text-align:center; padding:40px; font-size:18px;">
+            {% if query %}
+                No products found for "{{ query }}"
+            {% else %}
+                No products available
+            {% endif %}
+        </div>
+    {% endif %}
+
+</div>
+
 
             <!-- Pagination -->
-            <div class="pagination">
-                {% if products.has_previous %}
-                    <a href="?page={{ products.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="page-btn">←</a>
-                {% endif %}
+            <!-- Pagination -->
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?{% if base_querystring %}{{ base_querystring }}&{% endif %}page={{ page_obj.previous_page_number }}" class="page-btn">←</a>
+    {% endif %}
 
-                {% for num in products.paginator.page_range %}
-                    {% if products.number == num %}
-                        <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="page-btn active">{{ num }}</a>
-                    {% else %}
-                        <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="page-btn">{{ num }}</a>
-                    {% endif %}
-                {% endfor %}
+        {% for num in valid_pages %}
 
-                {% if products.has_next %}
-                    <a href="?page={{ products.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" class="page-btn">→</a>
-                {% endif %}
-            </div>
+
+
+        {% if page_obj.number == num %}
+            <a class="page-btn active">{{ num }}</a>
+        {% else %}
+            <a href="?{% if base_querystring %}{{ base_querystring }}&{% endif %}page={{ num }}" class="page-btn">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?{% if base_querystring %}{{ base_querystring }}&{% endif %}page={{ page_obj.next_page_number }}" class="page-btn">→</a>
+    {% endif %}
+</div>
+
+
+
 
             <!-- Quick Links Section -->
             <div class="quick-links">
@@ -1135,6 +1220,7 @@
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(el);
         });
+
     </script>
 </body>
 </html>

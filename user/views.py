@@ -5,11 +5,14 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages,auth
+from django.template.defaultfilters import title
+
 from core.models import User,Category
 from django.db.models import Q
 from seller.models import Product
 from user.models import Wishlist,Cart
 from django.http import JsonResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def home(request):
     categories = Category.objects.all()
@@ -33,25 +36,45 @@ def home(request):
 def orders(request):
     # If you have an Order model you can fetch user's orders:
     # orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    # return render(request, "user/orders.html", {"orders": orders})
+    # return render(request, "user/order.html", {"orders": orders})
 
     # placeholder for now:
-    return render(request, "user/orders.html")
+    return render(request, "user/order.html")
+
+
+@login_required
 def profile(request):
-    return render(request, "user/profile.html")
+    return render(request, "user/profile.html", {
+        "user": request.user
+    })
 
 
+def buy_now(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.user.is_authenticated:
+        # create order instantly or redirect to checkout
+        return redirect('checkout', product_id=product.id)
+
+    return redirect('login')
 
 
 def register_user(request):
     if request.method == "POST":
-        first_name = request.POST.get("first-name")
-        last_name = request.POST.get("last-name")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
+        first_name = request.POST.get("first_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "")
+        phone = request.POST.get("phone", "")
 
+        if not first_name:
+            messages.error(request, "First name is required.")
+            return redirect("register")
 
-        username = email.split("@")[0]
+        # username = email.split("@")[0]
+        # username from first name
+        username = first_name.lower().replace(" ", "_")
+
 
         user = User.objects.create(
             username=username,
@@ -59,13 +82,42 @@ def register_user(request):
             last_name=last_name,
             email=email,
         )
+
+        # Create profile with phone number
+        # Profile.objects.create(
+        #     user=user,
+        #     phone=phone
+        # )
+
         user.set_password(password)
         user.save()
 
         return redirect("login")
 
     return render(request, "user/registration.html")
+@login_required
+def update_personal_info(request):
+    user = request.user
 
+    if request.method == "POST":
+        # Update User fields
+        user.first_name = request.POST.get("first_name")
+        user.last_name = request.POST.get("last_name")
+        user.email = request.POST.get("email")
+        user.bio = request.POST.get("bio")
+
+        # Update profile picture (optional)
+        if "profile_picture" in request.FILES:
+            user.profile_picture = request.FILES["profile_picture"]
+
+        user.save()
+
+        messages.success(request, "Profile updated successfully!")
+        return redirect("personal_info")
+
+    return render(request, "user/personal-info.html", {
+        "user": user
+    })
 
 
 
@@ -92,66 +144,80 @@ def login_user(request):
 def category(request):
     return render(request,'user/category.html')
 from django.db.models import Q
+
+
+           # product
+
 def products(request):
 
-    # SEARCH
+    # GET PARAMETERS
     query = request.GET.get("q", "")
     sort = request.GET.get("sort", "featured")
-
-    # MULTI-CATEGORY SUPPORT
     selected_categories = request.GET.getlist("category")
 
-    # Base queryset
-    products = Product.objects.all()
+    # BASE QUERYSET
+    products_qs = Product.objects.all()
 
-    # Apply MULTIPLE category filters
+    # CATEGORY FILTER
     if selected_categories:
-        products = products.filter(category__name__in=selected_categories)
+        products_qs = products_qs.filter(category__name__in=selected_categories)
 
-    # Apply search
+    # SEARCH FILTER
     if query:
-        products = products.filter(
+        products_qs = products_qs.filter(
             Q(title__icontains=query) |
             Q(description__icontains=query) |
             Q(category__name__icontains=query)
         )
 
-    # Sorting
+    # SORTING
     if sort == "price-low":
-        products = products.order_by("price")
+        products_qs = products_qs.order_by("price")
     elif sort == "price-high":
-        products = products.order_by("-price")
+        products_qs = products_qs.order_by("-price")
     elif sort == "newest":
-        products = products.order_by("-id")
+        products_qs = products_qs.order_by("-id")
+    else:
+        products_qs = products_qs.order_by("-id")  # Featured DEFAULT
 
-    # Wishlist + Cart
+    # PAGINATION
+    paginator = Paginator(products_qs, 5)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    # PRESERVE FILTERS WHEN PAGINATING
+    base_qs = request.GET.copy()
+    if "page" in base_qs:
+        base_qs.pop("page")
+    base_querystring = base_qs.urlencode()
+
+    # VALID PAGES
+    valid_pages = [num for num in paginator.page_range if paginator.page(num).object_list.exists()]
+
+    # WISHLIST / CART COUNTS
     wishlist_ids = []
-    wishlist_count = 0
-    cart_count = 0
+    wishlist_count = cart_count = 0
 
     if request.user.is_authenticated:
-        wishlist_ids = Wishlist.objects.filter(
-            user=request.user
-        ).values_list('product_id', flat=True)
-
+        wishlist_ids = Wishlist.objects.filter(user=request.user).values_list("product_id", flat=True)
         wishlist_count = Wishlist.objects.filter(user=request.user).count()
         cart_count = Cart.objects.filter(user=request.user).count()
 
-    # SEND NEW VARIABLES
     categories = Category.objects.all()
 
     return render(request, "user/product.html", {
-        "products": products,
+        "page_obj": page_obj,
+        "base_querystring": base_querystring,
+        "valid_pages": valid_pages,
+
         "wishlist_ids": list(wishlist_ids),
         "wishlist_count": wishlist_count,
         "cart_count": cart_count,
 
         "query": query,
         "sort": sort,
-
-        # NEW
         "categories": categories,
-        "selected_categories": selected_categories,
+        "selected_categories": selected_categories
     })
 
 
@@ -172,6 +238,12 @@ def update_cart(request, item_id):
 
         cart_item.save()
     return redirect("cart")
+
+
+
+
+
+
 
 
 def deals(request):
@@ -237,7 +309,10 @@ def single_view(request, slug):
 def trending(request):
     return render(request,'user/trending.html')
 
-def search(request):
+
+
+
+def search_results(request):
     query = request.GET.get("q", "")
 
     results = Product.objects.filter(
@@ -246,10 +321,43 @@ def search(request):
         Q(category__name__icontains=query)
     )
 
+    wishlist_ids = []
+    wishlist_count = 0
+    cart_count = 0
+
+    if request.user.is_authenticated:
+        wishlist_ids = Wishlist.objects.filter(
+            user=request.user
+        ).values_list('product_id', flat=True)
+
+        wishlist_count = Wishlist.objects.filter(user=request.user).count()
+        cart_count = Cart.objects.filter(user=request.user).count()
+
     return render(request, "user/search.html", {
         "query": query,
-        "results": results
+        "results": results,
+        "wishlist_ids": list(wishlist_ids),
+        "wishlist_count": wishlist_count,
+        "cart_count": cart_count,
     })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -366,4 +474,25 @@ def logout_user(request):
 
 def categories(request):
     return render(request, 'user/category.html')
+
+
+
+def profile_dashboard(request):
+    return render(request,'user/profile_dashboard.html')
+
+def personal_info(request):
+    return render(request, 'user/personal_info.html')
+
+
+def change_password(request):
+    return render(request, 'user/change_password.html')
+
+
+def account_settings(request):
+    return render(request, 'user/account_settings.html')
+
+
+def order_history(request):
+    return render(request, 'user/order_history.html')
+
 
