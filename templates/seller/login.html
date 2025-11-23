@@ -3,136 +3,450 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Login</title>
-
+    <title>Login - ShopHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #F8FBFF;
+            --primary-color: #3B82F6;
+            --accent-color: #60A5FA;
+            --secondary-color: #2563EB;
+            --text-color: #1E3A8A;
+            --light-text: #64748B;
+            --hover-color: #2563EB;
+            --input-bg: #F0F9FF;
+            --input-border: #BFDBFE;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow-light: 0 8px 30px rgba(59, 130, 246, 0.08);
+            --shadow-medium: 0 15px 40px rgba(59, 130, 246, 0.12);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Open Sans', sans-serif;
+            --error-color: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f5f6fa;
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F8FBFF 0%, #EFF6FF 100%);
+            color: var(--text-color);
+            min-height: 100vh;
             display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
         }
-        .login-container {
-            width: 400px;
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        .login-title {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .login-subtitle {
-            text-align: center;
-            color: #777;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 18px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
-        }
-        input {
+
+        .container {
+            max-width: 450px;
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            z-index: 1;
         }
+
+        .form-section {
+            padding: 50px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .form-header h1 {
+            font-family: var(--font-heading);
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .form-header p {
+            color: var(--light-text);
+            margin-bottom: 0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            letter-spacing: 0.2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94A3B8;
+            font-size: 1.1rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px 14px 48px;
+            border-radius: 10px;
+            border: 1.5px solid var(--input-border);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .input-group input::placeholder {
+            color: #94A3B8;
+        }
+
         .password-input {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #94A3B8;
+            font-size: 1.2rem;
+            padding: 5px;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .remember-me {
             display: flex;
             align-items: center;
+            gap: 8px;
         }
-        .password-input button {
-            margin-left: 8px;
-            padding: 8px 12px;
+
+        .remember-me input {
+            width: auto;
+        }
+
+        .remember-me label {
+            margin-bottom: 0;
+            font-weight: 500;
+            color: var(--light-text);
             cursor: pointer;
         }
-        .login-btn {
+
+        .forgot-password {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password:hover {
+            color: var(--hover-color);
+            text-decoration: underline;
+        }
+
+        .btn {
             width: 100%;
-            padding: 12px;
-            background: #4e6ef2;
-            color: #fff;
+            padding: 16px;
             border: none;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .divider {
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.05rem;
             text-align: center;
-            margin: 20px 0;
-            color: #aaa;
-        }
-        .social-login button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 8px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
             cursor: pointer;
-            background: #fafafa;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+            color: white;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
         }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.25);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
         .error-msg {
-            color: red;
-            margin-top: 10px;
+            color: var(--error-color);
             text-align: center;
+            margin: 15px 0;
+            padding: 12px;
+            background: #FEF2F2;
+            border-radius: 8px;
+            border-left: 4px solid var(--error-color);
+            font-weight: 500;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--input-border), transparent);
+        }
+
+        .divider::before {
+            margin-right: 16px;
+        }
+
+        .divider::after {
+            margin-left: 16px;
+        }
+
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .social-btn {
+            padding: 14px;
+            border: 2px solid var(--input-border);
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+        }
+
+        .social-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .social-btn.google {
+            color: #DB4437;
+        }
+
+        .social-btn.facebook {
+            color: #4267B2;
+        }
+
+        .social-btn.apple {
+            color: #000000;
+        }
+
+        .form-footer {
+            text-align: center;
+            color: var(--light-text);
+            font-size: 0.95rem;
+        }
+
+        .form-footer a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-footer a:hover {
+            color: var(--hover-color);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 550px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                margin: 0;
+                border-radius: 20px;
+            }
+
+            .form-section {
+                padding: 30px 25px;
+            }
+
+            .logo {
+                font-size: 1.9rem;
+            }
+
+            .form-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
         }
     </style>
-
 </head>
 <body>
-
-<div class="login-container">
-
-    <h2 class="login-title">Seller Login</h2>
-    <p class="login-subtitle">Access your seller dashboard</p>
-
-    <form id="login-form" method="POST" action="">
-        {% csrf_token %}
-
-        <div class="form-group">
-            <label for="email">Username / Email</label>
-            <input type="text" id="email" name="username" placeholder="Enter username or email" required>
-        </div>
-
-        <div class="form-group">
-            <label for="password">Password</label>
-            <div class="password-input">
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                <button type="button" class="toggle-password">👁️</button>
+    <div class="container">
+        <div class="form-section">
+            <div class="form-header">
+                <div class="logo">ShopHub</div>
+                <h1>Welcome Back</h1>
+                <p>Sign in to your ShopHub account</p>
             </div>
+
+            <form id="login-form" method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+
+                <div class="input-group">
+                    <label for="username">Username or Email</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="username" name="username" placeholder="Enter your username or email" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper password-input">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <button type="button" class="toggle-password">👁️</button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+
+                {% if error %}
+                    <div class="error-msg">{{ error }}</div>
+                {% endif %}
+
+                <button type="submit" class="btn">SIGN IN</button>
+
+                <div class="divider">or continue with</div>
+
+                <div class="social-login">
+                    <button type="button" class="social-btn google">
+                        <span>G</span> Continue with Google
+                    </button>
+                    <button type="button" class="social-btn facebook">
+                        <span>f</span> Continue with Facebook
+                    </button>
+                    <button type="button" class="social-btn apple">
+                        <span>🍎</span> Continue with Apple
+                    </button>
+                </div>
+
+                <div class="form-footer">
+                    <p>Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
+                </div>
+            </form>
         </div>
+    </div>
 
-        <button type="submit" class="login-btn">Sign In</button>
+    <script>
+        // Password toggle functionality
+        document.querySelector('.toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '🔒';
+        });
 
-        {% if error %}
-            <p class="error-msg">{{ error }}</p>
-        {% endif %}
+        // Form submission loading state
+        document.getElementById('login-form').addEventListener('submit', function() {
+            const submitBtn = this.querySelector('.btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing In...';
+        });
 
-        <div class="divider">or continue with</div>
+        // Social login buttons
+        document.querySelectorAll('.social-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const provider = this.textContent.includes('Google') ? 'Google' :
+                               this.textContent.includes('Facebook') ? 'Facebook' : 'Apple';
 
-        <div class="social-login">
-            <button type="button" class="google"><span>G</span> Continue with Google</button>
-            <button type="button" class="facebook"><span>f</span> Continue with Facebook</button>
-            <button type="button" class="apple"><span>🍎</span> Continue with Apple</button>
-        </div>
+                alert(`${provider} login would be implemented here`);
+            });
+        });
 
-    </form>
-</div>
-
-<script>
-    // Password toggle
-    document.querySelector(".toggle-password").addEventListener("click", function () {
-        const pwd = document.getElementById("password");
-        pwd.type = pwd.type === "password" ? "text" : "password";
-    });
-</script>
-
+        // Forgot password
+        document.querySelector('.forgot-password').addEventListener('click', function(e) {
+            e.preventDefault();
+            const email = prompt('Please enter your email address to reset your password:');
+            if (email) {
+                alert(`Password reset instructions have been sent to ${email}`);
+            }
+        });
+    </script>
 </body>
 </html>

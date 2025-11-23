@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.core.paginator import Paginator
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.text import slugify
@@ -12,16 +12,250 @@ from user.models import Order, OrderItem
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Product, ProductImage
 from django.contrib.auth import get_user_model
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Sum, Q
+
+from django.utils import timezone
+from datetime import timedelta
+
+
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Sum, F
+from django.utils import timezone
+from datetime import timedelta
+
+from django.db.models import Sum, Count, F
+from django.utils import timezone
+from datetime import datetime, timedelta
+import json
+
+
+
+from django.db.models import Sum, Count, F
+from django.utils import timezone
+from datetime import datetime, timedelta
+import json
 
 
 
 def seller_dashboard(request):
+    print("===== DEBUG: DASHBOARD VIEW STARTED =====")
 
-    return render(request, 'seller/seller_dashboard.html')
+    # 1. Check logged-in seller
+    try:
+        seller = Seller.objects.get(user=request.user)
+        print("DEBUG: Seller found ->", seller)
+    except Seller.DoesNotExist:
+        print("ERROR: No seller profile for:", request.user)
+        return render(request, "seller/no_seller.html")
+
+    # 2. Seller products
+    seller_products = Product.objects.filter(seller=seller)
+    print("DEBUG: Seller Products Count =", seller_products.count())
+
+    # 3. Seller order items
+    seller_order_items = OrderItem.objects.filter(product__in=seller_products)
+    print("DEBUG: Seller Order Items Count =", seller_order_items.count())
+
+    # 4. Order IDs
+    order_ids = list(seller_order_items.values_list('order_id', flat=True).distinct())
+    print("DEBUG: Order IDs =", order_ids)
+
+    # 5. Recent orders
+    recent_orders = Order.objects.filter(id__in=order_ids).order_by('-created_at')[:5]
+    print("DEBUG: Recent Orders Count =", recent_orders.count())
+
+    # 6. Total orders
+    total_orders = Order.objects.filter(id__in=order_ids).count()
+
+    # 7. Total revenue (DELIVERED only)
+    delivered_orders = Order.objects.filter(id__in=order_ids, order_status="DELIVERED")
+    total_revenue = sum(order.total_amount for order in delivered_orders)
+    print("DEBUG: Delivered Orders =", delivered_orders.count())
+
+    # 8. Active products
+    active_products = seller_products.filter(is_active=True).count()
+
+    # 9. Customers
+    total_customers = Order.objects.filter(id__in=order_ids).values('user').distinct().count()
+
+    # 10. Product performance
+    product_performance = []
+    for product in seller_products[:5]:
+        product_orders = seller_order_items.filter(product=product)
+        total_sold = product_orders.aggregate(total_sold=Sum('quantity'))['total_sold'] or 0
+        total_revenue_for_product = product_orders.aggregate(
+            total_revenue=Sum(F('price_at_purchase') * F('quantity'))
+        )['total_revenue'] or 0
+
+        product_performance.append({
+            'product': product,
+            'sold': total_sold,
+            'revenue': total_revenue_for_product
+        })
+
+    product_performance.sort(key=lambda x: x['revenue'], reverse=True)
+
+    # 11. Activity feed
+    recent_activity = []
+
+    # Orders
+    for order in recent_orders:
+        recent_activity.append({
+            'icon': '📦',
+            'title': f'Order {order.order_number}',
+            'desc': f'{order.user.username if order.user else "Guest"} - ₹{order.total_amount}',
+            'timestamp': order.created_at
+        })
+
+    # Recent products
+    recent_products = seller_products.filter(
+        created_at__gte=timezone.now() - timedelta(days=7)
+    ).order_by('-created_at')[:2]
+
+    for product in recent_products:
+        recent_activity.append({
+            'icon': '🆕',
+            'title': 'New Product',
+            'desc': f'{product.title} added',
+            'timestamp': product.created_at
+        })
+
+    recent_activity.sort(key=lambda x: x['timestamp'], reverse=True)
+    recent_activity = recent_activity[:8]
+
+    # 12. CHART DATA GENERATION - Simple line chart only
+    def generate_chart_data(order_ids, months=6):
+        """Generate chart data for the last N months with correct dates"""
+
+        now = timezone.now()
+        current_month = now.month
+        current_year = now.year
+
+        # Generate labels for last 6 months in correct chronological order
+        labels = []
+        month_year_pairs = []
+
+        for i in range(months-1, -1, -1):  # From 5 to 0 to maintain order
+            month_num = current_month - i
+            year_num = current_year
+
+            # Handle year rollover
+            if month_num < 1:
+                month_num += 12
+                year_num -= 1
+
+            month_name = datetime(year_num, month_num, 1).strftime('%b')
+            labels.append(month_name)
+            month_year_pairs.append((year_num, month_num))
+
+        print(f"DEBUG: Generated labels: {labels}")
+        print(f"DEBUG: Month-year pairs: {month_year_pairs}")
+
+        # Initialize with zeros
+        revenue_data = [0.0] * months
+        orders_data = [0] * months
+
+        # Calculate start date (first day of the first month in our range)
+        first_month_year, first_month_num = month_year_pairs[0]
+        start_date = timezone.make_aware(datetime(first_month_year, first_month_num, 1))
+
+        # Get all orders in the date range
+        orders = Order.objects.filter(
+            id__in=order_ids,
+            created_at__range=[start_date, now]
+        )
+
+        print(f"DEBUG: Orders found for chart: {orders.count()}")
+
+        # Fill in actual data
+        for order in orders:
+            order_month = order.created_at.month
+            order_year = order.created_at.year
+
+            # Find the correct index for this order
+            for i, (year_num, month_num) in enumerate(month_year_pairs):
+                if order_month == month_num and order_year == year_num:
+                    orders_data[i] += 1
+                    if order.order_status == "DELIVERED":
+                        revenue_data[i] += float(order.total_amount)
+                    break
+
+        return {
+            'labels': labels,
+            'revenue_data': revenue_data,
+            'orders_data': orders_data
+        }
+
+    # Generate chart data
+    chart_data = generate_chart_data(order_ids, months=6)
+
+    # 13. Fix recent activity timestamps
+    def format_time_ago(timestamp):
+        """Format timestamp to human-readable time ago"""
+        now = timezone.now()
+        diff = now - timestamp
+
+        if diff.days > 0:
+            return f"{diff.days} day{'s' if diff.days > 1 else ''} ago"
+        elif diff.seconds >= 3600:
+            hours = diff.seconds // 3600
+            return f"{hours} hour{'s' if hours > 1 else ''} ago"
+        elif diff.seconds >= 60:
+            minutes = diff.seconds // 60
+            return f"{minutes} minute{'s' if minutes > 1 else ''} ago"
+        else:
+            return "Just now"
+
+    # Update recent activity with proper time formatting
+    for activity in recent_activity:
+        activity['time_ago'] = format_time_ago(activity['timestamp'])
+
+    context = {
+        'seller': seller,
+        'recent_orders': recent_orders,
+        'total_orders': total_orders,
+        'total_revenue': total_revenue,
+        'active_products': active_products,
+        'total_customers': total_customers,
+        'product_performance': product_performance,
+        'recent_activity': recent_activity,
+
+        # Chart data for JavaScript
+        'chart_labels_json': json.dumps(chart_data['labels']),
+        'chart_revenue_data_json': json.dumps(chart_data['revenue_data']),
+        'chart_orders_data_json': json.dumps(chart_data['orders_data']),
+
+        # DEBUG VARIABLES
+        'debug_seller_products': seller_products.count(),
+        'debug_order_items': seller_order_items.count(),
+        'debug_order_ids': order_ids,
+        'debug_recent_orders': recent_orders.count(),
+    }
+
+    print("DEBUG: Current Date:", timezone.now())
+    print("DEBUG: Chart Labels ->", chart_data['labels'])
+    print("DEBUG: Chart Revenue ->", chart_data['revenue_data'])
+    print("DEBUG: Chart Orders ->", chart_data['orders_data'])
+    print("===== DEBUG: DASHBOARD VIEW END =====")
+    return render(request, 'seller/seller_dashboard.html', context)
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.models import User
+from .models import Seller
+from django.contrib.auth import login, authenticate
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 
 def register_seller(request):
+    User = get_user_model()
     if request.method == "POST":
-
+        # Basic user fields
         first_name = request.POST.get("first_name")
         last_name = request.POST.get("last_name")
         username = request.POST.get("username")
@@ -29,48 +263,75 @@ def register_seller(request):
         password = request.POST.get("password")
         role = request.POST.get("role")
 
-        # Seller fields
-        shop_name = request.POST.get("shop_name")
-        shop_type = request.POST.get("shop_type")
-        shop_address = request.POST.get("shop_address")
-        gst_number = request.POST.get("gst_number")
-        bank_account_number = request.POST.get("bank_account_number")
-
-        # Check username exists
+        # Check if username exists
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already exists")
-            return redirect("seller_register")
+            return redirect("register_seller")
+
+        # Check if email exists
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already exists")
+            return redirect("register_seller")
+
+        # Validate required fields based on role
+        if role == "seller":
+            shop_name = request.POST.get("shop_name")
+            shop_type = request.POST.get("shop_type")
+            shop_address = request.POST.get("shop_address")
+            gst_number = request.POST.get("gst_number")
+            bank_account_number = request.POST.get("bank_account_number")
+
+            # Validate seller-specific fields
+            if not all([shop_name, shop_type, shop_address, gst_number, bank_account_number]):
+                messages.error(request, "All seller fields are required")
+                return redirect("register_seller")
 
         # Create user
-        user = User.objects.create_user(
-            username=username,
-            password=password,
-            email=email,
-            first_name=first_name,
-            last_name=last_name,
-            role=role
-        )
+        try:
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                email=email,
+                first_name=first_name,
+                last_name=last_name
+            )
+
+            # Add role to user profile or custom field if you have one
+            # If you have a custom user model with role field, use that instead
+            # user.role = role
+            # user.save()
+
+        except Exception as e:
+            messages.error(request, f"Error creating user: {str(e)}")
+            return redirect("register_seller")
 
         # Create seller ONLY if role == seller
         if role == "seller":
-            Seller.objects.create(
-                user=user,
-                shop_name=shop_name,
-                shop_type=shop_type,
-                shop_address=shop_address,
-                gst_number=gst_number,
-                bank_account_number=bank_account_number
-            )
+            try:
+                Seller.objects.create(
+                    user=user,
+                    shop_name=shop_name,
+                    shop_type=shop_type,
+                    shop_address=shop_address,
+                    gst_number=gst_number,
+                    bank_account_number=bank_account_number
+                )
+            except Exception as e:
+                user.delete()  # Clean up user if seller creation fails
+                messages.error(request, f"Error creating seller profile: {str(e)}")
+                return redirect("register_seller")
 
-        messages.success(request, "Registration successful!")
-        return redirect("login")
+        # Auto login after registration and redirect to home
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Registration successful! Welcome to your account.")
+            return redirect("home")  # Change "home" to your actual home page name
+        else:
+            messages.success(request, "Registration successful! Please login.")
+            return redirect("login")
 
     return render(request, "seller/register.html")
-
-
-
-
-
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
@@ -139,23 +400,6 @@ def seller_products(request):
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Product, Category
 
-
-
-
-
-def seller_products(request):
-    seller = get_object_or_404(Seller, user=request.user)
-    products = Product.objects.filter(seller=seller).order_by("-created_at")
-    categories = Category.objects.all()
-
-    paginator = Paginator(products, 10)
-    page_number = request.GET.get("page")
-    products = paginator.get_page(page_number)
-
-    return render(request, "seller/seller_product.html", {
-        "products": products,
-        "categories": categories,
-    })
 def add_product(request):
     seller = get_object_or_404(Seller, user=request.user)
     categories = Category.objects.all()
@@ -236,6 +480,8 @@ def product_detail(request, slug):
 
 from django.shortcuts import render, get_object_or_404
 
+from django.core.paginator import Paginator
+
 def seller_orders(request):
     status_filter = request.GET.get('status')
 
@@ -243,7 +489,7 @@ def seller_orders(request):
     STATUS_MAP = {
         'pending': 'PENDING',
         'processing': 'PROCESSING',
-        'placed':'PLACED',# (or create PROCESSING if you want)
+        'placed': 'PLACED',
         'shipped': 'SHIPPED',
         'delivered': 'DELIVERED',
         'cancelled': 'CANCELLED',
@@ -258,21 +504,85 @@ def seller_orders(request):
     else:
         orders = Order.objects.all()
 
+    # -------- PAGINATION ----------
+    paginator = Paginator(orders, 3)  # 5 orders per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(request, 'seller/seller_orders.html', {
-        'orders': orders,
-        'status_filter': status_filter
+        'orders': page_obj,         # important
+        'page_obj': page_obj,
+        'status_filter': status_filter,
     })
 
+@login_required
+def order_detail(request, order_id):
+    """View individual order details"""
+    try:
+        # Check if user is a seller
+        try:
+            seller = Seller.objects.get(user=request.user)
+        except Seller.DoesNotExist:
+            messages.error(request, "Seller profile not found.")
+            return redirect('seller_dashboard')
 
-def order_detail(request, id):
-    order = get_object_or_404(Order, id=id)
-    items = order.items.all()  # related_name="items"
+        # Get seller's products
+        seller_products = Product.objects.filter(seller=seller)
 
-    return render(request, 'seller/order_detail.html', {
-        'order': order,
-        'items': items
-    })
+        # Get order items that belong to this seller
+        order_items = OrderItem.objects.filter(
+            order_id=order_id,
+            product__in=seller_products
+        ).select_related('order', 'product')
 
+        if not order_items.exists():
+            messages.error(request, "Order not found or doesn't contain your products.")
+            return redirect('seller_orders')
+
+        # Get the order from the first order item (all items belong to same order)
+        order = order_items.first().order
+
+        # Rest of the code remains the same...
+        for item in order_items:
+            item.total_price = float(item.price_at_purchase) * int(item.quantity)
+            try:
+                first_img = item.product.images.first()
+                item.first_image = first_img.image.url if first_img else None
+            except Exception as img_error:
+                item.first_image = None
+
+        seller_total = sum(item.total_price for item in order_items)
+        total_quantity = sum(item.quantity for item in order_items)
+
+        context = {
+            'order': order,
+            'order_items': order_items,
+            'seller_total': seller_total,
+            'total_quantity': total_quantity,
+            'seller': seller,
+        }
+
+        return render(request, 'seller/order_detail.html', context)
+
+    except Exception as e:
+        messages.error(request, "Error loading order details.")
+        return redirect('seller_orders')
+def update_order_status(request, order_id):
+    """Update order status"""
+    if request.method == "POST":
+        try:
+            order = get_object_or_404(Order, id=order_id)
+            new_status = request.POST.get('status')
+
+            if new_status:
+                order.order_status = new_status
+                order.save()
+                messages.success(request, f"Order status updated to {order.get_order_status_display()}.")
+
+        except Exception as e:
+            messages.error(request, f"Error updating order status: {str(e)}")
+
+    return redirect('order_detail', order_id=order_id)
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -282,40 +592,100 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
+
+
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import PasswordChangeForm
+
+
 @login_required
 def seller_profile(request):
     user = request.user
 
+    # Initialize context with default values
     context = {
         "phone": request.session.get("phone", ""),
         "birth_date": request.session.get("birth_date", ""),
-        "gender": request.session.get("gender", "")
+        "gender": request.session.get("gender", ""),
+        "email_notifications": request.session.get("email_notifications", True),
+        "sms_notifications": request.session.get("sms_notifications", False),
+        "two_factor_auth": request.session.get("two_factor_auth", False),
+        "marketing_emails": request.session.get("marketing_emails", False),
+        "store_name": request.session.get("store_name", "TechGadgets Inc."),
+        "store_description": request.session.get("store_description",
+                                                 "We specialize in the latest smartphones, laptops, headphones, and smart home devices."),
+        "store_category": request.session.get("store_category", "electronics"),
+        "store_currency": request.session.get("store_currency", "USD"),
     }
 
     if request.method == "POST":
-        user.first_name = request.POST.get("firstName")
-        user.last_name = request.POST.get("lastName")
-        user.email = request.POST.get("email")
-        user.save()
+        form_type = request.POST.get("form_type")
 
-        # Save extra values to session
-        request.session["phone"] = request.POST.get("phone")
-        request.session["birth_date"] = request.POST.get("birthDate")
-        request.session["gender"] = request.POST.get("gender")
+        if form_type == "personal_info":
+            # Handle personal information update
+            user.first_name = request.POST.get("firstName", "")
+            user.last_name = request.POST.get("lastName", "")
+            user.email = request.POST.get("email", "")
+            user.save()
 
-        messages.success(request, "Profile updated successfully!")
-        return redirect("seller_profile")
+            # Save extra values to session
+            request.session["phone"] = request.POST.get("phone", "")
+            request.session["birth_date"] = request.POST.get("birthDate", "")
+            request.session["gender"] = request.POST.get("gender", "")
+
+            messages.success(request, "Profile updated successfully!")
+            return redirect("seller_profile")
+
+        elif form_type == "change_password":
+            # Handle password change
+            current_password = request.POST.get("current_password")
+            new_password = request.POST.get("new_password")
+            confirm_password = request.POST.get("confirm_password")
+
+            if not user.check_password(current_password):
+                messages.error(request, "Current password is incorrect.")
+            elif new_password != confirm_password:
+                messages.error(request, "New passwords do not match.")
+            elif len(new_password) < 8:
+                messages.error(request, "Password must be at least 8 characters long.")
+            else:
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user)  # Keep user logged in
+                messages.success(request, "Password changed successfully!")
+
+            return redirect("seller_profile")
+
+        elif form_type == "account_settings":
+            # Handle account settings
+            request.session["email_notifications"] = "email_notifications" in request.POST
+            request.session["sms_notifications"] = "sms_notifications" in request.POST
+            request.session["two_factor_auth"] = "two_factor_auth" in request.POST
+            request.session["marketing_emails"] = "marketing_emails" in request.POST
+
+            messages.success(request, "Account settings updated successfully!")
+            return redirect("seller_profile")
+
+        elif form_type == "store_settings":
+            # Handle store settings
+            request.session["store_name"] = request.POST.get("store_name", "")
+            request.session["store_description"] = request.POST.get("store_description", "")
+            request.session["store_category"] = request.POST.get("store_category", "electronics")
+            request.session["store_currency"] = request.POST.get("store_currency", "USD")
+
+            messages.success(request, "Store settings updated successfully!")
+            return redirect("seller_profile")
 
     return render(request, "seller/seller_profile.html", context)
-
-
-
 
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 
 def logout_seller(request):
     logout(request)
-    return redirect('seller_login')   # change to your login page name
+    return redirect('login')   # change to your login page name
 
 

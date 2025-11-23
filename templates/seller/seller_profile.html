@@ -4,91 +4,1280 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seller Profile - ShopHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; background: #f5f6fa; margin:0; padding:0; }
-        .container { width: 90%; margin: auto; padding: 30px 0; }
-        .profile-box { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        h2 { margin-bottom: 10px; }
-        label { font-weight: bold; margin-bottom: 6px; display:block; }
-        input, select { width: 100%; padding: 12px; border:1px solid #ccc; border-radius:8px; margin-bottom:20px; }
-        input[readonly] { background:#e9ecef; cursor:not-allowed; }
-        .row { display: flex; gap: 20px; }
-        .col { flex:1; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .notification-icon {
+            position: relative;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .notification-icon:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .profile-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .profile-dropdown:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .dropdown-arrow {
+            font-size: 0.8rem;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        .profile-dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 200px;
+            padding: 0.5rem 0;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+        }
+
+        .profile-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: #333;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #eaeaea;
+            margin: 0.5rem 0;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 50;
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .seller-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .seller-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .seller-info p {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 1.5rem 0;
+            flex: 1;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 12px 1.5rem;
+            text-decoration: none;
+            color: #333;
+            transition: var(--transition);
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(102, 126, 234, 0.15);
+            color: var(--primary);
+            font-weight: 600;
+            border-left: 3px solid var(--primary);
+        }
+
+        .sidebar-nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #eaeaea;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 8px 16px;
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 53, 69, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+            flex: 1;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2rem;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: var(--gray);
+        }
+
+        /* Profile Layout */
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            animation: slideInUp 0.8s ease-out 0.2s both;
+        }
+
+        /* Profile Sidebar */
+        .profile-sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .user-profile {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar-large {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            margin: 0 auto 1rem;
+            border: 4px solid white;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-name-large {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .profile-menu {
+            list-style: none;
+        }
+
+        .profile-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem;
+            color: var(--gray);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .profile-menu a:hover, .profile-menu a.active {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .profile-menu a.active {
+            font-weight: 600;
+        }
+
+        /* Profile Content */
+        .profile-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Personal Information Form */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem 1rem 1rem 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .readonly-field {
+            background: #f8f9fa;
+            color: var(--gray);
+            cursor: not-allowed;
+        }
+
+        /* Change Password */
+        .password-form {
+            max-width: 500px;
+        }
+
+        /* Account Settings */
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .setting-item:hover {
+            border-color: var(--primary);
+        }
+
+        .setting-info h4 {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .setting-info p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #e0e0e0;
+            transition: var(--transition);
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
         .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color:white; padding:12px 20px; border:none; border-radius:8px;
-            cursor:pointer; font-size:16px; font-weight:bold; width:200px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
         }
-        .btn-primary:hover { opacity:0.9; }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
         .btn-secondary {
-            background:white; border:2px solid #764ba2; color:#764ba2;
-            padding:12px 20px; border-radius:8px; cursor:pointer;
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
         }
-        .msg { padding: 12px; background:#d4edda; color:#155724; border-radius:8px;
-               border:1px solid #c3e6cb; margin-bottom:20px; }
+
+        .btn-secondary:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Messages */
+        .msg {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .msg.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .msg.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .msg i {
+            font-size: 18px;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            display: none;
+        }
+
+        .profile-section.active {
+            display: block;
+        }
+
+        /* Password Strength Indicator */
+        .password-strength {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .strength-weak {
+            color: var(--danger);
+        }
+
+        .strength-medium {
+            color: var(--warning);
+        }
+
+        .strength-strong {
+            color: var(--success);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .profile-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-sidebar {
+                position: static;
+            }
+
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                top: auto;
+            }
+
+            .sidebar-nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 1rem 0;
+            }
+
+            .sidebar-nav li {
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+
+            .sidebar-nav a {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                flex-direction: column;
+                padding: 10px 15px;
+                text-align: center;
+                min-width: 100px;
+            }
+
+            .sidebar-nav a.active {
+                border-left: none;
+                border-bottom: 3px solid var(--primary);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .content-wrapper {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-sidebar,
+            .profile-content {
+                padding: 1.5rem;
+            }
+        }
     </style>
 </head>
 
 <body>
-
-    <div class="container">
-        <h2>My Profile</h2>
-        <p>Manage your seller account information</p>
-
-        <!-- SUCCESS MESSAGE -->
-        {% if messages %}
-            {% for message in messages %}
-            <div class="msg">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-
-        <div class="profile-box">
-            <form method="POST" action="{% url 'seller_profile' %}">
-                {% csrf_token %}
-
-                <div class="row">
-                    <div class="col">
-                        <label>First Name</label>
-                        <input type="text" name="firstName" value="{{ user.first_name }}" required>
-                    </div>
-
-                    <div class="col">
-                        <label>Last Name</label>
-                        <input type="text" name="lastName" value="{{ user.last_name }}" required>
-                    </div>
-                </div>
-
-                <label>Username</label>
-                <input type="text" value="{{ user.username }}" readonly>
-
-                <label>Email</label>
-                <input type="email" name="email" value="{{ user.email }}" required>
-
-                <label>Phone</label>
-                <input type="text" name="phone" value="{{ phone }}">
-
-                <div class="row">
-                    <div class="col">
-                        <label>Date of Birth</label>
-                        <input type="date" name="birthDate" value="{{ birth_date }}">
-                    </div>
-                    <div class="col">
-                        <label>Gender</label>
-                        <select name="gender">
-                            <option value="">Select Gender</option>
-                            <option value="male" {% if gender == 'male' %}selected{% endif %}>Male</option>
-                            <option value="female" {% if gender == 'female' %}selected{% endif %}>Female</option>
-                            <option value="other" {% if gender == 'other' %}selected{% endif %}>Other</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-primary">Save Changes</button>
-                <button type="button" class="btn-secondary" onclick="window.location.reload()">Cancel</button>
-
-            </form>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="{% url 'seller_dashboard' %}" class="header-logo">🛍️ ShopHub Seller</a>
         </div>
+        <div class="header-right">
+            <div class="notification-icon">
+                <span>🔔</span>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="profile-dropdown">
+                <div class="profile-avatar">{{ user.username|first|upper }}</div>
+                <div class="profile-info">
+                    <span class="profile-name">{{ user.username }}</span>
+                </div>
+                <span class="dropdown-arrow">▼</span>
+                <div class="dropdown-menu">
+                    <a href="{% url 'seller_profile' %}" class="dropdown-item">
+                        <span>👤</span> My Profile
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span>⚙️</span> Account Settings
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span>💳</span> Billing
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{% url 'logout_seller' %}" class="dropdown-item">
+                        <span>🚪</span> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="seller-avatar">{{ user.username|first|upper }}</div>
+                <div class="seller-info">
+                    <h3>{{ user.username }}</h3>
+                    <span style="color: var(--gray); font-size: 0.9rem;">Seller Account</span>
+                </div>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li><a href="{% url 'seller_dashboard' %}">
+                    <span class="sidebar-nav-icon">📊</span>
+                    Dashboard
+                </a></li>
+                <li><a href="{% url 'seller_products' %}">
+                    <span class="sidebar-nav-icon">📦</span>
+                    Products
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">📋</span>
+                    Categories
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">📊</span>
+                    Inventory
+                </a></li>
+                <li><a href="{% url 'seller_orders' %}">
+                    <span class="sidebar-nav-icon">💰</span>
+                    Orders
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">👥</span>
+                    Customers
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">📈</span>
+                    Analytics
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">🎯</span>
+                    Promotions
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">⭐</span>
+                    Reviews
+                </a></li>
+                <li><a href="{% url 'seller_profile' %}" class="active">
+                    <span class="sidebar-nav-icon">👤</span>
+                    Profile
+                </a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <a href="{% url 'logout_seller' %}" class="logout-btn">
+                    <span>🚪</span> Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Content Wrapper -->
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <h2>My Profile</h2>
+                    <p>Manage your account settings and preferences</p>
+                </div>
+
+                <!-- SUCCESS MESSAGE -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="msg {% if message.tags %}{{ message.tags }}{% endif %}">
+                        <i class="fas fa-{% if message.tags == 'error' %}exclamation-circle{% else %}check-circle{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="profile-layout">
+                    <!-- Profile Sidebar -->
+                    <div class="profile-sidebar">
+                        <div class="user-profile">
+                            <div class="profile-avatar-large">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="profile-name-large">{{ user.first_name }} {{ user.last_name }}</div>
+                            <div class="profile-email">{{ user.email }}</div>
+                            <div style="margin-top: 1rem;">
+                                <span class="badge" style="background: var(--success); color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem;">
+                                    <i class="fas fa-check-circle"></i> Verified Seller
+                                </span>
+                            </div>
+                        </div>
+
+                        <ul class="profile-menu">
+                            <li><a href="#personal-info" class="active" onclick="showSection('personal-info')">👤 Personal Information</a></li>
+                            <li><a href="#change-password" onclick="showSection('change-password')">🔒 Change Password</a></li>
+                            <li><a href="#account-settings" onclick="showSection('account-settings')">⚙️ Account Settings</a></li>
+                            <li><a href="#store-settings" onclick="showSection('store-settings')">🏪 Store Settings</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Profile Content -->
+                    <div class="profile-content">
+                        <!-- Personal Information Section -->
+                        <div id="personal-info" class="profile-section active">
+                            <h3 class="section-title">👤 Personal Information</h3>
+                            <form method="POST" action="{% url 'seller_profile' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="personal_info">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="firstName">First Name</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-user"></i>
+                                            <input type="text" id="firstName" name="firstName" value="{{ user.first_name }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lastName">Last Name</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-user"></i>
+                                            <input type="text" id="lastName" name="lastName" value="{{ user.last_name }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-at"></i>
+                                        <input type="text" id="username" name="username" value="{{ user.username }}" class="readonly-field" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email Address</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-envelope"></i>
+                                        <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-phone"></i>
+                                        <input type="tel" id="phone" name="phone" value="{{ phone }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="birthDate">Date of Birth</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-calendar"></i>
+                                            <input type="date" id="birthDate" name="birthDate" value="{{ birth_date }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="gender">Gender</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-venus-mars"></i>
+                                            <select id="gender" name="gender">
+                                                <option value="">Select Gender</option>
+                                                <option value="male" {% if gender == 'male' %}selected{% endif %}>Male</option>
+                                                <option value="female" {% if gender == 'female' %}selected{% endif %}>Female</option>
+                                                <option value="other" {% if gender == 'other' %}selected{% endif %}>Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Save Changes
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Change Password Section -->
+                        <div id="change-password" class="profile-section">
+                            <h3 class="section-title">🔒 Change Password</h3>
+                            <form method="POST" action="{% url 'seller_profile' %}" class="password-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="change_password">
+                                <div class="form-group">
+                                    <label for="currentPassword">Current Password</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-lock"></i>
+                                        <input type="password" id="currentPassword" name="current_password" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="newPassword">New Password</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-key"></i>
+                                        <input type="password" id="newPassword" name="new_password" required>
+                                    </div>
+                                    <div id="passwordStrength" class="password-strength"></div>
+                                    <small style="color: var(--gray); font-size: 0.85rem; margin-top: 0.5rem; display: block;">
+                                        Password must be at least 8 characters with uppercase, lowercase, and numbers
+                                    </small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm New Password</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-key"></i>
+                                        <input type="password" id="confirmPassword" name="confirm_password" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Update Password</button>
+                                    <button type="button" class="btn btn-secondary" onclick="clearPasswordForm()">Clear</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Account Settings Section -->
+                        <div id="account-settings" class="profile-section">
+                            <h3 class="section-title">⚙️ Account Settings</h3>
+                            <form method="POST" action="{% url 'seller_profile' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="account_settings">
+                                <div class="settings-list">
+                                    <div class="setting-item">
+                                        <div class="setting-info">
+                                            <h4>Email Notifications</h4>
+                                            <p>Receive updates about orders and promotions</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" name="email_notifications" {% if email_notifications %}checked{% endif %}>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+
+                                    <div class="setting-item">
+                                        <div class="setting-info">
+                                            <h4>SMS Notifications</h4>
+                                            <p>Get order updates via text message</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" name="sms_notifications" {% if sms_notifications %}checked{% endif %}>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+
+                                    <div class="setting-item">
+                                        <div class="setting-info">
+                                            <h4>Two-Factor Authentication</h4>
+                                            <p>Extra security for your account</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" name="two_factor_auth" {% if two_factor_auth %}checked{% endif %}>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+
+                                    <div class="setting-item">
+                                        <div class="setting-info">
+                                            <h4>Marketing Communications</h4>
+                                            <p>Receive offers and product updates</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" name="marketing_emails" {% if marketing_emails %}checked{% endif %}>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions" style="margin-top: 2rem;">
+                                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                                </div>
+                            </form>
+
+                            <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid #e0e0e0;">
+                                <h4 style="color: var(--danger); margin-bottom: 1rem;">Danger Zone</h4>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>Delete Account</h4>
+                                        <p>Permanently delete your account and all data</p>
+                                    </div>
+                                    <button type="button" class="btn btn-secondary" style="background: var(--danger); color: white; border: none;" onclick="deleteAccount()">
+                                        Delete Account
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Store Settings Section -->
+                        <div id="store-settings" class="profile-section">
+                            <h3 class="section-title">🏪 Store Settings</h3>
+                            <form method="POST" action="{% url 'seller_profile' %}" id="storeForm">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="store_settings">
+                                <div class="form-group">
+                                    <label for="storeName">Store Name</label>
+                                    <input type="text" id="storeName" name="store_name" class="form-input" value="{{ store_name }}" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="storeDescription">Store Description</label>
+                                    <textarea id="storeDescription" name="store_description" class="form-textarea" rows="4">{{ store_description }}</textarea>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="storeCategory">Store Category</label>
+                                        <select id="storeCategory" name="store_category" class="form-select">
+                                            <option value="electronics" {% if store_category == 'electronics' %}selected{% endif %}>Electronics</option>
+                                            <option value="fashion" {% if store_category == 'fashion' %}selected{% endif %}>Fashion</option>
+                                            <option value="home_garden" {% if store_category == 'home_garden' %}selected{% endif %}>Home & Garden</option>
+                                            <option value="sports" {% if store_category == 'sports' %}selected{% endif %}>Sports</option>
+                                            <option value="books" {% if store_category == 'books' %}selected{% endif %}>Books</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="storeCurrency">Currency</label>
+                                        <select id="storeCurrency" name="store_currency" class="form-select">
+                                            <option value="USD" {% if store_currency == 'USD' %}selected{% endif %}>USD ($)</option>
+                                            <option value="EUR" {% if store_currency == 'EUR' %}selected{% endif %}>EUR (€)</option>
+                                            <option value="GBP" {% if store_currency == 'GBP' %}selected{% endif %}>GBP (£)</option>
+                                            <option value="JPY" {% if store_currency == 'JPY' %}selected{% endif %}>JPY (¥)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Save Store Settings</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
+    <script>
+        // Section navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.profile-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Update active menu item
+            document.querySelectorAll('.profile-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        // Form reset functions
+        function resetForm() {
+            // Reset to original values
+            document.getElementById('firstName').value = '{{ user.first_name }}';
+            document.getElementById('lastName').value = '{{ user.last_name }}';
+            document.getElementById('email').value = '{{ user.email }}';
+            document.getElementById('phone').value = '{{ phone }}';
+            document.getElementById('birthDate').value = '{{ birth_date }}';
+            document.getElementById('gender').value = '{{ gender }}';
+        }
+
+        function clearPasswordForm() {
+            document.querySelector('#change-password form').reset();
+            document.getElementById('passwordStrength').innerHTML = '';
+        }
+
+        function deleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                // In a real implementation, this would submit a form or make an API call
+                alert('Account deletion request submitted. You will receive a confirmation email.');
+            }
+        }
+
+        // Profile dropdown functionality
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        if (profileDropdown) {
+            profileDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('active');
+            });
+        }
+
+        document.addEventListener('click', function() {
+            if (profileDropdown) profileDropdown.classList.remove('active');
+        });
+
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+        if (dropdownMenu) {
+            dropdownMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+
+        // Logout confirmation
+        const logoutBtns = document.querySelectorAll('.logout-btn');
+        logoutBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if(!confirm('Are you sure you want to logout?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Notification click
+        const notificationIcon = document.querySelector('.notification-icon');
+        if (notificationIcon) {
+            notificationIcon.addEventListener('click', function() {
+                alert('You have 3 new notifications');
+            });
+        }
+
+        // Auto-hide messages
+        setTimeout(function() {
+            const messages = document.querySelector('.msg');
+            if (messages) {
+                messages.style.transition = 'opacity 0.5s ease';
+                messages.style.opacity = '0';
+                setTimeout(() => messages.remove(), 500);
+            }
+        }, 5000);
+
+        // Password strength indicator
+        document.getElementById('newPassword').addEventListener('input', function() {
+            const password = this.value;
+            const strengthIndicator = document.getElementById('passwordStrength');
+
+            let strength = 'Weak';
+            let color = 'strength-weak';
+
+            if (password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password)) {
+                strength = 'Strong';
+                color = 'strength-strong';
+            } else if (password.length >= 6) {
+                strength = 'Medium';
+                color = 'strength-medium';
+            }
+
+            strengthIndicator.innerHTML = `Password strength: <span class="${color}" style="font-weight: 600;">${strength}</span>`;
+        });
+
+        // Password confirmation validation
+        document.querySelector('#change-password form').addEventListener('submit', function(e) {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                e.preventDefault();
+                alert('Password must be at least 8 characters long!');
+                return;
+            }
+        });
+    </script>
 </body>
 </html>

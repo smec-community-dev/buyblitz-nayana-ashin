@@ -3,49 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-
+    <title>Register - ShopHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #F8FBFF;
+            --primary-color: #3B82F6;
+            --accent-color: #60A5FA;
+            --secondary-color: #2563EB;
+            --text-color: #1E3A8A;
+            --light-text: #64748B;
+            --hover-color: #2563EB;
+            --input-bg: #F0F9FF;
+            --input-border: #BFDBFE;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow-light: 0 8px 30px rgba(59, 130, 246, 0.08);
+            --shadow-medium: 0 15px 40px rgba(59, 130, 246, 0.12);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Open Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            padding: 30px;
-            background: #f5f5f5;
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F8FBFF 0%, #EFF6FF 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.6;
         }
 
         .container {
-            background: white;
-            max-width: 450px;
-            margin: auto;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            z-index: 1;
         }
 
-        h2 {
+        .form-section {
+            padding: 50px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+            max-height: 100%;
+        }
+
+        .form-header {
+            margin-bottom: 30px;
             text-align: center;
-            margin-bottom: 20px;
-            color: #333;
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .form-header h1 {
+            font-family: var(--font-heading);
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .form-header p {
+            color: var(--light-text);
+            margin-bottom: 0;
+            font-size: 1rem;
+            line-height: 1.6;
         }
 
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 22px;
         }
 
-        label {
-            font-weight: bold;
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            letter-spacing: 0.2px;
         }
 
-        input, select {
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94A3B8;
+            font-size: 1.1rem;
+        }
+
+        .input-group input, .input-group select {
             width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            border-radius: 6px;
-            border: 1px solid #bbb;
+            padding: 14px 18px 14px 48px;
+            border-radius: 10px;
+            border: 1.5px solid var(--input-border);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        .input-group select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            background-size: 16px;
+            padding-right: 45px;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .input-group input::placeholder {
+            color: #94A3B8;
         }
 
         .role-section {
             display: none;
             animation: fadeIn 0.4s ease-in-out;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid var(--primary-color);
         }
 
         .role-section.active {
@@ -57,136 +171,349 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .role-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--light-text);
+            cursor: pointer;
+            line-height: 1.5;
+        }
+
+        .checkbox-group a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .checkbox-group a:hover {
+            color: var(--hover-color);
+            text-decoration: underline;
+        }
+
         .btn {
             width: 100%;
-            padding: 12px;
-            background: royalblue;
-            color: white;
+            padding: 16px;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            text-align: center;
             cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+            color: white;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
         }
 
         .btn:hover {
-            background: #1746a2;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.25);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--input-border), transparent);
+        }
+
+        .divider::before {
+            margin-right: 16px;
+        }
+
+        .divider::after {
+            margin-left: 16px;
+        }
+
+        .form-footer {
+            text-align: center;
+            color: var(--light-text);
+            font-size: 0.95rem;
+        }
+
+        .form-footer a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .form-footer a:hover {
+            color: var(--hover-color);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 550px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                margin: 0;
+                border-radius: 20px;
+            }
+
+            .form-section {
+                padding: 30px 25px;
+            }
+
+            .logo {
+                font-size: 1.9rem;
+            }
+
+            .form-header h1 {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
-
 <body>
-
-<div class="container">
-    <h2>Create Account</h2>
-
-    <form method="POST" action="/seller/register/">
-        {% csrf_token %}
-
-        <div class="input-group">
-            <label>First Name</label>
-            <input type="text" name="first_name" required>
-        </div>
-
-        <div class="input-group">
-            <label>Last Name</label>
-            <input type="text" name="last_name" required>
-        </div>
-
-        <div class="input-group">
-            <label>Username</label>
-            <input type="text" name="username" required>
-        </div>
-
-        <div class="input-group">
-            <label>Email</label>
-            <input type="email" name="email" required>
-        </div>
-
-        <div class="input-group">
-            <label>Select Role</label>
-            <select name="role" id="roleSelect" required>
-                <option value="" selected disabled>Select your account type</option>
-                <option value="user">User</option>
-                <option value="seller">Seller</option>
-                <option value="admin">Admin</option>
-            </select>
-        </div>
-
-        <!-- USER FIELDS -->
-        <div id="userFields" class="role-section">
-            <div class="input-group">
-                <label>Phone Number</label>
-                <input type="text" name="phone">
-            </div>
-        </div>
-
-        <!-- SELLER FIELDS -->
-        <div id="sellerFields" class="role-section">
-            <div class="input-group">
-                <label>Shop Name</label>
-                <input type="text" name="shop_name" required>
+    <div class="container">
+        <div class="form-section">
+            <div class="form-header">
+                <div class="logo">ShopHub</div>
+                <h1>Create Account</h1>
+                <p>Join ShopHub and start shopping today!</p>
             </div>
 
-            <div class="input-group">
-                <label>Shop Type</label>
-                <select name="shop_type" required>
-                    <option value="RETAIL">Retail Shop</option>
-                    <option value="WHOLESALE">Wholesale</option>
-                    <option value="DROPSHIPPING">Dropshipping</option>
-                    <option value="MANUFACTURER">Manufacturer</option>
-                    <option value="OTHER">Other</option>
-                </select>
-            </div>
+            <form method="POST" action="/seller/register/">
+                {% csrf_token %}
 
-            <div class="input-group">
-                <label>Shop Address</label>
-                <input type="text" name="shop_address" required>
-            </div>
+                <div class="input-group">
+                    <label for="first_name">First Name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required>
+                    </div>
+                </div>
 
-            <div class="input-group">
-                <label>GST Number</label>
-                <input type="text" name="gst_number" required>
-            </div>
+                <div class="input-group">
+                    <label for="last_name">Last Name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="last_name" name="last_name" placeholder="Enter your last name" required>
+                    </div>
+                </div>
 
-            <div class="input-group">
-                <label>Bank Account Number</label>
-                <input type="text" name="bank_account_number" required>
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">✉</span>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="role">Account Type</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👥</span>
+                        <select id="roleSelect" name="role" required>
+                            <option value="" disabled selected>Select your role</option>
+                            <option value="user">User</option>
+                            <option value="seller">Seller</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- USER FIELDS -->
+                <div id="userFields" class="role-section">
+                    <div class="role-badge">👤 User Registration</div>
+
+                    <div class="input-group">
+                        <label for="phone">Phone Number</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📱</span>
+                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SELLER FIELDS -->
+                <div id="sellerFields" class="role-section">
+                    <div class="role-badge">🏪 Seller Registration</div>
+
+                    <div class="input-group">
+                        <label for="shop_name">Shop Name</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🏪</span>
+                            <input type="text" id="shop_name" name="shop_name" placeholder="Enter your shop name" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="shop_type">Shop Type</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">💼</span>
+                            <select id="shop_type" name="shop_type" required>
+                                <option value="" disabled selected>Select shop type</option>
+                                <option value="RETAIL">Retail Shop</option>
+                                <option value="WHOLESALE">Wholesale</option>
+                                <option value="DROPSHIPPING">Dropshipping</option>
+                                <option value="MANUFACTURER">Manufacturer</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="shop_address">Shop Address</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📍</span>
+                            <input type="text" id="shop_address" name="shop_address" placeholder="Enter shop address" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="gst_number">GST Number</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📄</span>
+                            <input type="text" id="gst_number" name="gst_number" placeholder="Enter GST number" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="bank_account_number">Bank Account Number</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🏦</span>
+                            <input type="text" id="bank_account_number" name="bank_account_number" placeholder="Enter bank account number" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADMIN FIELDS -->
+                <div id="adminFields" class="role-section">
+                    <div class="role-badge">⚙ Admin Registration</div>
+
+                    <div class="input-group">
+                        <label for="admin_id">Employee ID</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🆔</span>
+                            <input type="text" id="admin_id" name="admin_id" placeholder="Enter employee ID">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" name="password" placeholder="Create a password" required>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">I agree to the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a></label>
+                </div>
+
+                <button type="submit" class="btn">CREATE ACCOUNT</button>
+            </form>
+
+            <div class="divider">or</div>
+
+            <div class="form-footer">
+                <p>Already have an account? <a href="{% url 'login' %}">Sign in here</a></p>
             </div>
         </div>
+    </div>
 
-        <!-- ADMIN FIELDS (OPTIONAL) -->
-        <div id="adminFields" class="role-section">
-            <div class="input-group">
-                <label>Employee ID</label>
-                <input type="text" name="admin_id">
-            </div>
-        </div>
+    <script>
+        const roleSelect = document.getElementById("roleSelect");
+        const userFields = document.getElementById("userFields");
+        const sellerFields = document.getElementById("sellerFields");
+        const adminFields = document.getElementById("adminFields");
 
-        <div class="input-group">
-            <label>Password</label>
-            <input type="password" name="password" required>
-        </div>
+        roleSelect.addEventListener("change", () => {
+            userFields.classList.remove("active");
+            sellerFields.classList.remove("active");
+            adminFields.classList.remove("active");
 
-        <button class="btn" type="submit">CREATE ACCOUNT</button>
-    </form>
-</div>
+            if (roleSelect.value === "user") userFields.classList.add("active");
+            if (roleSelect.value === "seller") sellerFields.classList.add("active");
+            if (roleSelect.value === "admin") adminFields.classList.add("active");
+        });
 
-<script>
-    const roleSelect = document.getElementById("roleSelect");
-    const userFields = document.getElementById("userFields");
-    const sellerFields = document.getElementById("sellerFields");
-    const adminFields = document.getElementById("adminFields");
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('roleSelect').value;
+            const terms = document.getElementById('terms').checked;
 
-    roleSelect.addEventListener("change", () => {
-        userFields.classList.remove("active");
-        sellerFields.classList.remove("active");
-        adminFields.classList.remove("active");
+            if (!terms) {
+                alert('Please agree to the Terms and Conditions');
+                e.preventDefault();
+                return;
+            }
 
-        if (roleSelect.value === "user") userFields.classList.add("active");
-        if (roleSelect.value === "seller") sellerFields.classList.add("active");
-        if (roleSelect.value === "admin") adminFields.classList.add("active");
-    });
-</script>
+            if (role === 'seller') {
+                const shopName = document.getElementById('shop_name').value;
+                const shopType = document.getElementById('shop_type').value;
+                const shopAddress = document.getElementById('shop_address').value;
+                const gstNumber = document.getElementById('gst_number').value;
+                const bankAccount = document.getElementById('bank_account_number').value;
 
+                if (!shopName || !shopType || !shopAddress || !gstNumber || !bankAccount) {
+                    alert('Please fill in all seller fields');
+                    e.preventDefault();
+                    return;
+                }
+            }
+        });
+    </script>
 </body>
 </html>

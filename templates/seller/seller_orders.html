@@ -6,7 +6,6 @@
     {% load static %}
     <title>Seller Orders - ShopHub</title>
     <style>
-        /* Add all the CSS from your order page here */
         * {
             margin: 0;
             padding: 0;
@@ -23,8 +22,10 @@
             --warning: #ffc107;
             --danger: #dc3545;
             --gray: #6c757d;
+            --light-gray: #e9ecef;
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
+            --border-radius: 12px;
         }
 
         body {
@@ -38,7 +39,7 @@
             min-height: 100vh;
         }
 
-        /* Header Styles - Same as dashboard */
+        /* Header Styles */
         .header {
             background: white;
             box-shadow: var(--shadow);
@@ -158,7 +159,7 @@
             top: 100%;
             right: 0;
             background: white;
-            border-radius: 10px;
+            border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             width: 200px;
             padding: 0.5rem 0;
@@ -320,6 +321,7 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
+            background-color: var(--light-gray);
         }
 
         .content-wrapper {
@@ -371,16 +373,20 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        /* Order Page Styles */
-        .filter-tabs {
+        /* Order Page Styles - IMPROVED */
+        .filter-section {
             background: white;
             padding: 1.5rem;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
+        }
+
+        .filter-tabs {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
             flex-wrap: wrap;
+            margin-bottom: 1rem;
         }
 
         .tab-btn {
@@ -392,6 +398,10 @@
             font-weight: 600;
             transition: var(--transition);
             color: var(--gray);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .tab-btn:hover {
@@ -405,6 +415,52 @@
             border-color: transparent;
         }
 
+        .search-filter {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .date-filter {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .date-input {
+            padding: 0.8rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
         .orders-list {
             display: flex;
             flex-direction: column;
@@ -413,15 +469,37 @@
 
         .order-card {
             background: white;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             padding: 2rem;
             box-shadow: var(--shadow);
             transition: var(--transition);
+            border-left: 4px solid transparent;
+            position: relative;
         }
 
         .order-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+        }
+
+        .order-card.pending {
+            border-left-color: var(--warning);
+        }
+
+        .order-card.processing {
+            border-left-color: var(--primary);
+        }
+
+        .order-card.shipped {
+            border-left-color: #17a2b8;
+        }
+
+        .order-card.delivered {
+            border-left-color: var(--success);
+        }
+
+        .order-card.cancelled {
+            border-left-color: var(--danger);
         }
 
         .order-header {
@@ -430,7 +508,7 @@
             align-items: start;
             margin-bottom: 1.5rem;
             padding-bottom: 1.5rem;
-
+            border-bottom: 1px solid var(--light-gray);
         }
 
         .order-info h3 {
@@ -442,6 +520,9 @@
         .order-date {
             color: var(--gray);
             font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .order-status {
@@ -449,6 +530,9 @@
             border-radius: 20px;
             font-weight: 600;
             font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .status-pending {
@@ -484,7 +568,7 @@
             display: flex;
             gap: 1.5rem;
             padding: 1rem 0;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid var(--light-gray);
         }
 
         .order-item:last-child {
@@ -531,7 +615,7 @@
             justify-content: space-between;
             align-items: center;
             padding-top: 1.5rem;
-            border-top: 2px solid #e0e0e0;
+            border-top: 2px solid var(--light-gray);
         }
 
         .order-total {
@@ -555,6 +639,33 @@
             border: 2px solid var(--primary);
         }
 
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: white;
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-success {
+            background: white;
+            color: var(--success);
+            border: 2px solid var(--success);
+        }
+
+        .btn-success:hover {
+            background: var(--success);
+            color: white;
+        }
+
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
@@ -564,13 +675,14 @@
             text-align: center;
             padding: 4rem 2rem;
             background: white;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             box-shadow: var(--shadow);
         }
 
         .empty-orders-icon {
             font-size: 6rem;
             margin-bottom: 1.5rem;
+            opacity: 0.5;
         }
 
         .empty-orders h3 {
@@ -582,6 +694,32 @@
         .empty-orders p {
             color: var(--gray);
             margin-bottom: 2rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 0.5rem;
+        }
+
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pagination-btn:hover {
+            background: var(--light-gray);
+        }
+
+        .pagination-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         /* Responsive Design */
@@ -654,6 +792,10 @@
 
             .filter-tabs {
                 justify-content: center;
+            }
+
+            .search-filter {
+                flex-direction: column;
             }
         }
 
@@ -775,101 +917,177 @@
                         <h1 class="dashboard-title">Order Management</h1>
                         <p class="dashboard-subtitle">Manage and track your customer orders</p>
                     </div>
+                    <div class="order-stats">
+                        <div class="btn btn-primary">
+                            <span>📥</span> Export Orders
+                        </div>
+                    </div>
                 </div>
 
-                <div class="filter-tabs">
-    <a href="{% url 'seller_orders' %}" class="tab-btn {% if not status_filter %}active{% endif %}">All Orders</a>
-    <a href="{% url 'seller_orders' %}?status=pending" class="tab-btn {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
-    <a href="{% url 'seller_orders' %}?status=processing" class="tab-btn {% if status_filter == 'processing' %}active{% endif %}">Processing</a>
-    <a href="{% url 'seller_orders' %}?status=shipped" class="tab-btn {% if status_filter == 'shipped' %}active{% endif %}">Shipped</a>
-    <a href="{% url 'seller_orders' %}?status=delivered" class="tab-btn {% if status_filter == 'delivered' %}active{% endif %}">Delivered</a>
-    <a href="{% url 'seller_orders' %}?status=cancelled" class="tab-btn {% if status_filter == 'cancelled' %}active{% endif %}">Cancelled</a>
-</div>
+                <div class="filter-section">
+                    <div class="filter-tabs">
+                        <a href="{% url 'seller_orders' %}" class="tab-btn {% if not status_filter %}active{% endif %}">
+                            <span>📋</span> All Orders
+                        </a>
+                        <a href="{% url 'seller_orders' %}?status=placed" class="tab-btn {% if status_filter == 'placed' %}active{% endif %}">
+                            <span>⏳</span> Placed
+                        </a>
+                        <a href="{% url 'seller_orders' %}?status=pending" class="tab-btn {% if status_filter == 'pending' %}active{% endif %}">
+                            <span>⏳</span> Pending
+                        </a>
+                        <a href="{% url 'seller_orders' %}?status=processing" class="tab-btn {% if status_filter == 'processing' %}active{% endif %}">
+                            <span>🔄</span> Processing
+                        </a>
+                        <a href="{% url 'seller_orders' %}?status=shipped" class="tab-btn {% if status_filter == 'shipped' %}active{% endif %}">
+                            <span>🚚</span> Shipped
+                        </a>
+                        <a href="{% url 'seller_orders' %}?status=delivered" class="tab-btn {% if status_filter == 'delivered' %}active{% endif %}">
+                            <span>✅</span> Delivered
+                        </a>
+                        <a href="{% url 'seller_orders' %}?status=cancelled" class="tab-btn {% if status_filter == 'cancelled' %}active{% endif %}">
+                            <span>❌</span> Cancelled
+                        </a>
+                    </div>
 
+                    <div class="search-filter">
+                        <div class="search-box">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" class="search-input" placeholder="Search by order ID, customer name...">
+                        </div>
+
+                    </div>
+                </div>
 
                 <div class="orders-list">
-    {% for order in orders %}
-    <div class="order-card">
+                    {% for order in orders %}
+                    <div class="order-card {{ order.order_status|lower }}">
+                        <div class="order-header">
+                            <div class="order-info">
+                                <h3>Order {{ order.id }}</h3>
+                                <div class="order-date">
+                                    <span>📅</span> Placed on {{ order.created_at|date:"M d, Y" }}
+                                </div>
+                                <div class="order-date">
+                                    <span>👤</span> Customer: {{ order.user.username }}
+                                </div>
+                            </div>
+                            <div class="order-status status-{{ order.order_status|lower }}">
+                                {% if order.order_status == 'PLACED' %}
+                                    <span>⏳</span>
+                                {% elif order.order_status == 'PROCESSING' %}
+                                    <span>🔄</span>
+                                {% elif order.order_status == 'SHIPPED' %}
+                                    <span>🚚</span>
+                                {% elif order.order_status == 'DELIVERED' %}
+                                    <span>✅</span>
+                                {% elif order.order_status == 'CANCELLED' %}
+                                    <span>❌</span>
+                                {% endif %}
+                                {{ order.order_status|title }}
+                            </div>
+                        </div>
 
-        <div class="order-header">
-            <div class="order-info">
-                <h3>Order {{ order.id }}</h3>
-                <div class="order-date">Placed on {{ order.created_at|date:"M d, Y" }}</div>
-                <div class="order-date">Customer: {{ order.user.username }}</div>
-            </div>
-
-            <!-- Corrected status -->
-            <div class="order-status status-{{ order.order_status|lower }}">
-                {{ order.order_status|title }}
-            </div>
+                        <div class="order-items">
+    {% for item in order.orderitem_set.all %}
+    <div class="order-item">
+        <div class="item-image">{{ item.product.title|first|upper }}</div>
+        <div class="item-details">
+            <div class="item-name">{{ item.product.title }}</div>
+            <div class="item-qty">Quantity: {{ item.quantity }}</div>
+            <div class="item-price">Price: ₹{{ item.price_at_purchase|floatformat:2 }}</div>
         </div>
-
-        <div class="order-items">
-            {% for item in order.orderitem_set.all %}
-            <div class="order-item">
-                <div class="item-image">{{ item.product.title|first|upper }}</div>
-                <div class="item-details">
-                    <div class="item-name">{{ item.product.title }}</div>
-                    <div class="item-qty">Quantity: {{ item.quantity }}</div>
-                </div>
-                <div class="item-price">${{ item.price|floatformat:2 }}</div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="order-footer">
-            <div class="order-total">
-                Total: <span>${{ order.total_amount|floatformat:2 }}</span>
-            </div>
-
-            <div class="order-actions">
-                <a href="{% url 'order_detail' order.id %}" class="btn btn-primary">
-                    View Details
-                </a>
-
-                <!-- Pending / Processing can be cancelled -->
-                {% if order.order_status == 'PLACED' %}
-                    <button class="btn btn-secondary" onclick="updateOrderStatus({{ order.id }}, 'CANCELLED')">
-                        Cancel Order
-                    </button>
-                {% endif %}
-
-                <!-- Processing → Shipped -->
-                {% if order.order_status == 'PLACED' %}
-                    <button class="btn btn-secondary" onclick="updateOrderStatus({{ order.id }}, 'SHIPPED')">
-                        Mark Shipped
-                    </button>
-                {% endif %}
-
-                <!-- Shipped → Delivered -->
-                {% if order.order_status == 'SHIPPED' %}
-                    <button class="btn btn-secondary" onclick="updateOrderStatus({{ order.id }}, 'DELIVERED')">
-                        Mark Delivered
-                    </button>
-                {% endif %}
-            </div>
-        </div>
-
-    </div>
-    {% empty %}
-    <div class="empty-orders">
-        <div class="empty-orders-icon">📦</div>
-        <h3>No orders found</h3>
-        <p>You haven't received any orders yet.</p>
+        <div class="item-total">₹{{ item.get_total_price|floatformat:2 }}</div>
     </div>
     {% endfor %}
 </div>
+                        <div class="order-footer">
+                            <div class="order-total">
+                                Total: <span>${{ order.total_amount|floatformat:2 }}</span>
+                            </div>
 
+                            <div class="order-actions">
+                                <a href="{% url 'order_detail' order.id %}" class="btn btn-primary">
+                                    <span>👁️</span> View Details
+                                </a>
+
+                                <!-- Pending / Processing can be cancelled -->
+                                {% if order.order_status == 'PLACED' %}
+                                    <button class="btn btn-danger" onclick="updateOrderStatus({{ order.id }}, 'CANCELLED')">
+                                        <span>❌</span> Cancel Order
+                                    </button>
+                                {% endif %}
+
+                                <!-- Processing → Shipped -->
+                                {% if order.order_status == 'PLACED' %}
+                                    <button class="btn btn-success" onclick="updateOrderStatus({{ order.id }}, 'SHIPPED')">
+                                        <span>🚚</span> Mark Shipped
+                                    </button>
+                                {% endif %}
+
+                                <!-- Shipped → Delivered -->
+                                {% if order.order_status == 'SHIPPED' %}
+                                    <button class="btn btn-success" onclick="updateOrderStatus({{ order.id }}, 'DELIVERED')">
+                                        <span>✅</span> Mark Delivered
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-orders">
+                        <div class="empty-orders-icon">📦</div>
+                        <h3>No orders found</h3>
+                        <p>You haven't received any orders yet.</p>
+                        <a href="{% url 'seller_products' %}" class="btn btn-primary">
+                            <span>➕</span> Add Products
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+               {% if page_obj.has_other_pages %}
+<div class="pagination">
+
+    {% if page_obj.has_previous %}
+        <a class="pagination-btn"
+           href="?page={{ page_obj.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">«</a>
+    {% else %}
+        <span class="pagination-btn">«</span>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <span class="pagination-btn active">{{ num }}</span>
+        {% else %}
+            <a class="pagination-btn"
+               href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                {{ num }}
+            </a>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a class="pagination-btn"
+           href="?page={{ page_obj.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">»</a>
+    {% else %}
+        <span class="pagination-btn">»</span>
+    {% endif %}
+
+</div>
+{% endif %}
+
+            </div>
+        </main>
+    </div>
 
     <script>
-
         function updateOrderStatus(orderId, newStatus) {
-    if (confirm("Are you sure you want to update this order status?")) {
-        alert(`Order #${orderId} status updated to: ${newStatus}`);
-        location.reload();
-    }
-}
-
+            if (confirm("Are you sure you want to update this order status?")) {
+                alert(`Order #${orderId} status updated to: ${newStatus}`);
+                location.reload();
+            }
+        }
 
         // Profile dropdown functionality
         const profileDropdown = document.querySelector('.profile-dropdown');
@@ -891,15 +1109,24 @@
             }
         }
 
-        function updateOrderStatus(orderId, newStatus) {
-            if (confirm('Are you sure you want to update this order status?')) {
-                // In a real application, you would make an AJAX call to update the order status
-                // For now, we'll just show an alert
-                const statusText = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
-                alert(`Order #${orderId} status updated to: ${statusText}`);
-                // Reload the page to see the changes
-                location.reload();
-            }
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const orderCards = document.querySelectorAll('.order-card');
+
+                orderCards.forEach(card => {
+                    const orderId = card.querySelector('.order-info h3').textContent.toLowerCase();
+                    const customerName = card.querySelector('.order-info .order-date:nth-child(3)').textContent.toLowerCase();
+
+                    if (orderId.includes(searchTerm) || customerName.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
         }
     </script>
 </body>

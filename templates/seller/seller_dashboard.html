@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <title>Seller Dashboard - ShopHub</title>
-    <!-- Add Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -39,7 +38,6 @@
             min-height: 100vh;
         }
 
-        /* Header Styles */
         .header {
             background: white;
             box-shadow: var(--shadow);
@@ -197,14 +195,12 @@
             margin: 0.5rem 0;
         }
 
-        /* Main Layout */
         .main-layout {
             display: flex;
             flex: 1;
             position: relative;
         }
 
-        /* Sidebar Styles */
         .sidebar {
             width: 280px;
             background: white;
@@ -308,13 +304,13 @@
             cursor: pointer;
             transition: var(--transition);
             font-weight: 500;
+            text-decoration: none;
         }
 
         .logout-btn:hover {
             background: rgba(220, 53, 69, 0.2);
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
             display: flex;
@@ -391,7 +387,6 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -471,7 +466,6 @@
             color: var(--danger);
         }
 
-        /* Dashboard Grid */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -522,7 +516,6 @@
             background: rgba(102, 126, 234, 0.1);
         }
 
-        /* Orders Table */
         .orders-table {
             width: 100%;
             border-collapse: collapse;
@@ -582,9 +575,14 @@
             color: #856404;
         }
 
-        .status-shipped {
+        .status-placed {
             background: rgba(0, 123, 255, 0.2);
             color: #004085;
+        }
+
+        .status-shipped {
+            background: rgba(40, 167, 69, 0.2);
+            color: #155724;
         }
 
         .status-delivered {
@@ -597,7 +595,6 @@
             color: #721c24;
         }
 
-        /* Product Performance */
         .product-performance {
             margin-top: 1rem;
         }
@@ -670,7 +667,6 @@
             margin-bottom: 0;
         }
 
-        /* Recent Activity */
         .recent-activity {
             margin-top: 1rem;
         }
@@ -714,22 +710,10 @@
             font-size: 0.85rem;
         }
 
-        /* Chart Styles */
         .chart-container {
             position: relative;
             height: 300px;
             margin-top: 1rem;
-        }
-
-        .chart-placeholder {
-            height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 10px;
-            color: var(--gray);
-            font-size: 1.1rem;
         }
 
         .chart-legend {
@@ -765,7 +749,6 @@
             opacity: 0.5;
         }
 
-        /* Messages */
         .messages {
             margin-bottom: 1rem;
         }
@@ -782,7 +765,6 @@
             border: 1px solid rgba(220, 53, 69, 0.2);
         }
 
-        /* Responsive Design */
         @media (max-width: 1024px) {
             .main-layout {
                 flex-direction: column;
@@ -875,7 +857,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="header-left">
             <a href="{% url 'seller_dashboard' %}" class="header-logo">🛍️ ShopHub Seller</a>
@@ -902,7 +883,7 @@
                         <span>💳</span> Billing
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a href="{% url 'logout' %}" class="dropdown-item">
+                    <a href="{% url 'logout_seller' %}" class="dropdown-item">
                         <span>🚪</span> Logout
                     </a>
                 </div>
@@ -910,7 +891,6 @@
         </div>
     </header>
 
-    <!-- Messages -->
     {% if messages %}
     <div class="messages">
         {% for message in messages %}
@@ -921,9 +901,7 @@
     </div>
     {% endif %}
 
-    <!-- Main Layout -->
     <div class="main-layout">
-        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="seller-avatar">{{ user.username|first|upper }}</div>
@@ -977,13 +955,12 @@
             </ul>
 
             <div class="sidebar-footer">
-                <a href="{% url 'logout' %}" class="logout-btn">
+                <a href="{% url 'logout_seller' %}" class="logout-btn">
                     <span>🚪</span> Logout
                 </a>
             </div>
         </aside>
 
-        <!-- Main Content -->
         <main class="main-content">
             <div class="content-wrapper">
                 <div class="dashboard-header">
@@ -991,20 +968,13 @@
                         <h1 class="dashboard-title">Seller Dashboard</h1>
                         <p class="dashboard-subtitle">Manage your products, track sales, and monitor performance</p>
                     </div>
-                    <div class="date-filter">
-                        <select class="filter-select" id="chartPeriod">
-                            <option value="7">Last 7 days</option>
-                            <option value="30" selected>Last 30 days</option>
-                            <option value="90">Last 90 days</option>
-                            <option value="365">This year</option>
-                        </select>
+
                         <button class="btn btn-primary" onclick="updateChart()">
                             <span>📊</span> Generate Report
                         </button>
                     </div>
                 </div>
 
-                <!-- Stats Overview -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon stat-icon-revenue">💰</div>
@@ -1044,9 +1014,7 @@
                 </div>
 
                 <div class="dashboard-grid">
-                    <!-- Left Column -->
                     <div>
-                        <!-- Sales Chart -->
                         <div class="dashboard-card">
                             <div class="card-header">
                                 <h2 class="card-title">Sales Overview</h2>
@@ -1061,17 +1029,12 @@
                             </div>
                             <div class="chart-legend">
                                 <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #667eea;"></div>
-                                    <span>Revenue</span>
-                                </div>
-                                <div class="legend-item">
                                     <div class="legend-color" style="background-color: #764ba2;"></div>
                                     <span>Orders</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Recent Orders -->
                         <div class="dashboard-card">
                             <div class="card-header">
                                 <h2 class="card-title">Recent Orders</h2>
@@ -1094,13 +1057,13 @@
                                 <tbody>
                                     {% for order in recent_orders %}
                                     <tr>
-                                        <td><a href="#" class="order-id">#{{ order.order_number }}</a></td>
-                                        <td class="customer-name">{{ order.user.username }}</td>
+                                        <td><a href="{% url 'order_detail' order.id %}" class="order-id">{{ order.order_number }}</a></td>
+                                        <td class="customer-name">{{ order.user.username|default:"Guest" }}</td>
                                         <td>{{ order.created_at|date:"M d, Y" }}</td>
                                         <td>₹{{ order.total_amount|floatformat:2 }}</td>
                                         <td>
                                             <span class="status-badge status-{{ order.order_status|lower }}">
-                                                {{ order.order_status }}
+                                                {{ order.get_order_status_display }}
                                             </span>
                                         </td>
                                     </tr>
@@ -1116,7 +1079,6 @@
                             {% endif %}
                         </div>
 
-                        <!-- Product Performance -->
                         <div class="dashboard-card">
                             <div class="card-header">
                                 <h2 class="card-title">Product Performance</h2>
@@ -1127,31 +1089,31 @@
 
                             {% if product_performance %}
                             <div class="product-performance">
-                                {% for product in product_performance %}
+                                {% for performance in product_performance %}
                                 <div class="performance-item">
                                     <div class="product-image">
-                                        {% if product.product_image %}
-                                        <img src="{{ product.product_image.url }}" alt="{{ product.product_name }}">
+                                        {% if performance.product.main_image %}
+                                        <img src="{{ performance.product.main_image }}" alt="{{ performance.product.title }}">
                                         {% else %}
                                         📦
                                         {% endif %}
                                     </div>
                                     <div class="product-info">
-                                        <div class="product-name">{{ product.product_name }}</div>
+                                        <div class="product-name">{{ performance.product.title }}</div>
                                         <div class="product-category">
-                                            {% if product.category %}
-                                                {{ product.category.category_name }}
+                                            {% if performance.product.category %}
+                                                {{ performance.product.category.name }}
                                             {% else %}
                                                 Uncategorized
                                             {% endif %}
                                         </div>
                                         <div class="product-stats">
                                             <div class="stat">
-                                                <div class="stat-value">₹{{ product.revenue|default:0|floatformat:0 }}</div>
+                                                <div class="stat-value">₹{{ performance.revenue|floatformat:0 }}</div>
                                                 <div class="stat-label">Revenue</div>
                                             </div>
                                             <div class="stat">
-                                                <div class="stat-value">{{ product.sold|default:0 }}</div>
+                                                <div class="stat-value">{{ performance.sold }}</div>
                                                 <div class="stat-label">Sold</div>
                                             </div>
                                         </div>
@@ -1169,12 +1131,15 @@
                         </div>
                     </div>
 
-                    <!-- Right Column -->
                     <div>
-                        <!-- Recent Activity -->
                         <div class="dashboard-card">
                             <div class="card-header">
                                 <h2 class="card-title">Recent Activity</h2>
+                                <div class="card-actions">
+                                    <button class="btn btn-outline" onclick="refreshActivity()">
+                                        <span>🔄</span> Refresh
+                                    </button>
+                                </div>
                             </div>
 
                             {% if recent_activity %}
@@ -1185,6 +1150,9 @@
                                     <div class="activity-info">
                                         <div class="activity-title">{{ activity.title }}</div>
                                         <div class="activity-desc">{{ activity.desc }}</div>
+                                        <div class="activity-time" style="font-size: 0.75rem; color: var(--gray); margin-top: 0.25rem;">
+                                            {{ activity.timestamp|timesince }} ago
+                                        </div>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -1193,12 +1161,27 @@
                             <div class="empty-state">
                                 <div class="empty-state-icon">📋</div>
                                 <p>No recent activity</p>
+                                <small>Your recent activities will appear here</small>
                             </div>
                             {% endif %}
                         </div>
 
-                        <!-- Top Categories -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">Quick Actions</h2>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                                <a href="{% url 'seller_products' %}" class="btn btn-outline" style="justify-content: center;">
+                                    <span>📦</span> Add Product
+                                </a>
+                                <a href="{% url 'seller_orders' %}" class="btn btn-outline" style="justify-content: center;">
+                                    <span>💰</span> View Orders
+                                </a>
+                            </div>
+                        </div>
 
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1206,17 +1189,23 @@
     </div>
 
     <script>
-        // Chart initialization
-        let salesChart;
-        let chartType = 'line'; // 'line' or 'bar'
+         let salesChart;
+        let chartType = 'line';
 
         function initializeChart() {
             const ctx = document.getElementById('salesChart').getContext('2d');
 
-            // Sample data - in a real app, this would come from your Django backend
-            const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
-            const revenueData = [12000, 19000, 15000, 25000, 22000, 30000, 28000];
-            const ordersData = [45, 78, 56, 90, 85, 120, 110];
+            // Use backend data from Django template
+            const labels = {{ chart_labels_json|safe }};
+            const revenueData = {{ chart_revenue_data_json|safe }};
+            const ordersData = {{ chart_orders_data_json|safe }};
+
+            console.log("Chart Data Loaded:", { labels, revenueData, ordersData });
+
+            // Destroy existing chart if it exists
+            if (salesChart) {
+                salesChart.destroy();
+            }
 
             salesChart = new Chart(ctx, {
                 type: chartType,
@@ -1227,19 +1216,29 @@
                             label: 'Revenue (₹)',
                             data: revenueData,
                             borderColor: '#667eea',
-                            backgroundColor: chartType === 'bar' ? '#667eea' : 'transparent',
+                            backgroundColor: chartType === 'bar' ? 'rgba(102, 126, 234, 0.3)' : 'rgba(102, 126, 234, 0.1)',
                             borderWidth: 3,
                             fill: chartType === 'line',
-                            tension: 0.4
+                            tension: 0.4,
+                            pointBackgroundColor: '#667eea',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
                         },
                         {
                             label: 'Orders',
                             data: ordersData,
                             borderColor: '#764ba2',
-                            backgroundColor: chartType === 'bar' ? '#764ba2' : 'transparent',
+                            backgroundColor: chartType === 'bar' ? 'rgba(118, 75, 162, 0.3)' : 'rgba(118, 75, 162, 0.1)',
                             borderWidth: 3,
                             fill: chartType === 'line',
-                            tension: 0.4
+                            tension: 0.4,
+                            pointBackgroundColor: '#764ba2',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
                         }
                     ]
                 },
@@ -1248,23 +1247,58 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: false
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    size: 12,
+                                    weight: '600'
+                                }
+                            }
                         },
                         tooltip: {
                             mode: 'index',
-                            intersect: false
+                            intersect: false,
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#333',
+                            bodyColor: '#666',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            boxPadding: 6
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
                             grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    if (value >= 1000) {
+                                        return '₹' + (value / 1000).toFixed(0) + 'k';
+                                    }
+                                    return '₹' + value;
+                                }
                             }
                         },
                         x: {
                             grid: {
                                 display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11,
+                                    weight: '600'
+                                }
                             }
                         }
                     },
@@ -1272,6 +1306,10 @@
                         mode: 'nearest',
                         axis: 'x',
                         intersect: false
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
                     }
                 }
             });
@@ -1279,21 +1317,48 @@
 
         function toggleChartType() {
             chartType = chartType === 'line' ? 'bar' : 'line';
-            if (salesChart) {
-                salesChart.destroy();
-            }
             initializeChart();
+
+            // Update button text
+            const switchBtn = document.querySelector('.btn-outline');
+            if (switchBtn) {
+                const icon = chartType === 'line' ? '📊' : '📈';
+                switchBtn.innerHTML = `<span>${icon}</span> Switch View`;
+            }
         }
 
         function updateChart() {
-            const period = document.getElementById('chartPeriod').value;
-            // In a real app, you would make an AJAX call to update chart data based on period
-            alert(`Updating chart for last ${period} days...`);
+            // Show loading state
+            const generateBtn = document.querySelector('.btn-primary');
+            const originalText = generateBtn.innerHTML;
+            generateBtn.innerHTML = '<span>⏳</span> Generating...';
+            generateBtn.disabled = true;
 
-            if (salesChart) {
-                salesChart.destroy();
-            }
-            initializeChart();
+            // Simulate API call or refresh
+            setTimeout(() => {
+                if (salesChart) {
+                    salesChart.destroy();
+                }
+                initializeChart();
+
+                // Restore button
+                generateBtn.innerHTML = originalText;
+                generateBtn.disabled = false;
+
+                // Show success message
+                alert('Report generated successfully!');
+            }, 1000);
+        }
+
+        function refreshActivity() {
+            const refreshBtn = event.target.closest('.btn');
+            const originalText = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<span>⏳</span> Refreshing...';
+            refreshBtn.disabled = true;
+
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
         }
 
         // Profile dropdown functionality
@@ -1305,14 +1370,10 @@
             });
         }
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', function() {
-            if (profileDropdown) {
-                profileDropdown.classList.remove('active');
-            }
+            if (profileDropdown) profileDropdown.classList.remove('active');
         });
 
-        // Prevent dropdown from closing when clicking inside
         const dropdownMenu = document.querySelector('.dropdown-menu');
         if (dropdownMenu) {
             dropdownMenu.addEventListener('click', function(e) {
@@ -1320,7 +1381,7 @@
             });
         }
 
-        // Logout button functionality
+        // Logout confirmation
         const logoutBtns = document.querySelectorAll('.logout-btn, a[href*="logout"]');
         logoutBtns.forEach(btn => {
             if (btn.classList.contains('logout-btn')) {
@@ -1332,7 +1393,7 @@
             }
         });
 
-        // Notification icon functionality
+        // Notification click
         const notificationIcon = document.querySelector('.notification-icon');
         if (notificationIcon) {
             notificationIcon.addEventListener('click', function() {
@@ -1340,15 +1401,13 @@
             });
         }
 
-        // Auto-hide messages after 5 seconds
+        // Auto-hide messages
         setTimeout(function() {
             const messages = document.querySelector('.messages');
             if (messages) {
                 messages.style.transition = 'opacity 0.5s ease';
                 messages.style.opacity = '0';
-                setTimeout(function() {
-                    messages.remove();
-                }, 500);
+                setTimeout(() => messages.remove(), 500);
             }
         }, 5000);
 
@@ -1356,6 +1415,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeChart();
         });
+
+
+
     </script>
 </body>
-</html>
+</html><div class="legend-color" style="background-color: #667eea;"></div>
+                                    <span>Revenue</span>
+                                </div>
+                                <div class="legend-item">
