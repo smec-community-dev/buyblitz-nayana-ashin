@@ -52,14 +52,17 @@ def profile(request):
 
 
 def buy_now(request, product_id):
-    quantity = int(request.GET.get("qty", 1))  # default = 1
+    if request.method == "POST":
+        quantity = int(request.POST.get("quantity", 1))
 
-    request.session["buy_now"] = {
-        "product_id": product_id,
-        "quantity": quantity,
-    }
+        request.session["buy_now"] = {
+            "product_id": product_id,
+            "quantity": quantity
+        }
 
-    return redirect("checkout")
+        return redirect("checkout")
+
+    return redirect("single_view", slug=Product.objects.get(id=product_id).slug)
 
 
 def register_user(request):
@@ -533,47 +536,46 @@ def remove_cart(request, id):
     return redirect("cart")
 
 
-
+@login_required
 def checkout(request):
-    # 1️⃣ CHECK IF USER IS USING BUY NOW
+
+
+    # If user coming from cart → remove old buy_now session
+    if request.GET.get("from_cart"):
+        if "buy_now" in request.session:
+            del request.session["buy_now"]
+
+
+
     buy_now_data = request.session.get("buy_now")
 
+    # BUY NOW MODE
     if buy_now_data:
-        product_id = buy_now_data["product_id"]
+        product = Product.objects.get(id=buy_now_data["product_id"])
         quantity = buy_now_data["quantity"]
-
-        product = Product.objects.get(id=product_id)
         total = product.price * quantity
 
-        context = {
-            "mode": "buy_now",              # important
+        return render(request, "user/checkout.html", {
+            "mode": "buy_now",
             "product": product,
             "quantity": quantity,
-            "total": total,
-        }
-        return render(request, "user/checkout.html", context)
+            "total": total,          # ✅ FIXED (was total_amount)
+            "total_amount": total,   # Optional if HTML uses this
+        })
 
-    # 2️⃣ OTHERWISE CHECKOUT IS FROM CART
+    # CART MODE
     cart_items = Cart.objects.filter(user=request.user)
+    total_amount = sum(item.subtotal for item in cart_items)
 
-    if not cart_items.exists():
-        messages.error(request, "Your cart is empty")
-        return redirect("cart")
-
-    total_amount = sum(item.product.price * item.quantity for item in cart_items)
-
-    context = {
-        "mode": "cart",                     # important
-        "cart_items": cart_items,
-
-        "total": total_amount,
-    }
-
-    return render(request, "user/checkout.html",  {
+    return render(request, "user/checkout.html", {
         "mode": "cart",
         "cart_items": cart_items,
-        "total_amount": total_amount,   # ✔ FIXED (this was missing)
+        "total": total_amount,        # ✅ FIXED (added)
+        "total_amount": total_amount, # Already correct
     })
+
+
+
 
 
 

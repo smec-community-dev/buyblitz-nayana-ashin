@@ -1194,93 +1194,99 @@
                 </div>
 
                 <!-- RIGHT COLUMN -->
+                <div class="order-summary">
+            <h3 class="summary-title">Order Summary</h3>
 
+            {% if mode == "buy_now" %}
 
+                <!-- BUY NOW SUMMARY -->
+                <div class="order-item">
+                    <div class="item-image">
+                        {% if product.main_image %}
+                        <img src="{{ product.main_image }}" style="width:80px;height:80px;border-radius:8px;">
+                        {% endif %}
+                    </div>
 
-  <div class="order-summary">
-    <h3 class="summary-title">Order Summary</h3>
+                    <div class="item-details">
+                        <div class="item-name">{{ product.title }}</div>
+                        <div class="item-qty">Quantity: {{ quantity }}</div>
+                    </div>
 
-    {% if mode == "buy_now" %}
-        <!-- Buy Now Summary -->
-        <div class="order-item">
-            <div class="item-image">
-                {% if product.main_image %}
-                    <img src="{{ product.main_image }}" style="width:80px;height:80px;border-radius:8px;">
-                {% endif %}
-            </div>
+                    <div class="item-price">₹{{ total_amount }}</div>
+                </div>
 
-            <div class="item-details">
-                <div class="item-name">{{ product.title }}</div>
-                <div class="item-qty">Quantity: {{ quantity }}</div>
-            </div>
+                <div class="price-breakdown">
+                    <div class="price-row">
+                        <span>Subtotal</span>
+                        <span>₹{{ total_amount }}</span>
+                    </div>
 
-            <div class="item-price">
-                ₹{% if total %}{{ total }}{% elif total_amount %}{{ total_amount }}{% else %}0{% endif %}
-            </div>
-        </div>
+                    <div class="price-row total">
+                        <span>Total</span>
+                        <span>₹{{ total_amount }}</span>
+                    </div>
+                </div>
 
-        <div class="price-breakdown">
-            <div class="price-row">
-                <span>Subtotal</span>
-                <span>₹{% if total %}{{ total }}{% elif total_amount %}{{ total_amount }}{% else %}0{% endif %}</span>
-            </div>
+                <button type="submit" class="place-order-btn">
+                    Place Order – ₹{{ total_amount }}
+                </button>
 
-            <div class="price-row total">
-                <span>Total</span>
-                <span>₹{% if total %}{{ total }}{% elif total_amount %}{{ total_amount }}{% else %}0{% endif %}</span>
-            </div>
-        </div>
-    {% else %}
-        <!-- CART SUMMARY -->
-        {% for item in cart_items %}
-            <div class="order-item">
-                <div class="item-image">
-                    {% if item.product.images.first.image %}
+                <div class="security-notice">
+                    <span>🔒</span>
+                    Your payment is secure and encrypted
+                </div>
+
+            {% else %}
+
+                <!-- CART SUMMARY -->
+                {% for item in cart_items %}
+                <div class="order-item">
+                    <div class="item-image">
+                        {% if item.product.images.first %}
                         <img src="{{ item.product.images.first.image.url }}" style="width:80px;height:80px;border-radius:8px;">
-                    {% endif %}
+                        {% endif %}
+                    </div>
+
+                    <div class="item-details">
+                        <div class="item-name">{{ item.product.title }}</div>
+                        <div class="item-qty">Quantity: {{ item.quantity }}</div>
+                    </div>
+
+                    <div class="item-price">₹{{ item.subtotal }}</div>
+                </div>
+                {% endfor %}
+
+                <div class="price-breakdown">
+                    <div class="price-row">
+                        <span>Subtotal</span>
+                        <span>₹{{ total_amount }}</span>
+                    </div>
+
+                    <div class="price-row total">
+                        <span>Total</span>
+                        <span>₹{{ total_amount }}</span>
+                    </div>
                 </div>
 
-                <div class="item-details">
-                    <div class="item-name">{{ item.product.title }}</div>
-                    <div class="item-qty">Quantity: {{ item.quantity }}</div>
+                <button type="submit" class="place-order-btn">
+                    Place Order – ₹{{ total_amount }}
+                </button>
+
+                <div class="security-notice">
+                    <span>🔒</span>
+                    Your payment is secure and encrypted
                 </div>
 
-                <div class="item-price">₹{{ item.subtotal }}</div>
-            </div>
-        {% endfor %}
+            {% endif %}
 
-        <div class="price-breakdown">
-            <div class="price-row">
-                <span>Subtotal</span>
-                <span>₹{{ total_amount }}</span>
-            </div>
+        </div> <!-- RIGHT COLUMN END -->
 
-            <div class="price-row total">
-                <span>Total</span>
-                <span>₹{{ total_amount }}</span>
-            </div>
-        </div>
-    {% endif %}
+    </div> <!-- checkout-layout END -->
 
-    <button type="submit" class="place-order-btn">
-        Place Order – ₹{% if total %}{{ total }}{% elif total_amount %}{{ total_amount }}{% else %}0{% endif %}
-    </button>
-
-    <div class="security-notice">
-        <span>🔒</span>
-        Your payment is secure and encrypted
-    </div>
-</div>
+</form>
 
 
 
-
-
-
-
-
-        </form>  <!-- END FORM -->
-    </div>
 
     <!-- Footer -->
     <footer>
