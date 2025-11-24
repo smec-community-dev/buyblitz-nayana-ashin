@@ -2922,10 +2922,13 @@
             <a href="#" class="header-logo">🛍️ ShopHub Seller</a>
         </div>
         <div class="header-right">
-            <div class="notification-icon">
-                <span>🔔</span>
-                <span class="notification-badge">3</span>
-            </div>
+            <a href="{% url 'notifications' %}" class="notification-icon" style="text-decoration:none; color:inherit;">
+    <span>🔔</span>
+
+    {% if unread_count > 0 %}
+        <span class="notification-badge">{{ unread_count }}</span>
+    {% endif %}
+</a>
             <div class="profile-dropdown">
                 <div class="profile-avatar">{{ user.username|first|upper }}</div>
                 <div class="profile-info">

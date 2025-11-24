@@ -1017,6 +1017,8 @@
                                     </button>
                                 {% endif %}
 
+
+
                                 <!-- Processing → Shipped -->
                                 {% if order.order_status == 'PLACED' %}
                                     <button class="btn btn-success" onclick="updateOrderStatus({{ order.id }}, 'SHIPPED')">

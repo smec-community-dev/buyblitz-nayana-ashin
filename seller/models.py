@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import Category, SubCategory
+from core.models import Category, SubCategory,User
 
 
 class Seller(models.Model):
@@ -75,3 +75,12 @@ class ProductImage(models.Model):
     def __str__(self):
         return f"Image for {self.product.title}"
 
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255, default="New Notification")
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def _str_(self):
+        return self.message

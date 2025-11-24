@@ -863,8 +863,14 @@
         </div>
         <div class="header-right">
             <div class="notification-icon">
-                <span>🔔</span>
-                <span class="notification-badge">3</span>
+             <a href="{% url 'notifications' %}" class="notification-icon" style="text-decoration:none; color:inherit;">
+    <span>🔔</span>
+
+    {% if unread_count > 0 %}
+        <span class="notification-badge">{{ unread_count }}</span>
+    {% endif %}
+</a>
+                <span class="notification-badge">{{ unread_count }}</span>
             </div>
             <div class="profile-dropdown">
                 <div class="profile-avatar">{{ user.username|first|upper }}</div>
@@ -1189,6 +1195,34 @@
     </div>
 
     <script>
+
+        const notificationSocket = new WebSocket(
+    "ws://" + window.location.host + "/ws/seller/notifications/"
+);
+
+notificationSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+
+    const badge = document.querySelector('.notification-badge');
+    if (badge) {
+        badge.innerText = parseInt(badge.innerText) + 1;
+    }
+
+    const toast = document.createElement("div");
+    toast.style.position = "fixed";
+    toast.style.top = "20px";
+    toast.style.right = "20px";
+    toast.style.padding = "15px 20px";
+    toast.style.background = "#667eea";
+    toast.style.color = "white";
+    toast.style.borderRadius = "10px";
+    toast.style.zIndex = 9999;
+    toast.innerHTML = `🔔 ${data.message}`;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 4000);
+};
+
          let salesChart;
         let chartType = 'line';
 

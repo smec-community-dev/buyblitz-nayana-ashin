@@ -739,5 +739,13 @@
         </main>
     </div>
 </body>
+<script>
+const ws = new WebSocket("ws://127.0.0.1:8000/ws/notifications/");
+
+ws.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    alert("🔔 " + data.message);
+};
+</script>
 
 </html>

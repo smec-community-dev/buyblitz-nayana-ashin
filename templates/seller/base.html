@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Seller Panel</title>
+    <meta charset="UTF-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+
+<body>
+
+    <!-- COMMON HEADER -->
+    <header style="padding:15px; background:#667eea; color:white;">
+        <h2>ShopHub Seller Panel</h2>
+    </header>
+
+    <div style="padding:20px;">
+        {% block content %}
+        {% endblock %}
+    </div>
+<a href="{% url 'seller_notifications' %}" class="notification-icon">
+    <span>🔔</span>
+    {% if unread_count > 0 %}
+        <span class="notification-badge">{{ unread_count }}</span>
+    {% endif %}
+</a>
+
+</body>
+</html>

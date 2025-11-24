@@ -338,36 +338,267 @@ from django.contrib.auth import authenticate, login
 from core.models import User
 from seller.models import Seller
 
+from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
+
 def login_seller(request):
-    print("..................")
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
-        print(username,password)
+
         User = get_user_model()
+
         # Allow login using email OR username
         if User.objects.filter(email=username).exists():
             user_obj = User.objects.get(email=username)
             username = user_obj.username
 
         user = authenticate(request, username=username, password=password)
-        print(user)
 
         if user is not None:
             login(request, user)
 
             # Check if seller
-            if Seller.objects.filter(user=user).exists():
-                print("........")
+            if hasattr(user, 'seller') or Seller.objects.filter(user=user).exists():
+                messages.success(request, 'Welcome back! You have successfully logged in.')
                 return redirect('seller_dashboard')
 
             return redirect('home')
 
         # Error message when login fails
-        return render(request, "seller/login.html", {"error": "Invalid username or password"})
+        return render(request, "seller/login.html", {
+            "error": "Invalid username/email or password. Please try again."
+        })
 
     return render(request, "seller/login.html")
 
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import login, get_user_model
+from seller.models import Seller
+
+User = get_user_model()
+
+
+def role_selection(request):
+    """Show role selection page after Google OAuth"""
+    # Check if user came from Google OAuth
+    if not request.session.get('pending_google_signup'):
+        messages.error(request, "Invalid access. Please login with Google first.")
+        return redirect('login')
+
+    return render(request, 'seller/role_selection.html')
+
+
+def complete_google_signup(request):
+    """Handle role selection and redirect to appropriate form"""
+    if request.method == "POST":
+        if not request.session.get('pending_google_signup'):
+            messages.error(request, "Session expired. Please try again.")
+            return redirect('login')
+
+        selected_role = request.POST.get('selected_role')
+
+        if not selected_role:
+            messages.error(request, "Please select a role")
+            return redirect('role_selection')
+
+        # Store selected role in session
+        request.session['selected_role'] = selected_role
+
+        # Redirect based on role
+        if selected_role == 'user':
+            return redirect('google_user_form')
+        elif selected_role == 'seller':
+            return redirect('google_seller_form')
+        else:
+            messages.error(request, "Invalid role selected")
+            return redirect('role_selection')
+
+    return redirect('role_selection')
+
+
+def google_user_form(request):
+    """Show user registration form for Google signup"""
+    if not request.session.get('pending_google_signup'):
+        messages.error(request, "Invalid access. Please login with Google first.")
+        return redirect('login')
+
+    if request.session.get('selected_role') != 'user':
+        messages.error(request, "Invalid role")
+        return redirect('role_selection')
+
+    context = {
+        'google_email': request.session.get('google_email', ''),
+        'google_first_name': request.session.get('google_first_name', ''),
+        'google_last_name': request.session.get('google_last_name', ''),
+    }
+    return render(request, 'seller/google_user_form.html', context)
+
+
+def google_seller_form(request):
+    """Show seller registration form for Google signup"""
+    if not request.session.get('pending_google_signup'):
+        messages.error(request, "Invalid access. Please login with Google first.")
+        return redirect('login')
+
+    if request.session.get('selected_role') != 'seller':
+        messages.error(request, "Invalid role")
+        return redirect('role_selection')
+
+    context = {
+        'google_email': request.session.get('google_email', ''),
+        'google_first_name': request.session.get('google_first_name', ''),
+        'google_last_name': request.session.get('google_last_name', ''),
+    }
+    return render(request, 'seller/google_seller_form.html', context)
+
+
+def finalize_google_user(request):
+    """Create user account with Google data"""
+    if request.method != "POST":
+        return redirect('login')
+
+    if not request.session.get('pending_google_signup'):
+        messages.error(request, "Session expired. Please try again.")
+        return redirect('login')
+
+    # Get form data
+    username = request.POST.get('username', '').strip()
+    phone = request.POST.get('phone', '').strip()
+
+    # Get Google data from session
+    email = request.session.get('google_email')
+    first_name = request.session.get('google_first_name', '')
+    last_name = request.session.get('google_last_name', '')
+
+    # Validation
+    if not username:
+        messages.error(request, "Username is required")
+        return redirect('google_user_form')
+
+    if User.objects.filter(username=username).exists():
+        messages.error(request, "Username already taken. Please choose another.")
+        return redirect('google_user_form')
+
+    if User.objects.filter(email=email).exists():
+        messages.error(request, "An account with this email already exists.")
+        return redirect('login')
+
+    try:
+        # Create user
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+        )
+
+        # If you have a phone field in your User model, save it
+        # user.phone = phone
+        # user.save()
+
+        # Log the user in
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+        # Clear session data
+        request.session.pop('pending_google_signup', None)
+        request.session.pop('google_email', None)
+        request.session.pop('google_first_name', None)
+        request.session.pop('google_last_name', None)
+        request.session.pop('google_picture', None)
+        request.session.pop('selected_role', None)
+
+        messages.success(request, f"Welcome {first_name}! Your account has been created successfully.")
+        return redirect('home')  # Change to your home page URL name
+
+    except Exception as e:
+        messages.error(request, f"Error creating account: {str(e)}")
+        return redirect('google_user_form')
+
+
+def finalize_google_seller(request):
+    """Create seller account with Google data"""
+    if request.method != "POST":
+        return redirect('login')
+
+    if not request.session.get('pending_google_signup'):
+        messages.error(request, "Session expired. Please try again.")
+        return redirect('login')
+
+    # Get form data
+    username = request.POST.get('username', '').strip()
+    shop_name = request.POST.get('shop_name', '').strip()
+    shop_type = request.POST.get('shop_type', '').strip()
+    shop_address = request.POST.get('shop_address', '').strip()
+    gst_number = request.POST.get('gst_number', '').strip()
+    bank_account_number = request.POST.get('bank_account_number', '').strip()
+
+    # Get Google data from session
+    email = request.session.get('google_email')
+    first_name = request.session.get('google_first_name', '')
+    last_name = request.session.get('google_last_name', '')
+
+    # Validation
+    if not username:
+        messages.error(request, "Username is required")
+        return redirect('google_seller_form')
+
+    if not all([shop_name, shop_type, shop_address, gst_number, bank_account_number]):
+        messages.error(request, "All seller fields are required")
+        return redirect('google_seller_form')
+
+    if User.objects.filter(username=username).exists():
+        messages.error(request, "Username already taken. Please choose another.")
+        return redirect('google_seller_form')
+
+    if User.objects.filter(email=email).exists():
+        messages.error(request, "An account with this email already exists.")
+        return redirect('login')
+
+    try:
+        # Create user
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+        )
+
+        # Create seller profile
+        seller = Seller.objects.create(
+            user=user,
+            shop_name=shop_name,
+            shop_type=shop_type,
+            shop_address=shop_address,
+            gst_number=gst_number,
+            bank_account_number=bank_account_number
+        )
+
+        # Log the user in
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+        # Clear session data
+        request.session.pop('pending_google_signup', None)
+        request.session.pop('google_email', None)
+        request.session.pop('google_first_name', None)
+        request.session.pop('google_last_name', None)
+        request.session.pop('google_picture', None)
+        request.session.pop('selected_role', None)
+
+        messages.success(request, f"Welcome {first_name}! Your seller account has been created successfully.")
+        return redirect('seller_dashboard')
+
+    except Exception as e:
+        # If seller creation fails, delete the user
+        if 'user' in locals():
+            user.delete()
+        messages.error(request, f"Error creating seller account: {str(e)}")
+        return redirect('google_seller_form')
 
 def seller_products(request):
     if not request.user.is_authenticated:
@@ -437,7 +668,7 @@ def update_product(request, slug):
 
     if request.method == "POST":
         product.sub_category_id = request.POST.get("sub_category")
-        product.title = request.POST.get("product_name")   # title field
+        product.title = request.POST.get("product_name")
         product.price = request.POST.get("price")
         product.stock = request.POST.get("stock")
         product.rating = request.POST.get("rating")
@@ -448,10 +679,15 @@ def update_product(request, slug):
         # SAVE MULTIPLE IMAGES
         images = request.FILES.getlist("images")
         for img in images:
-            ProductImage.objects.create(
-                product=product,
-                image=img          # correct field name
-            )
+            ProductImage.objects.create(product=product, image=img)
+
+        # -------------------------------
+        # 🔔 SEND NOTIFICATION TO SELLER
+        # -------------------------------
+        send_notification(
+            user=request.user,
+            message=f"Your product '{product.title}' has been updated successfully!"
+        )
 
         return redirect('seller_products')
 
@@ -542,17 +778,20 @@ def order_detail(request, order_id):
         # Get the order from the first order item (all items belong to same order)
         order = order_items.first().order
 
-        # Rest of the code remains the same...
+        # Calculate totals and add image data
+        seller_total = 0
+        total_quantity = 0
+
         for item in order_items:
             item.total_price = float(item.price_at_purchase) * int(item.quantity)
+            seller_total += item.total_price
+            total_quantity += item.quantity
+
             try:
                 first_img = item.product.images.first()
                 item.first_image = first_img.image.url if first_img else None
             except Exception as img_error:
                 item.first_image = None
-
-        seller_total = sum(item.total_price for item in order_items)
-        total_quantity = sum(item.quantity for item in order_items)
 
         context = {
             'order': order,
@@ -565,25 +804,46 @@ def order_detail(request, order_id):
         return render(request, 'seller/order_detail.html', context)
 
     except Exception as e:
-        messages.error(request, "Error loading order details.")
+        messages.error(request, f"Error loading order details: {str(e)}")
         return redirect('seller_orders')
+
+
+@login_required
 def update_order_status(request, order_id):
     """Update order status"""
     if request.method == "POST":
         try:
-            order = get_object_or_404(Order, id=order_id)
+            # Check if user is a seller
+            try:
+                seller = Seller.objects.get(user=request.user)
+            except Seller.DoesNotExist:
+                messages.error(request, "Seller profile not found.")
+                return redirect('seller_dashboard')
+
+            # Get the order and verify it contains seller's products
+            seller_products = Product.objects.filter(seller=seller)
+            order_items = OrderItem.objects.filter(
+                order_id=order_id,
+                product__in=seller_products
+            )
+
+            if not order_items.exists():
+                messages.error(request, "Order not found or doesn't contain your products.")
+                return redirect('seller_orders')
+
+            order = order_items.first().order
             new_status = request.POST.get('status')
 
             if new_status:
                 order.order_status = new_status
                 order.save()
+
                 messages.success(request, f"Order status updated to {order.get_order_status_display()}.")
 
         except Exception as e:
             messages.error(request, f"Error updating order status: {str(e)}")
 
     return redirect('order_detail', order_id=order_id)
-
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -591,7 +851,6 @@ from django.contrib.auth.models import User
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-
 
 
 from django.contrib import messages
@@ -687,5 +946,36 @@ from django.shortcuts import redirect
 def logout_seller(request):
     logout(request)
     return redirect('login')   # change to your login page name
+from django.contrib.auth.models import User
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from seller.models import Notification
 
+def send_notification(user, message):
+    # Save DB
+    Notification.objects.create(
+        user=user,
+        title="Product Update",
+        message=message
+    )
 
+    # Send real-time
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f"user_{user.id}",
+        {
+            "type": "notify",
+            "message": message
+        }
+    )
+
+# send_notification("New user registered!")
+
+def notification_page(request):
+    seller = Seller.objects.get(user=request.user)
+    notifications = Notification.objects.filter(user=request.user).order_by("-created_at")
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+
+    # Mark notifications as read
+    notifications.filter(is_read=False).update(is_read=True)
+    return render(request, "seller/notifications.html", {"notifications": notifications,'seller':seller,"unread_count":unread_count})

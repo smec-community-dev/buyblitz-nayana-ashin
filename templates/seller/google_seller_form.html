@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Seller Registration - ShopHub</title>
+    <!-- Copy same styles as google_user_form.html -->
+    <style>
+        /* Same styles as google_user_form.html */
+        :root {
+            --bg-color: #F8FBFF;
+            --primary-color: #3B82F6;
+            --accent-color: #60A5FA;
+            --secondary-color: #2563EB;
+            --text-color: #1E3A8A;
+            --light-text: #64748B;
+            --hover-color: #2563EB;
+            --input-bg: #F0F9FF;
+            --input-border: #BFDBFE;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow-light: 0 8px 30px rgba(59, 130, 246, 0.08);
+            --shadow-medium: 0 15px 40px rgba(59, 130, 246, 0.12);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Open Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F8FBFF 0%, #EFF6FF 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .form-section {
+            padding: 50px 45px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .form-header h1 {
+            font-family: var(--font-heading);
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .form-header p {
+            color: var(--light-text);
+            font-size: 1rem;
+        }
+
+        .google-info {
+            background: #F0F9FF;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .google-info p {
+            color: var(--text-color);
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .google-info strong {
+            color: var(--primary-color);
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94A3B8;
+            font-size: 1.1rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 14px 18px 14px 48px;
+            border-radius: 10px;
+            border: 1.5px solid var(--input-border);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        .input-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            background-size: 16px;
+            padding-right: 45px;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+            color: white;
+            margin-top: 10px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.25);
+        }
+
+        @media (max-width: 550px) {
+            .form-section {
+                padding: 30px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-section">
+            <div class="form-header">
+                <div class="logo">ShopHub</div>
+                <h1>Complete Seller Profile</h1>
+                <p>Set up your shop and start selling!</p>
+            </div>
+
+            <div class="google-info">
+                <p><strong>Signing in with Google</strong></p>
+                <p>Email: {{ google_email }}</p>
+            </div>
+
+            <form method="POST" action="{% url 'finalize_google_seller' %}">
+                {% csrf_token %}
+
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="shop_name">Shop Name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🏪</span>
+                        <input type="text" id="shop_name" name="shop_name" placeholder="Enter your shop name" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="shop_type">Shop Type</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">💼</span>
+                        <select id="shop_type" name="shop_type" required>
+                            <option value="" disabled selected>Select shop type</option>
+                            <option value="RETAIL">Retail Shop</option>
+                            <option value="WHOLESALE">Wholesale</option>
+                            <option value="DROPSHIPPING">Dropshipping</option>
+                            <option value="MANUFACTURER">Manufacturer</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="shop_address">Shop Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📍</span>
+                        <input type="text" id="shop_address" name="shop_address" placeholder="Enter shop address" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="gst_number">GST Number</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📄</span>
+                        <input type="text" id="gst_number" name="gst_number" placeholder="Enter GST number" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="bank_account_number">Bank Account Number</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🏦</span>
+                        <input type="text" id="bank_account_number" name="bank_account_number" placeholder="Enter bank account number" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">COMPLETE REGISTRATION</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

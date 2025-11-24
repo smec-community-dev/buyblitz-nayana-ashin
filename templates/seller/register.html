@@ -60,7 +60,7 @@
             flex-direction: column;
             justify-content: flex-start;
             overflow-y: auto;
-            max-height: 100%;
+            max-height: 90vh;
         }
 
         .form-header {
@@ -90,6 +90,91 @@
             margin-bottom: 0;
             font-size: 1rem;
             line-height: 1.6;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-error {
+            background: #FEF2F2;
+            color: #EF4444;
+            border-left: 4px solid #EF4444;
+        }
+
+        .alert-success {
+            background: #ECFDF5;
+            color: #10B981;
+            border-left: 4px solid #10B981;
+        }
+
+        /* Social Login Section */
+        .social-login {
+            margin-bottom: 25px;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--input-border);
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .social-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .social-btn .google-icon {
+            width: 20px;
+            height: 20px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="%23EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="%234285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="%23FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="%2334A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>') no-repeat center;
+            background-size: contain;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--input-border), transparent);
+        }
+
+        .divider::before {
+            margin-right: 16px;
+        }
+
+        .divider::after {
+            margin-left: 16px;
         }
 
         .input-group {
@@ -246,34 +331,11 @@
             transform: translateY(-1px);
         }
 
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 25px 0;
-            color: var(--light-text);
-            font-size: 0.9rem;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--input-border), transparent);
-        }
-
-        .divider::before {
-            margin-right: 16px;
-        }
-
-        .divider::after {
-            margin-left: 16px;
-        }
-
         .form-footer {
             text-align: center;
             color: var(--light-text);
             font-size: 0.95rem;
+            margin-top: 20px;
         }
 
         .form-footer a {
@@ -322,7 +384,26 @@
                 <p>Join ShopHub and start shopping today!</p>
             </div>
 
-            <form method="POST" action="/seller/register/">
+            <!-- Display Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Google Sign Up -->
+            <div class="social-login">
+                <a href="{% url 'google_login' %}" class="social-btn">
+                    <span class="google-icon"></span>
+                    Continue with Google
+                </a>
+            </div>
+
+            <div class="divider">or register with email</div>
+
+            <form method="POST" action="{% url 'register_seller' %}">
                 {% csrf_token %}
 
                 <div class="input-group">
@@ -391,7 +472,7 @@
                         <label for="shop_name">Shop Name</label>
                         <div class="input-wrapper">
                             <span class="input-icon">🏪</span>
-                            <input type="text" id="shop_name" name="shop_name" placeholder="Enter your shop name" required>
+                            <input type="text" id="shop_name" name="shop_name" placeholder="Enter your shop name">
                         </div>
                     </div>
 
@@ -399,7 +480,7 @@
                         <label for="shop_type">Shop Type</label>
                         <div class="input-wrapper">
                             <span class="input-icon">💼</span>
-                            <select id="shop_type" name="shop_type" required>
+                            <select id="shop_type" name="shop_type">
                                 <option value="" disabled selected>Select shop type</option>
                                 <option value="RETAIL">Retail Shop</option>
                                 <option value="WHOLESALE">Wholesale</option>
@@ -414,7 +495,7 @@
                         <label for="shop_address">Shop Address</label>
                         <div class="input-wrapper">
                             <span class="input-icon">📍</span>
-                            <input type="text" id="shop_address" name="shop_address" placeholder="Enter shop address" required>
+                            <input type="text" id="shop_address" name="shop_address" placeholder="Enter shop address">
                         </div>
                     </div>
 
@@ -422,7 +503,7 @@
                         <label for="gst_number">GST Number</label>
                         <div class="input-wrapper">
                             <span class="input-icon">📄</span>
-                            <input type="text" id="gst_number" name="gst_number" placeholder="Enter GST number" required>
+                            <input type="text" id="gst_number" name="gst_number" placeholder="Enter GST number">
                         </div>
                     </div>
 
@@ -430,7 +511,7 @@
                         <label for="bank_account_number">Bank Account Number</label>
                         <div class="input-wrapper">
                             <span class="input-icon">🏦</span>
-                            <input type="text" id="bank_account_number" name="bank_account_number" placeholder="Enter bank account number" required>
+                            <input type="text" id="bank_account_number" name="bank_account_number" placeholder="Enter bank account number">
                         </div>
                     </div>
                 </div>
@@ -463,8 +544,6 @@
 
                 <button type="submit" class="btn">CREATE ACCOUNT</button>
             </form>
-
-            <div class="divider">or</div>
 
             <div class="form-footer">
                 <p>Already have an account? <a href="{% url 'login' %}">Sign in here</a></p>

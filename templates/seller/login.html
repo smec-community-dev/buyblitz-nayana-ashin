@@ -91,6 +91,108 @@
             line-height: 1.6;
         }
 
+        /* Alert Messages */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: #ECFDF5;
+            color: #10B981;
+            border-left: 4px solid #10B981;
+        }
+
+        .alert-error {
+            background: #FEF2F2;
+            color: #EF4444;
+            border-left: 4px solid #EF4444;
+        }
+
+        .alert-info {
+            background: #F0F9FF;
+            color: #3B82F6;
+            border-left: 4px solid #3B82F6;
+        }
+
+        .error-msg {
+            color: var(--error-color);
+            text-align: center;
+            margin: 15px 0;
+            padding: 12px;
+            background: #FEF2F2;
+            border-radius: 8px;
+            border-left: 4px solid var(--error-color);
+            font-weight: 500;
+        }
+
+        /* Social Login */
+        .social-login {
+            margin-bottom: 25px;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--input-border);
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .social-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .social-btn .google-icon {
+            width: 20px;
+            height: 20px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="%23EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="%234285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="%23FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="%2334A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>') no-repeat center;
+            background-size: contain;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: var(--light-text);
+            font-size:0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--input-border), transparent);
+        }
+
+        .divider::before {
+            margin-right: 16px;
+        }
+
+        .divider::after {
+            margin-left: 16px;
+        }
+
         .input-group {
             margin-bottom: 22px;
         }
@@ -155,6 +257,11 @@
             color: #94A3B8;
             font-size: 1.2rem;
             padding: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary-color);
         }
 
         .form-options {
@@ -173,7 +280,10 @@
         }
 
         .remember-me input {
-            width: auto;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
         }
 
         .remember-me label {
@@ -181,6 +291,7 @@
             font-weight: 500;
             color: var(--light-text);
             cursor: pointer;
+            font-size: 0.95rem;
         }
 
         .forgot-password {
@@ -189,6 +300,7 @@
             font-weight: 500;
             transition: all 0.3s ease;
             font-size: 0.9rem;
+            cursor: pointer;
         }
 
         .forgot-password:hover {
@@ -224,87 +336,17 @@
             transform: translateY(-1px);
         }
 
-        .error-msg {
-            color: var(--error-color);
-            text-align: center;
-            margin: 15px 0;
-            padding: 12px;
-            background: #FEF2F2;
-            border-radius: 8px;
-            border-left: 4px solid var(--error-color);
-            font-weight: 500;
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 25px 0;
-            color: var(--light-text);
-            font-size: 0.9rem;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--input-border), transparent);
-        }
-
-        .divider::before {
-            margin-right: 16px;
-        }
-
-        .divider::after {
-            margin-left: 16px;
-        }
-
-        .social-login {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        .social-btn {
-            padding: 14px;
-            border: 2px solid var(--input-border);
-            background: white;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            transition: all 0.3s ease;
-            font-family: var(--font-body);
-            font-size: 0.95rem;
-        }
-
-        .social-btn:hover {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-light);
-        }
-
-        .social-btn.google {
-            color: #DB4437;
-        }
-
-        .social-btn.facebook {
-            color: #4267B2;
-        }
-
-        .social-btn.apple {
-            color: #000000;
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .form-footer {
             text-align: center;
             color: var(--light-text);
             font-size: 0.95rem;
+            margin-top: 20px;
         }
 
         .form-footer a {
@@ -358,6 +400,30 @@
                 <p>Sign in to your ShopHub account</p>
             </div>
 
+            <!-- Display Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Display Error -->
+            {% if error %}
+                <div class="error-msg">{{ error }}</div>
+            {% endif %}
+
+            <!-- Google Sign In -->
+            <div class="social-login">
+                <a href="{% url 'google_login' %}" class="social-btn">
+                    <span class="google-icon"></span>
+                    Continue with Google
+                </a>
+            </div>
+
+            <div class="divider">or sign in with email</div>
+
             <form id="login-form" method="POST" action="{% url 'login' %}">
                 {% csrf_token %}
 
@@ -374,7 +440,7 @@
                     <div class="input-wrapper password-input">
                         <span class="input-icon">🔒</span>
                         <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                        <button type="button" class="toggle-password">👁️</button>
+                        <button type="button" class="toggle-password" aria-label="Toggle password visibility">👁️</button>
                     </div>
                 </div>
 
@@ -383,33 +449,15 @@
                         <input type="checkbox" id="remember" name="remember">
                         <label for="remember">Remember me</label>
                     </div>
-                    <a href="#" class="forgot-password">Forgot password?</a>
+                    <a href="{% url 'password_reset' %}" class="forgot-password">Forgot password?</a>
                 </div>
-
-                {% if error %}
-                    <div class="error-msg">{{ error }}</div>
-                {% endif %}
 
                 <button type="submit" class="btn">SIGN IN</button>
-
-                <div class="divider">or continue with</div>
-
-                <div class="social-login">
-                    <button type="button" class="social-btn google">
-                        <span>G</span> Continue with Google
-                    </button>
-                    <button type="button" class="social-btn facebook">
-                        <span>f</span> Continue with Facebook
-                    </button>
-                    <button type="button" class="social-btn apple">
-                        <span>🍎</span> Continue with Apple
-                    </button>
-                </div>
-
-                <div class="form-footer">
-                    <p>Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
-                </div>
             </form>
+
+            <div class="form-footer">
+                <p>Don't have an account? <a href="{% url 'register_seller' %}">Sign up here</a></p>
+            </div>
         </div>
     </div>
 
@@ -419,33 +467,38 @@
             const passwordInput = document.getElementById('password');
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            this.textContent = type === 'password' ? '👁️' : '🔒';
+            this.textContent = type === 'password' ? '👁️' : '🙈';
         });
 
         // Form submission loading state
-        document.getElementById('login-form').addEventListener('submit', function() {
+        document.getElementById('login-form').addEventListener('submit', function(e) {
             const submitBtn = this.querySelector('.btn');
+            const originalText = submitBtn.textContent;
+
             submitBtn.disabled = true;
             submitBtn.textContent = 'Signing In...';
+
+            // Re-enable button if form submission fails (network error, etc.)
+            setTimeout(function() {
+                if (submitBtn.disabled) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            }, 5000);
         });
 
-        // Social login buttons
-        document.querySelectorAll('.social-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const provider = this.textContent.includes('Google') ? 'Google' :
-                               this.textContent.includes('Facebook') ? 'Facebook' : 'Apple';
-
-                alert(`${provider} login would be implemented here`);
+        // Auto-hide messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert, .error-msg');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    alert.style.transition = 'opacity 0.5s ease';
+                    alert.style.opacity = '0';
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 500);
+                }, 5000);
             });
-        });
-
-        // Forgot password
-        document.querySelector('.forgot-password').addEventListener('click', function(e) {
-            e.preventDefault();
-            const email = prompt('Please enter your email address to reset your password:');
-            if (email) {
-                alert(`Password reset instructions have been sent to ${email}`);
-            }
         });
     </script>
 </body>

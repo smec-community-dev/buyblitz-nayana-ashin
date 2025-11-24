@@ -12,6 +12,18 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+DEBUG = os.getenv("DEBUG") == "True"
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,7 +48,6 @@ ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'core.User'
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,11 +55,50 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # your apps
     'core',
     'user',
-    'seller'
-]
+    'seller',
+'channels',
 
+    # allauth apps
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+]
+SITE_ID = 1
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',          # normal login
+    'allauth.account.auth_backends.AuthenticationBackend' # google login
+]
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.getenv("GOOGLE_CLIENT_ID"),
+            'secret': os.getenv("GOOGLE_CLIENT_SECRET"),
+            'key': ''
+        }
+    }
+}
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_AUTO_SIGNUP = False  # We want to handle signup manually
+LOGIN_REDIRECT_URL = '/seller/role-selection/'
+SOCIALACCOUNT_LOGIN_ON_GET = True
+# Add this line in settings.py
+SOCIALACCOUNT_ADAPTER = 'seller.adapters.CustomSocialAccountAdapter'
+
+
+ASGI_APPLICATION = "project.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -57,6 +107,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+'allauth.account.middleware.AccountMiddleware'
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -79,7 +130,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'project.wsgi.application'
+
 
 
 # Database
@@ -92,21 +143,25 @@ DATABASES = {
     }
 }
 
-# Email configuration (example for Gmail)
-# settings.py - UPDATE WITH REAL VALUES
 
+
+
+# Email Configuration
+# For development (prints email to console)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# # Email configuration for Gmail
+
+# For production with Gmail
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_HOST = 'smtp.gmail.com'
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your-real-email@gmail.com'  # Replace with your actual Gmail
-# EMAIL_HOST_PASSWORD = 'your-app-password'      # Replace with Gmail App Password
-# DEFAULT_FROM_EMAIL = 'your-real-email@gmail.com'  # Same as EMAIL_HOST_USER
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+# EMAIL_HOST_USER = 'your-email@gmail.com'
+# EMAIL_HOST_PASSWORD = 'your-app-password'  # Use App Password, not regular password
+# DEFAULT_FROM_EMAIL = 'ShopHub <noreply@shophub.com>'
+
+# Password reset settings
+PASSWORD_RESET_TIMEOUT = 86400  # 24 hours in seconds
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -114,7 +169,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    }
+    },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
@@ -124,6 +179,16 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Email configuration for development
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Optional: Set default from email
+DEFAULT_FROM_EMAIL = 'noreply@shophub.com'
+
+# Login URLs
+LOGIN_URL = '/seller/login/'
+LOGIN_REDIRECT_URL = '/seller/sellerdashboard/'
+LOGOUT_REDIRECT_URL = '/seller/login/'
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
