@@ -46,8 +46,20 @@ def orders(request):
 
 @login_required
 def profile(request):
+    user = request.user
+
+    # counts
+    wishlist_count = Wishlist.objects.filter(user=user).count()
+    cart_count = Cart.objects.filter(user=user).count()
+
+    # recent activity
+    recent_orders = Order.objects.filter(user=user).order_by('-created_at')[:3]
+
     return render(request, "user/profile.html", {
-        "user": request.user
+        "user": user,
+        "wishlist_count": wishlist_count,
+        "cart_count": cart_count,
+        "recent_orders": recent_orders,
     })
 
 
@@ -625,27 +637,27 @@ def account_settings(request):
 # def order_history(request):
 #     return render(request, 'user/order_history.html')
 
-
 @login_required
 def place_order(request):
     if request.method != "POST":
-        return redirect("checkout")  # if someone loads directly
+        return redirect("checkout")   # block direct URL access
 
     mode = request.POST.get("mode")
 
-    # BUY NOW
+    # =====================================
+    # 🚀 BUY NOW CHECKOUT
+    # =====================================
     if mode == "buy_now":
         product_id = request.POST.get("product_id")
         quantity = int(request.POST.get("quantity", 1))
 
         product = Product.objects.get(id=product_id)
-        total = product.price * quantity
+        total_amount = product.price * quantity
 
         order = Order.objects.create(
             user=request.user,
-            total_amount=total,
+            total_amount=total_amount,
             full_name=request.POST.get("full_name"),
-
             phone=request.POST.get("phone"),
             address=request.POST.get("address"),
             city=request.POST.get("city"),
@@ -663,18 +675,24 @@ def place_order(request):
             price_at_purchase=product.price
         )
 
+        # Remove buy_now session
+        if "buy_now" in request.session:
+            del request.session["buy_now"]
+
         return redirect("order_success", order_number=order.order_number)
 
-    # CART CHECKOUT
+    # =====================================
+    # 🛒 CART CHECKOUT
+    # =====================================
     cart_items = Cart.objects.filter(user=request.user)
+
     total_amount = sum(item.subtotal for item in cart_items)
 
     order = Order.objects.create(
         user=request.user,
         total_amount=total_amount,
         full_name=request.POST.get("full_name"),
-
-    phone=request.POST.get("phone"),
+        phone=request.POST.get("phone"),
         address=request.POST.get("address"),
         city=request.POST.get("city"),
         state=request.POST.get("state"),
@@ -682,7 +700,7 @@ def place_order(request):
         payment_method=request.POST.get("payment_method"),
     )
 
-    # Create Order Items
+    # Create order items
     for item in cart_items:
         OrderItem.objects.create(
             order=order,
@@ -692,11 +710,10 @@ def place_order(request):
             price_at_purchase=item.product.price
         )
 
-    # Clear cart
-    cart_items.delete()
+    # 🔥 CLEAR CART AFTER ORDER
+    Cart.objects.filter(user=request.user).delete()
 
     return redirect("order_success", order_number=order.order_number)
-
 
 def order_success(request, order_number):
     order = Order.objects.get(order_number=order_number)
