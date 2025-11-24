@@ -505,19 +505,19 @@ def add_to_wishlist(request, product_id):
 def remove_from_wishlist(request, product_id):
     Wishlist.objects.filter(user=request.user, product_id=product_id).delete()
     return redirect('wishlist')   # or redirect("/user/wishlist/") if name differs
-def update_cart(request, cart_id):
-    action = request.GET.get("action")
-    item = Cart.objects.get(id=cart_id, user=request.user)
+@login_required
+def update_cart(request, id):
+    item = get_object_or_404(Cart, id=id, user=request.user)
+    action = request.POST.get("action")
 
-    if action == "inc":
+    if action == "increment":
         item.quantity += 1
-    elif action == "dec" and item.quantity > 1:
-        item.quantity -= 1
+    elif action == "decrement":
+        if item.quantity > 1:
+            item.quantity -= 1
 
     item.save()
-
-    return JsonResponse({"qty": item.quantity, "total": item.subtotal})
-
+    return redirect("cart")
 
 
 def remove_cart(request, id):

@@ -68,7 +68,8 @@ path("wishlist/", views.wishlist_page, name="wishlist"),
 path('remove_from_wishlist/<int:product_id>/', views.remove_from_wishlist, name='remove_from_wishlist'),
 path("remove_cart/<int:id>/", views.remove_cart, name="remove_cart"),
 path("add_to_wishlist/<int:product_id>/", views.add_to_wishlist, name="add_to_wishlist"),
-    path("update-cart/<int:item_id>/", views.update_cart, name="update_cart"),
+path("update_cart/<int:item_id>/", views.update_cart, name="update_cart"),
+
 
 
 

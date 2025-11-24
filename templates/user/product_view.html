@@ -1204,57 +1204,81 @@
                     <div class="quantity-selector">
                         <span class="quantity-label">Quantity:</span>
                         <div class="quantity-controls">
+
+
                             <button class="quantity-btn minus">-</button>
                             <input type="number" class="quantity-input" value="1" min="1" max="{{ product.stock }}">
                             <button class="quantity-btn plus">+</button>
+                               <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
                         </div>
                     </div>
                 </div>
                 {% endif %}
+<!-- Action Buttons -->
+<div class="action-buttons">
+    {% if product.stock > 0 %}
+        {% if request.user.is_authenticated %}
 
-                <!-- Action Buttons -->
-                <div class="action-buttons">
-                    {% if product.stock > 0 %}
-                        {% if request.user.is_authenticated %}
-                            <a href="{% url 'add_to_cart' product.id %}" class="add-to-cart">
-                                <i class="fas fa-shopping-cart"></i> Add to Cart
-                            </a>
-                            <a href="{% url 'buy_now' product.id %}" class="buy-now">
-                                <i class="fas fa-bolt"></i> Buy Now
-                            </a>
-                        {% else %}
-                            <a href="{% url 'login' %}" class="add-to-cart">
-                                <i class="fas fa-shopping-cart"></i> Add to Cart
-                            </a>
-                            <a href="{% url 'login' %}" class="buy-now">
-                                <i class="fas fa-bolt"></i> Buy Now
-                            </a>
-                        {% endif %}
-                    {% else %}
-                        <button class="add-to-cart" disabled>
-                            <i class="fas fa-times"></i> Out of Stock
-                        </button>
-                        <button class="buy-now" disabled>
-                            <i class="fas fa-times"></i> Unavailable
-                        </button>
-                    {% endif %}
+            <!-- DESKTOP ADD TO CART (FIXED) -->
+            <form method="POST" action="{% url 'add_to_cart' product.id %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
+                <button type="submit" class="add-to-cart">
+                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                </button>
+            </form>
 
-                    {% if request.user.is_authenticated %}
-                        {% if product.id in wishlist_ids %}
-                            <a href="{% url 'remove_from_wishlist' product.id %}" class="wishlist-btn liked">
-                                <i class="fa-solid fa-heart"></i>
-                            </a>
-                        {% else %}
-                            <a href="{% url 'add_to_wishlist' product.id %}" class="wishlist-btn">
-                                <i class="fa-regular fa-heart"></i>
-                            </a>
-                        {% endif %}
-                    {% else %}
-                        <a href="{% url 'login' %}" class="wishlist-btn">
-                            <i class="fa-regular fa-heart"></i>
-                        </a>
-                    {% endif %}
-                </div>
+            <!-- BUY NOW (optional: also pass quantity) -->
+            <form method="POST" action="{% url 'buy_now' product.id %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
+                <button type="submit" class="buy-now">
+                    <i class="fas fa-bolt"></i> Buy Now
+                </button>
+            </form>
+
+        {% else %}
+
+            <!-- GUEST USER -->
+            <form method="POST" action="{% url 'add_to_cart' product.id %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
+                <button type="submit" class="add-to-cart">
+                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                </button>
+            </form>
+
+            <a href="{% url 'login' %}" class="buy-now">
+                <i class="fas fa-bolt"></i> Buy Now
+            </a>
+
+        {% endif %}
+    {% else %}
+        <button class="add-to-cart" disabled>
+            <i class="fas fa-times"></i> Out of Stock
+        </button>
+        <button class="buy-now" disabled>
+            <i class="fas fa-times"></i> Unavailable
+        </button>
+    {% endif %}
+
+    <!-- Wishlist -->
+    {% if request.user.is_authenticated %}
+        {% if product.id in wishlist_ids %}
+            <a href="{% url 'remove_from_wishlist' product.id %}" class="wishlist-btn liked">
+                <i class="fa-solid fa-heart"></i>
+            </a>
+        {% else %}
+            <a href="{% url 'add_to_wishlist' product.id %}" class="wishlist-btn">
+                <i class="fa-regular fa-heart"></i>
+            </a>
+        {% endif %}
+    {% else %}
+        <a href="{% url 'login' %}" class="wishlist-btn">
+            <i class="fa-regular fa-heart"></i>
+        </a>
+    {% endif %}
+</div>
 
                 <!-- Product Meta Information -->
                 <div class="product-meta">
@@ -1528,69 +1552,77 @@
             </div>
         </div>
     </footer>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
-    <script>
-        // Mobile Navigation Toggle
-        const mobileNavToggle = document.getElementById('mobileNavToggle');
-        const navMenu = document.getElementById('navMenu');
+    /* ================================
+       MOBILE NAVIGATION TOGGLE
+    =================================*/
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    const navMenu = document.getElementById('navMenu');
 
-        if (mobileNavToggle) {
-            mobileNavToggle.addEventListener('click', () => {
-                navMenu.classList.toggle('active');
-            });
-        }
+    if (mobileNavToggle) {
+        mobileNavToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+    }
 
-        // Profile Dropdown Toggle
-        const profileBtn = document.querySelector(".profile-btn");
-        const profileMenu = document.querySelector(".profile-menu");
+    /* ================================
+       PROFILE DROPDOWN
+    =================================*/
+    const profileBtn = document.querySelector(".profile-btn");
+    const profileMenu = document.querySelector(".profile-menu");
 
-        if (profileBtn) {
-            profileBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                profileMenu.style.display = profileMenu.style.display === "block" ? "none" : "block";
-            });
-
-            // Hide dropdown when clicking outside
-            document.addEventListener("click", () => {
-                profileMenu.style.display = "none";
-            });
-        }
-
-
-        // Add animation to product cards on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Observe all product cards
-        document.querySelectorAll('.product-card').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(el);
+    if (profileBtn) {
+        profileBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            profileMenu.style.display = profileMenu.style.display === "block" ? "none" : "block";
         });
 
-document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener("click", () => {
+            profileMenu.style.display = "none";
+        });
+    }
+
+    /* ================================
+       PRODUCT CARD ANIMATION
+    =================================*/
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.product-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+
+    /* ================================
+       QUANTITY INCREASE / DECREASE
+       (UPDATE ALL HIDDEN INPUTS)
+    =================================*/
     const minusBtn = document.querySelector('.quantity-btn.minus');
     const plusBtn = document.querySelector('.quantity-btn.plus');
     const quantityInput = document.querySelector('.quantity-input');
-    const hiddenQuantity = document.querySelector('.quantity-input-hidden');
 
     function syncHidden() {
-        hiddenQuantity.value = quantityInput.value;
+        document.querySelectorAll('.quantity-input-hidden')
+                .forEach(h => h.value = quantityInput.value);
     }
 
     if (minusBtn && plusBtn && quantityInput) {
+
         minusBtn.addEventListener('click', function(e) {
             e.preventDefault();
             let q = parseInt(quantityInput.value);
@@ -1617,12 +1649,13 @@ document.addEventListener('DOMContentLoaded', function() {
             syncHidden();
         });
     }
-});
 
-    </script>
+});
+</script>
+
 {% if request.GET.review and not user_review %}
 <script>
-    window.scrollTo(0, document.querySelector("form").offsetTop - 120);
+window.scrollTo(0, document.querySelector("form").offsetTop - 120);
 </script>
 {% endif %}
 

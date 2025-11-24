@@ -576,21 +576,27 @@
                         <div class="cart-details">
                             <h3>{{ item.product.title }}</h3>
                             <p>₹{{ item.product.price }}</p>
-
                             <div class="qty-box">
-                                <form method="POST" action="{% url 'update_cart' item.id %}">
-                                    {% csrf_token %}
-<!--                                    <input type="hidden" name="action" value="decrement">-->
-<!--                                    <button type="submit" class="qty-btn">-</button>-->
-                                </form>
-                              <span>Qty: {{ item.quantity }}</span>
 
-                                <form method="POST" action="{% url 'update_cart' item.id %}">
-                                    {% csrf_token %}
-<!--                                    <input type="hidden" name="action" value="increment">-->
-<!--                                    <button type="submit" class="qty-btn">+</button>-->
-                                </form>
-                            </div>
+    <!-- Decrease -->
+    <form method="POST" action="{% url 'update_cart' item.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="decrement">
+        <button type="submit" class="qty-btn">-</button>
+    </form>
+
+    <span>Qty: {{ item.quantity }}</span>
+
+    <!-- Increase -->
+    <form method="POST" action="{% url 'update_cart' item.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="increment">
+        <button type="submit" class="qty-btn">+</button>
+    </form>
+
+</div>
+
+
 
                             <form method="POST" action="{% url 'remove_cart' item.id %}" class="remove-form">
                                 {% csrf_token %}
