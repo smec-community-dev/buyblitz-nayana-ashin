@@ -1221,7 +1221,7 @@
                         <a href="{% url 'profile' %}" class="dropdown-item">
                             <span>👤</span> My Profile
                         </a>
-                        <a href="{% url 'orders' %}" class="dropdown-item">
+                        <a href="{% url 'order_history' %}" class="dropdown-item">
                             <span>📦</span> My Orders
                         </a>
                         <a href="{% url 'profile' %}" class="dropdown-item">
@@ -1411,19 +1411,8 @@
     gap: 1.2rem;
 ">
     <!-- Orders -->
-    <a href="{% url 'orders' %}" style="
-        background: rgba(255,255,255,0.4);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 1.5rem 1rem;
-        text-decoration: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255,255,255,0.3);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    "
+    <a href="{% url 'order_history' %}"
+
     onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.2)'"
     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.1)'">
         <span style="font-size: 2rem; margin-bottom: 0.5rem;">📦</span>

@@ -658,149 +658,182 @@
     </header>
 
     <!-- Order Details Section -->
+
     <section class="order-details">
-        <div class="page-header">
-            <h1 class="page-title">Order Details</h1>
-            <a href="orders.html" class="back-btn">
-                <span>←</span> Back to Orders
-            </a>
+
+    <div class="page-header">
+        <h1 class="page-title">Order Details</h1>
+
+        <a href="{% url 'order_history' %}" class="back-btn">
+
+            <span>←</span> Back to Orders
+        </a>
+    </div>
+
+    <div class="order-container">
+
+        <!-- ORDER SUMMARY -->
+        <div class="order-card">
+            <div class="card-header">
+                <h2 class="card-title">Order Summary</h2>
+
+                <div class="status-badge
+                    {% if order.order_status == 'DELIVERED' %}status-delivered
+                    {% elif order.order_status == 'SHIPPED' %}status-shipped
+                    {% elif order.order_status == 'PROCESSING' %}status-processing
+                    {% elif order.order_status == 'CANCELLED' %}status-cancelled
+                    {% endif %}">
+                    {{ order.order_status }}
+                </div>
+            </div>
+
+            <div class="order-summary">
+                <div class="summary-item">
+                    <span class="summary-label">Order ID</span>
+                    <span class="summary-value">#{{ order.order_number }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Order Date</span>
+                    <span class="summary-value">{{ order.created_at|date:"F d, Y" }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Total Amount</span>
+                    <span class="summary-value">₹{{ order.total_amount }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="summary-label">Payment Method</span>
+                    <span class="summary-value">{{ order.get_payment_method_display }}</span>
+                </div>
+            </div>
         </div>
 
-        <div class="order-container">
-            <!-- Order Summary -->
-            <div class="order-card">
-                <div class="card-header">
-                    <h2 class="card-title">Order Summary</h2>
-                    <div class="status-badge status-delivered">Delivered</div>
+        <!-- ORDER ITEMS -->
+        <div class="order-card">
+            <div class="card-header">
+                <h2 class="card-title">Order Items</h2>
+            </div>
+
+            <div class="order-items">
+                {% for item in order.items.all %}
+                <div class="order-item">
+
+                    <div class="item-image">
+                        {% if item.product %}
+                            <img src="{{ item.product.main_image }}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+                        {% else %}
+                            📦
+                        {% endif %}
+                    </div>
+
+                    <div class="item-details">
+                        <h3 class="item-name">{{ item.product_title }}</h3>
+
+                        {% if item.product and item.product.category %}
+                        <p class="item-category">{{ item.product.category.name }}</p>
+                        {% endif %}
+
+                        <p class="item-price">₹{{ item.price_at_purchase }}</p>
+                        <p class="item-quantity">Quantity: {{ item.quantity }}</p>
+                        <!-- ⭐ REVIEW BUTTON SECTION ⭐ -->
+{% if order.order_status == "DELIVERED" %}
+    {% if not item.user_has_reviewed %}
+        <a href="{% url 'single_view' item.product.slug %}?review=1"
+           class="btn btn-success"
+           style="padding:8px 15px;margin-top:10px;display:inline-block;border-radius:8px;">
+           ⭐ Add Review
+        </a>
+    {% else %}
+        <p style="color: green; font-weight:600; margin-top:10px;">
+            ✓ You already reviewed this product
+        </p>
+    {% endif %}
+{% endif %}
+
+
+
+<!-- END -->
+
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- DELIVERY ADDRESS -->
+        <div class="order-card">
+            <div class="card-header">
+                <h2 class="card-title">Delivery Address</h2>
+            </div>
+
+            <div class="address-details">
+                <p class="address-line"><strong>{{ order.full_name }}</strong></p>
+                <p class="address-line">{{ order.address }}</p>
+                <p class="address-line">{{ order.city }}, {{ order.state }} - {{ order.pincode }}</p>
+                <p class="address-line">Phone: {{ order.phone }}</p>
+            </div>
+        </div>
+
+        <!-- PAYMENT DETAILS -->
+        <div class="order-card">
+            <div class="card-header">
+                <h2 class="card-title">Payment Details</h2>
+            </div>
+
+            <div class="payment-details">
+
+                <div class="payment-method">
+                    <div class="payment-icon">
+                        {% if order.payment_method == "COD" %} 💵 {% else %} 💳 {% endif %}
+                    </div>
+
+                    <div class="payment-info">
+                        <p class="payment-type">{{ order.get_payment_method_display }}</p>
+                        <p class="payment-number">Status: {{ order.payment_status }}</p>
+                    </div>
                 </div>
 
                 <div class="order-summary">
                     <div class="summary-item">
-                        <span class="summary-label">Order ID</span>
-                        <span class="summary-value">#SH123456789</span>
+                        <span class="summary-label">Subtotal</span>
+                        <span class="summary-value">₹{{ order.total_amount }}</span>
                     </div>
+
                     <div class="summary-item">
-                        <span class="summary-label">Order Date</span>
-                        <span class="summary-value">March 15, 2025</span>
+                        <span class="summary-label">Shipping</span>
+                        <span class="summary-value">Free</span>
                     </div>
+
                     <div class="summary-item">
-                        <span class="summary-label">Total Amount</span>
-                        <span class="summary-value">$249.99</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Payment Method</span>
-                        <span class="summary-value">Credit Card</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Order Items -->
-            <div class="order-card">
-                <div class="card-header">
-                    <h2 class="card-title">Order Items</h2>
-                </div>
-
-                <div class="order-items">
-                    <div class="order-item">
-                        <div class="item-image">🎧</div>
-                        <div class="item-details">
-                            <h3 class="item-name">Wireless Headphones Pro</h3>
-                            <p class="item-category">Electronics / Audio</p>
-                            <p class="item-price">$149.99</p>
-                            <p class="item-quantity">Quantity: 1</p>
-                        </div>
-                    </div>
-
-                    <div class="order-item">
-                        <div class="item-image">📱</div>
-                        <div class="item-details">
-                            <h3 class="item-name">Phone Case - Premium</h3>
-                            <p class="item-category">Electronics / Accessories</p>
-                            <p class="item-price">$24.99</p>
-                            <p class="item-quantity">Quantity: 2</p>
-                        </div>
-                    </div>
-
-                    <div class="order-item">
-                        <div class="item-image">🔌</div>
-                        <div class="item-details">
-                            <h3 class="item-name">Fast Charging Cable</h3>
-                            <p class="item-category">Electronics / Accessories</p>
-                            <p class="item-price">$19.99</p>
-                            <p class="item-quantity">Quantity: 1</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Delivery Address -->
-            <div class="order-card">
-                <div class="card-header">
-                    <h2 class="card-title">Delivery Address</h2>
-                </div>
-
-                <div class="address-details">
-                    <p class="address-line"><strong>John Doe</strong></p>
-                    <p class="address-line">123 Main Street, Apt 4B</p>
-                    <p class="address-line">New York, NY 10001</p>
-                    <p class="address-line">United States</p>
-                    <p class="address-line">Phone: +1 (555) 123-4567</p>
-                </div>
-            </div>
-
-            <!-- Payment Details -->
-            <div class="order-card">
-                <div class="card-header">
-                    <h2 class="card-title">Payment Details</h2>
-                </div>
-
-                <div class="payment-details">
-                    <div class="payment-method">
-                        <div class="payment-icon">💳</div>
-                        <div class="payment-info">
-                            <p class="payment-type">Credit Card</p>
-                            <p class="payment-number">**** **** **** 4242</p>
-                        </div>
-                    </div>
-
-                    <div class="order-summary">
-                        <div class="summary-item">
-                            <span class="summary-label">Subtotal</span>
-                            <span class="summary-value">$194.97</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">Shipping</span>
-                            <span class="summary-value">$10.00</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">Tax</span>
-                            <span class="summary-value">$15.02</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">Discount</span>
-                            <span class="summary-value">-$30.00</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">Total</span>
-                            <span class="summary-value" style="color: var(--primary); font-size: 1.3rem;">$189.99</span>
-                        </div>
+                        <span class="summary-label">Total</span>
+                        <span class="summary-value" style="color: var(--primary); font-size: 1.3rem;">
+                            ₹{{ order.total_amount }}
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
 
         <!-- Invoice Download -->
-        <div class="order-card">
-            <div class="invoice-section">
-                <div class="invoice-icon">📄</div>
-                <h3 class="invoice-title">Download Invoice</h3>
-                <p class="invoice-description">Get a detailed invoice for your order for record keeping or reimbursement purposes.</p>
-                <a href="#" class="btn btn-primary">
-                    <span>📥</span> Download Invoice (PDF)
-                </a>
-            </div>
-        </div>
-    </section>
+
 
     <!-- Footer -->
     <footer>

@@ -6,8 +6,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages,auth
 from django.template.defaultfilters import title
-
+from user.models import Order,OrderItem,Review
 from core.models import User,Category
+from django.shortcuts import get_object_or_404
+
 from django.db.models import Q
 from seller.models import Product
 from user.models import Wishlist,Cart
@@ -50,13 +52,14 @@ def profile(request):
 
 
 def buy_now(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    quantity = int(request.GET.get("qty", 1))  # default = 1
 
-    if request.user.is_authenticated:
-        # create order instantly or redirect to checkout
-        return redirect('checkout', product_id=product.id)
+    request.session["buy_now"] = {
+        "product_id": product_id,
+        "quantity": quantity,
+    }
 
-    return redirect('login')
+    return redirect("checkout")
 
 
 def register_user(request):
@@ -281,25 +284,83 @@ def toggle_wishlist(request, product_id):
 
 
 
-
+@login_required
 def single_view(request, slug):
-    product = Product.objects.get(slug=slug)
+    product = get_object_or_404(Product, slug=slug)
 
+    # ⭐ Selected image logic (for switching images)
+    image_id = request.GET.get("image_id")
+    selected_image = None
+    if image_id:
+        try:
+            selected_image = product.images.get(id=image_id)
+        except ProductImage.DoesNotExist:
+            selected_image = None
+
+    # Wishlist & cart details
     wishlist_ids = []
     wishlist_count = 0
     cart_count = 0
 
     if request.user.is_authenticated:
-        wishlist_ids = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
+        wishlist_ids = Wishlist.objects.filter(
+            user=request.user
+        ).values_list('product_id', flat=True)
+
         wishlist_count = Wishlist.objects.filter(user=request.user).count()
         cart_count = Cart.objects.filter(user=request.user).count()
 
+    # ⭐ Check if user already reviewed
+    user_review = None
+    if request.user.is_authenticated:
+        user_review = Review.objects.filter(
+            user=request.user,
+            product=product
+        ).first()
+
+    # ⭐ Check if user is allowed to review (must be delivered)
+    can_review = False
+    if request.user.is_authenticated:
+        delivered_items = OrderItem.objects.filter(
+            order__user=request.user,
+            order__order_status="DELIVERED",
+            product=product
+        )
+
+        if delivered_items.exists():
+            can_review = True
+
+    # ⭐ Review submission
+    if request.method == "POST" and can_review and not user_review:
+        rating = request.POST.get("rating")
+        comment = request.POST.get("comment")
+
+        if not rating:
+            messages.error(request, "Please select a rating")
+        else:
+            Review.objects.create(
+                user=request.user,
+                product=product,
+                rating=rating,
+                comment=comment
+            )
+            messages.success(request, "Review submitted successfully!")
+            return redirect(f"/user/product/{product.slug}/")
+
     return render(request, "user/product_view.html", {
         "product": product,
+        "selected_image": selected_image,   # ⭐ IMPORTANT
         "wishlist_ids": list(wishlist_ids),
         "wishlist_count": wishlist_count,
-        "cart_count": cart_count
+        "cart_count": cart_count,
+        "user_review": user_review,
+        "can_review": can_review,
     })
+
+
+
+
+
 
 
 
@@ -364,26 +425,35 @@ def search_results(request):
 
 
 
-
 @login_required
 def add_to_cart(request, id):
     try:
         product = Product.objects.get(id=id)
     except Product.DoesNotExist:
-        return redirect("products")   # If product not found
+        return redirect("products")
 
     user = request.user
 
+    # ✅ Get quantity from product page (+ / - buttons)
+    quantity = int(request.POST.get("quantity", 1))
+
+    # Create or update cart item
     cart_item, created = Cart.objects.get_or_create(
         user=user,
         product=product
     )
 
-    if not created:
-        cart_item.quantity += 1
-        cart_item.save()
+    if created:
+        # First time adding product
+        cart_item.quantity = quantity
+    else:
+        # Already in cart → increase quantity
+        cart_item.quantity += quantity
 
-    return redirect("cart")   # <-- GO TO CART PAGE
+    cart_item.save()
+
+    return redirect("cart")
+
 def wishlist_page(request):
     items = Wishlist.objects.filter(user=request.user)
 
@@ -415,6 +485,9 @@ def cart_page(request):
         # "wishlist_count": wishlist_count,
         "cart_count": cart_count,
     })
+
+
+
 @login_required
 def add_to_wishlist(request, product_id):
     product = Product.objects.get(id=product_id)
@@ -460,9 +533,64 @@ def remove_cart(request, id):
     return redirect("cart")
 
 
-def checkout_page(request):
-    return render(request, "user/checkout.html")
 
+def checkout(request):
+    # 1️⃣ CHECK IF USER IS USING BUY NOW
+    buy_now_data = request.session.get("buy_now")
+
+    if buy_now_data:
+        product_id = buy_now_data["product_id"]
+        quantity = buy_now_data["quantity"]
+
+        product = Product.objects.get(id=product_id)
+        total = product.price * quantity
+
+        context = {
+            "mode": "buy_now",              # important
+            "product": product,
+            "quantity": quantity,
+            "total": total,
+        }
+        return render(request, "user/checkout.html", context)
+
+    # 2️⃣ OTHERWISE CHECKOUT IS FROM CART
+    cart_items = Cart.objects.filter(user=request.user)
+
+    if not cart_items.exists():
+        messages.error(request, "Your cart is empty")
+        return redirect("cart")
+
+    total_amount = sum(item.product.price * item.quantity for item in cart_items)
+
+    context = {
+        "mode": "cart",                     # important
+        "cart_items": cart_items,
+
+        "total": total_amount,
+    }
+
+    return render(request, "user/checkout.html",  {
+        "mode": "cart",
+        "cart_items": cart_items,
+        "total_amount": total_amount,   # ✔ FIXED (this was missing)
+    })
+
+
+
+def order_detail(request):
+    return render(request, 'user/order.html')
+
+
+
+
+
+@login_required
+def order_history(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+
+    return render(request, 'user/order_history.html', {
+        "orders": orders
+    })
 
 
 
@@ -492,7 +620,132 @@ def account_settings(request):
     return render(request, 'user/account_settings.html')
 
 
-def order_history(request):
-    return render(request, 'user/order_history.html')
+# def order_history(request):
+#     return render(request, 'user/order_history.html')
 
 
+@login_required
+def place_order(request):
+    if request.method != "POST":
+        return redirect("checkout")  # if someone loads directly
+
+    mode = request.POST.get("mode")
+
+    # BUY NOW
+    if mode == "buy_now":
+        product_id = request.POST.get("product_id")
+        quantity = int(request.POST.get("quantity", 1))
+
+        product = Product.objects.get(id=product_id)
+        total = product.price * quantity
+
+        order = Order.objects.create(
+            user=request.user,
+            total_amount=total,
+            full_name=request.POST.get("full_name"),
+
+            phone=request.POST.get("phone"),
+            address=request.POST.get("address"),
+            city=request.POST.get("city"),
+            state=request.POST.get("state"),
+            pincode=request.POST.get("pincode"),
+            payment_method=request.POST.get("payment_method"),
+        )
+
+        # Create OrderItem
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            product_title=product.title,
+            quantity=quantity,
+            price_at_purchase=product.price
+        )
+
+        return redirect("order_success", order_number=order.order_number)
+
+    # CART CHECKOUT
+    cart_items = Cart.objects.filter(user=request.user)
+    total_amount = sum(item.subtotal for item in cart_items)
+
+    order = Order.objects.create(
+        user=request.user,
+        total_amount=total_amount,
+        full_name=request.POST.get("full_name"),
+
+    phone=request.POST.get("phone"),
+        address=request.POST.get("address"),
+        city=request.POST.get("city"),
+        state=request.POST.get("state"),
+        pincode=request.POST.get("pincode"),
+        payment_method=request.POST.get("payment_method"),
+    )
+
+    # Create Order Items
+    for item in cart_items:
+        OrderItem.objects.create(
+            order=order,
+            product=item.product,
+            product_title=item.product.title,
+            quantity=item.quantity,
+            price_at_purchase=item.product.price
+        )
+
+    # Clear cart
+    cart_items.delete()
+
+    return redirect("order_success", order_number=order.order_number)
+
+
+def order_success(request, order_number):
+    order = Order.objects.get(order_number=order_number)
+    return render(request, "user/order_success.html", {"order": order})
+
+
+@login_required
+def order_detail(request, order_number):
+    order = get_object_or_404(Order, order_number=order_number, user=request.user)
+
+    # wishlist and cart counts
+    wishlist_count = Wishlist.objects.filter(user=request.user).count()
+    cart_count = Cart.objects.filter(user=request.user).count()
+
+    # Mark each item whether user reviewed or not
+    for item in order.items.all():
+        if item.product:
+            item.user_has_reviewed = item.product.reviews.filter(user=request.user).exists()
+        else:
+            item.user_has_reviewed = True  # no product = no review button
+
+    return render(request, "user/order.html", {
+        "order": order,
+        "wishlist_count": wishlist_count,
+        "cart_count": cart_count,
+    })
+
+
+@login_required
+def add_review(request, item_id):
+    item = get_object_or_404(OrderItem, id=item_id, order__user=request.user)
+
+    # Only allow review if delivered
+    if item.order.order_status != "DELIVERED":
+        return redirect("order_history")
+
+    # Prevent duplicate review
+    if Review.objects.filter(product=item.product, user=request.user).exists():
+        return redirect("order_history")
+
+    if request.method == "POST":
+        rating = request.POST.get("rating")
+        comment = request.POST.get("comment")
+
+        Review.objects.create(
+            product=item.product,
+            user=request.user,
+            rating=rating,
+            comment=comment
+        )
+
+        return redirect("order_history")
+
+    return render(request, "user/add_review.html", {"item": item})

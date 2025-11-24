@@ -580,14 +580,15 @@
                             <div class="qty-box">
                                 <form method="POST" action="{% url 'update_cart' item.id %}">
                                     {% csrf_token %}
-                                    <input type="hidden" name="action" value="decrement">
-                                    <button type="submit" class="qty-btn">-</button>
+<!--                                    <input type="hidden" name="action" value="decrement">-->
+<!--                                    <button type="submit" class="qty-btn">-</button>-->
                                 </form>
-                                <span>{{ item.quantity }}</span>
+                              <span>Qty: {{ item.quantity }}</span>
+
                                 <form method="POST" action="{% url 'update_cart' item.id %}">
                                     {% csrf_token %}
-                                    <input type="hidden" name="action" value="increment">
-                                    <button type="submit" class="qty-btn">+</button>
+<!--                                    <input type="hidden" name="action" value="increment">-->
+<!--                                    <button type="submit" class="qty-btn">+</button>-->
                                 </form>
                             </div>
 
@@ -635,9 +636,10 @@
                     <span>₹{{ total_amount }}</span>
                 </div>
 
-               <a href="{% url 'checkout_page' %}">
-    <button class="checkout-btn">Proceed to Checkout</button>
+           <a href="{% url 'checkout' %}" class="checkout-btn">
+    Proceed to Checkout
 </a>
+
 
             </div>
             {% endif %}
