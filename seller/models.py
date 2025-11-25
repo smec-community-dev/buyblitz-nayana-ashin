@@ -45,7 +45,6 @@ class Seller(models.Model):
 class Product(models.Model):
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, related_name="products")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products")
-
     sub_category = models.ForeignKey(
         SubCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name="products"
     )
@@ -56,7 +55,15 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
 
-    is_active = models.BooleanField(default=True)
+    # Existing field
+    is_active = models.BooleanField(default=True, help_text="Seller can hide/show product")
+
+    # ←←← ADD THIS NEW FIELD ←←←
+    is_approved = models.BooleanField(
+        default=False,
+        help_text="Admin approval required before product goes live"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -65,9 +72,7 @@ class Product(models.Model):
 
     @property
     def main_image(self):
-        return self.images.first().image.url if self.images.exists() else None
-
-
+        return self.images.first().image.url if self.images.exists() else "/static/images/no-image.png"
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to="products/")
