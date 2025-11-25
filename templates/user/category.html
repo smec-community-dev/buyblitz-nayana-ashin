@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Details - ShopHub</title>
+    <title>Categories - ShopHub</title>
     <style>
         * {
             margin: 0;
@@ -205,279 +206,184 @@
             border-radius: 3px;
         }
 
-        /* Order Details Section */
-        .order-details {
+        /* Main Content */
+        main {
             max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 20px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
 
         .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            font-size: 1rem;
+            color: var(--gray);
+            font-weight: 400;
+        }
+
+        /* Filter Section */
+        .filter-section {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
+            gap: 12px;
             flex-wrap: wrap;
-            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 45px;
+            animation: slideInUp 0.6s ease-out;
         }
 
-        .page-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .back-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 20px;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .back-btn:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
-        }
-
-        .order-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-
-        @media (max-width: 1024px) {
-            .order-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .order-card {
+        .filter-btn {
+            padding: 10px 22px;
+            border: 2px solid #ddd;
             background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: var(--shadow);
-            margin-bottom: 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #333;
+            font-size: 0.95rem;
         }
 
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #eaeaea;
+        .filter-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark);
+        .filter-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
-        .order-summary {
+        /* Categories Grid */
+        .categories-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
         }
 
-        .summary-item {
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            animation: scaleIn 0.5s ease-out backwards;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
         }
 
-        .summary-label {
-            font-size: 0.9rem;
-            color: var(--gray);
-            font-weight: 500;
+        .category-card:nth-child(1) { animation-delay: 0s; }
+        .category-card:nth-child(2) { animation-delay: 0.1s; }
+        .category-card:nth-child(3) { animation-delay: 0.2s; }
+        .category-card:nth-child(4) { animation-delay: 0.3s; }
+        .category-card:nth-child(5) { animation-delay: 0.4s; }
+        .category-card:nth-child(6) { animation-delay: 0.5s; }
+
+        .category-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.25);
         }
 
-        .summary-value {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .status-badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .status-processing {
-            background: rgba(255, 193, 7, 0.2);
-            color: #856404;
-        }
-
-        .status-shipped {
-            background: rgba(0, 123, 255, 0.2);
-            color: #004085;
-        }
-
-        .status-delivered {
-            background: rgba(40, 167, 69, 0.2);
-            color: #155724;
-        }
-
-        .status-cancelled {
-            background: rgba(220, 53, 69, 0.2);
-            color: #721c24;
-        }
-
-        .order-items {
-            margin-top: 1.5rem;
-        }
-
-        .order-item {
-            display: flex;
-            gap: 1.5rem;
-            padding: 1.5rem 0;
-            border-bottom: 1px solid #eaeaea;
-        }
-
-        .order-item:last-child {
-            border-bottom: none;
-        }
-
-        .item-image {
-            width: 100px;
-            height: 100px;
+        .category-image {
+            height: 200px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
             color: white;
-            flex-shrink: 0;
+            font-size: 56px;
+            transition: transform 0.4s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .item-details {
-            flex: 1;
+        .category-card:hover .category-image {
+            transform: scale(1.08);
         }
 
-        .item-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
+        .category-image::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 215, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
-        .item-category {
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+        .category-card:hover .category-image::before {
+            opacity: 1;
         }
 
-        .item-price {
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .item-quantity {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        .address-details {
-            margin-top: 1.5rem;
-        }
-
-        .address-line {
-            margin-bottom: 0.5rem;
-            line-height: 1.5;
-        }
-
-        .payment-details {
-            margin-top: 1.5rem;
-        }
-
-        .payment-method {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .payment-icon {
-            width: 50px;
-            height: 50px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .payment-info {
-            flex: 1;
-        }
-
-        .payment-type {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .payment-number {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        .invoice-section {
+        .category-content {
+            padding: 24px 20px;
             text-align: center;
-            padding: 2rem;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin-top: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .invoice-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .category-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
         }
 
-        .invoice-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .invoice-description {
+        .category-description {
+            font-size: 0.9rem;
             color: var(--gray);
-            margin-bottom: 1.5rem;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            min-height: 40px;
         }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
+        .category-count {
+            font-size: 0.85rem;
+            color: var(--primary);
             font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
+            margin-bottom: 16px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        .view-category-btn {
+            padding: 10px 24px;
+            background-color: var(--primary);
             color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.95rem;
+            width: 100%;
         }
 
-        .btn-primary:hover {
+        .view-category-btn:hover {
+            background-color: var(--secondary);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+        }
+
+        .view-category-btn:active {
+            transform: translateY(0);
         }
 
         /* Footer */
@@ -485,7 +391,6 @@
             background: var(--dark);
             color: white;
             padding: 4rem 0 2rem;
-            margin-top: 4rem;
         }
 
         .footer-content {
@@ -563,7 +468,54 @@
             font-size: 0.9rem;
         }
 
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
         /* Responsive Design */
+        @media (max-width: 1024px) {
+            .categories-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 25px;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            main {
+                padding: 30px 20px;
+            }
+        }
+
         @media (max-width: 768px) {
             .header-wrapper {
                 flex-direction: column;
@@ -579,34 +531,84 @@
                 gap: 1rem;
             }
 
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
+            .categories-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
             }
 
-            .order-summary {
-                grid-template-columns: 1fr;
+            .page-header h1 {
+                font-size: 1.8rem;
             }
 
-            .order-item {
-                flex-direction: column;
-                text-align: center;
+            .page-header p {
+                font-size: 0.9rem;
             }
 
-            .item-image {
-                align-self: center;
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .category-content {
+                padding: 16px 12px;
+            }
+
+            .view-category-btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
             }
         }
 
         @media (max-width: 480px) {
-            .order-card {
-                padding: 1.5rem;
+            .logo {
+                font-size: 1.2rem;
             }
 
-            .card-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
+            .search-bar {
+                min-width: auto;
+            }
+
+            .header-actions {
+                gap: 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            nav a {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 8px;
+            }
+
+            .page-header p {
+                font-size: 0.85rem;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .filter-section {
+                gap: 8px;
+                margin-bottom: 30px;
+            }
+
+            .filter-btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+
+            main {
+                padding: 20px 15px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
             }
         }
     </style>
@@ -647,193 +649,103 @@
 
         <nav>
             <ul class="nav-links">
-                <li><a href="home.html">Home</a></li>
-                <li><a href="{% url 'products' %}">Products</a></li>
+    <li><a href="{% url 'home' %}">Home</a></li>
+     <li><a href="{% url 'products' %}">Products</a></li>
                 <li><a href="{% url 'deals' %}">Deals</a></li>
                 <li><a href="{% url 'trending' %}">Trending</a></li>
                 <li><a href="{% url 'about' %}">About</a></li>
                 <li><a href="{% url 'contact' %}">Contact</a></li>
-            </ul>
+</ul>
+
         </nav>
     </header>
 
-    <!-- Order Details Section -->
+    <!-- Main Content -->
+    <main>
+        <div class="page-header">
+            <h1>Shop by Category</h1>
+            <p>Explore our wide range of products organized by category</p>
+        </div>
 
-    <section class="order-details">
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <button class="filter-btn active">All Categories</button>
+            <button class="filter-btn">Popular</button>
+            <button class="filter-btn">New</button>
+            <button class="filter-btn">Trending</button>
+        </div>
 
-    <div class="page-header">
-        <h1 class="page-title">Order Details</h1>
+        <!-- Categories Grid -->
+        <div class="categories-grid">
+            <!-- Electronics -->
 
-        <a href="{% url 'order_history' %}" class="back-btn">
+            <div class="category-card">
 
-            <span>←</span> Back to Orders
-        </a>
-    </div>
-
-    <div class="order-container">
-
-        <!-- ORDER SUMMARY -->
-        <div class="order-card">
-            <div class="card-header">
-                <h2 class="card-title">Order Summary</h2>
-
-                <div class="status-badge
-                    {% if order.order_status == 'DELIVERED' %}status-delivered
-                    {% elif order.order_status == 'SHIPPED' %}status-shipped
-                    {% elif order.order_status == 'PROCESSING' %}status-processing
-                    {% elif order.order_status == 'CANCELLED' %}status-cancelled
-                    {% endif %}">
-                    {{ order.order_status }}
+                <div class="category-image">📱</div>
+                <div class="category-content">
+                    <div class="category-name">Electronics</div>
+                    <div class="category-description">Smartphones, laptops, and gadgets</div>
+                    <div class="category-count">2,450 Products</div>
+                    <button class="view-category-btn">View</button>
                 </div>
             </div>
 
-            <div class="order-summary">
-                <div class="summary-item">
-                    <span class="summary-label">Order ID</span>
-                    <span class="summary-value">#{{ order.order_number }}</span>
+            <!-- Fashion -->
+            <div class="category-card">
+                <div class="category-image">👕</div>
+                <div class="category-content">
+                    <div class="category-name">Fashion</div>
+                    <div class="category-description">Clothing, shoes, and accessories</div>
+                    <div class="category-count">5,890 Products</div>
+                    <button class="view-category-btn">View</button>
                 </div>
+            </div>
 
-                <div class="summary-item">
-                    <span class="summary-label">Order Date</span>
-                    <span class="summary-value">{{ order.created_at|date:"F d, Y" }}</span>
+            <!-- Home & Garden -->
+            <div class="category-card">
+                <div class="category-image">🏠</div>
+                <div class="category-content">
+                    <div class="category-name">Home & Garden</div>
+                    <div class="category-description">Furniture and home decor items</div>
+                    <div class="category-count">1,340 Products</div>
+                    <button class="view-category-btn">View</button>
                 </div>
+            </div>
 
-                <div class="summary-item">
-                    <span class="summary-label">Total Amount</span>
-                    <span class="summary-value">₹{{ order.total_amount }}</span>
+            <!-- Sports & Outdoors -->
+            <div class="category-card">
+                <div class="category-image">⚽</div>
+                <div class="category-content">
+                    <div class="category-name">Sports & Outdoors</div>
+                    <div class="category-description">Sports equipment and outdoor gear</div>
+                    <div class="category-count">980 Products</div>
+                    <button class="view-category-btn">View</button>
                 </div>
+            </div>
 
-                <div class="summary-item">
-                    <span class="summary-label">Payment Method</span>
-                    <span class="summary-value">{{ order.get_payment_method_display }}</span>
+            <!-- Beauty & Personal Care -->
+            <div class="category-card">
+                <div class="category-image">💄</div>
+                <div class="category-content">
+                    <div class="category-name">Beauty & Care</div>
+                    <div class="category-description">Cosmetics and personal care products</div>
+                    <div class="category-count">3,210 Products</div>
+                    <button class="view-category-btn">View</button>
+                </div>
+            </div>
+
+            <!-- Books & Media -->
+            <div class="category-card">
+                <div class="category-image">📚</div>
+                <div class="category-content">
+                    <div class="category-name">Books & Media</div>
+                    <div class="category-description">Books, movies, and educational content</div>
+                    <div class="category-count">4,560 Products</div>
+                    <button class="view-category-btn">View</button>
                 </div>
             </div>
         </div>
-
-        <!-- ORDER ITEMS -->
-        <div class="order-card">
-            <div class="card-header">
-                <h2 class="card-title">Order Items</h2>
-            </div>
-
-            <div class="order-items">
-                {% for item in order.items.all %}
-                <div class="order-item">
-
-                    <div class="item-image">
-                        {% if item.product %}
-                            <img src="{{ item.product.main_image }}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
-                        {% else %}
-                            📦
-                        {% endif %}
-                    </div>
-
-                    <div class="item-details">
-                        <h3 class="item-name">{{ item.product_title }}</h3>
-
-                        {% if item.product and item.product.category %}
-                        <p class="item-category">{{ item.product.category.name }}</p>
-                        {% endif %}
-
-                        <p class="item-price">₹{{ item.price_at_purchase }}</p>
-                        <p class="item-quantity">Quantity: {{ item.quantity }}</p>
-                        <!-- ⭐ REVIEW BUTTON SECTION ⭐ -->
-{% if order.order_status == "DELIVERED" %}
-    {% if not item.user_has_reviewed %}
-        <a href="{% url 'single_view' item.product.slug %}?review=1"
-           class="btn btn-success"
-           style="padding:8px 15px;margin-top:10px;display:inline-block;border-radius:8px;">
-           ⭐ Add Review
-        </a>
-    {% else %}
-        <p style="color: green; font-weight:600; margin-top:10px;">
-            ✓ You already reviewed this product
-        </p>
-    {% endif %}
-{% endif %}
-
-
-
-<!-- END -->
-
-                    </div>
-
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- DELIVERY ADDRESS -->
-        <div class="order-card">
-            <div class="card-header">
-                <h2 class="card-title">Delivery Address</h2>
-            </div>
-
-            <div class="address-details">
-                <p class="address-line"><strong>{{ order.full_name }}</strong></p>
-                <p class="address-line">{{ order.address }}</p>
-                <p class="address-line">{{ order.city }}, {{ order.state }} - {{ order.pincode }}</p>
-                <p class="address-line">Phone: {{ order.phone }}</p>
-            </div>
-        </div>
-
-        <!-- PAYMENT DETAILS -->
-        <div class="order-card">
-            <div class="card-header">
-                <h2 class="card-title">Payment Details</h2>
-            </div>
-
-            <div class="payment-details">
-
-                <div class="payment-method">
-                    <div class="payment-icon">
-                        {% if order.payment_method == "COD" %} 💵 {% else %} 💳 {% endif %}
-                    </div>
-
-                    <div class="payment-info">
-                        <p class="payment-type">{{ order.get_payment_method_display }}</p>
-                        <p class="payment-number">Status: {{ order.payment_status }}</p>
-                    </div>
-                </div>
-
-                <div class="order-summary">
-                    <div class="summary-item">
-                        <span class="summary-label">Subtotal</span>
-                        <span class="summary-value">₹{{ order.total_amount }}</span>
-                    </div>
-
-                    <div class="summary-item">
-                        <span class="summary-label">Shipping</span>
-                        <span class="summary-value">Free</span>
-                    </div>
-
-                    <div class="summary-item">
-                        <span class="summary-label">Total</span>
-                        <span class="summary-value" style="color: var(--primary); font-size: 1.3rem;">
-                            ₹{{ order.total_amount }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-        <!-- Invoice Download -->
-
+    </main>
 
     <!-- Footer -->
     <footer>
@@ -853,8 +765,8 @@
                 <h3>Shop</h3>
                 <ul class="footer-links">
                     <li><a href="category.html">All Products</a></li>
-                    <li><a href="deals.html">Deals</a></li>
                     <li><a href="trending.html">Trending</a></li>
+                    <li><a href="deals.html">Deals</a></li>
                     <li><a href="category.html">New Arrivals</a></li>
                     <li><a href="category.html">Best Sellers</a></li>
                 </ul>
@@ -889,24 +801,20 @@
     </footer>
 
     <script>
-        // Add to Cart Functionality
-        document.querySelectorAll('.add-to-cart').forEach(button => {
-            button.addEventListener('click', function() {
-                const productCard = this.closest('.product-card');
-                const productName = productCard.querySelector('.product-name').textContent;
-                const productPrice = productCard.querySelector('.product-price').textContent;
+        // Filter button functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
 
-                // Animation
-                this.innerHTML = '✓';
-                this.style.background = '#28a745';
-
-                setTimeout(() => {
-                    this.innerHTML = '+';
-                    this.style.background = '';
-                }, 2000);
-
-                // In a real app, this would add to cart
-                console.log(Added to cart: ${productName} - ${productPrice});
+        // Category card click
+        document.querySelectorAll('.view-category-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const categoryName = this.parentElement.querySelector('.category-name').textContent;
+                alert(Viewing ${categoryName} products!);
             });
         });
 
@@ -917,6 +825,29 @@
                 alert(Searching for: ${searchTerm});
                 // In a real app, this would redirect to search results
             }
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all category cards
+        document.querySelectorAll('.category-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
         });
     </script>
 </body>

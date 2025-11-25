@@ -189,22 +189,26 @@
     <!-- FORM START -->
     <form id="registration-form" method="POST" action="/user/register/">
         {% csrf_token %}
-
         <div class="input-group">
-            <label>First Name</label>
-            <div class="input-wrapper">
-                <span class="input-icon">👤</span>
-                <input type="text" name="first-name" required placeholder="Enter first name">
-            </div>
-        </div>
+    <label>First Name</label>
+    <div class="input-wrapper">
+        <span class="input-icon">👤</span>
+        <input type="text" name="first_name" required placeholder="Enter first name">
+    </div>
+</div>
 
-        <div class="input-group">
-            <label>Last Name</label>
-            <div class="input-wrapper">
-                <span class="input-icon">👤</span>
-                <input type="text" name="last-name" required placeholder="Enter last name">
-            </div>
-        </div>
+<div class="input-group">
+    <label>Last Name</label>
+    <div class="input-wrapper">
+        <span class="input-icon">👤</span>
+        <input type="text" name="last_name" required placeholder="Enter last name">
+    </div>
+</div>
+
+
+
+
+
 
         <div class="input-group">
             <label>Email</label>

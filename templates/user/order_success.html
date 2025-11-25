@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Successful - ShopHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* ==========================
+           GLOBAL STYLES (Same as Home Page)
+           ========================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --accent: #f72585;
+            --success: #4cc9a7;
+            --warning: #f9c74f;
+            --danger: #f94144;
+            --dark: #1a1a2e;
+            --dark-light: #2d2d44;
+            --light: #f8f9fa;
+            --light-gray: #e9ecef;
+            --gray: #6c757d;
+            --border: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* ==========================
+           HEADER STYLES (Same as Home Page)
+           ========================== */
+        .header {
+            width: 100%;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .mobile-nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+
+        .mobile-nav-toggle:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        /* Updated Search Bar (Product.html Style) */
+        .search-bar {
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-bar form {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 50px;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 5px 15px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        .search-bar i {
+            color: var(--primary);
+            font-size: 18px;
+            margin-right: 12px;
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            background: transparent;
+            color: #333;
+            width: 100%;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            box-shadow: 0px 4px 10px rgba(90,66,255,0.4);
+        }
+
+        .search-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            position: relative;
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            background: rgba(67, 97, 238, 0.08);
+        }
+
+        .action-btn:hover {
+            background: rgba(67, 97, 238, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .badge {
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav {
+            width: 100%;
+            background: #fff;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 10px 0;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1.5rem;
+            right: 1.5rem;
+            height: 3px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-btn {
+            background: rgba(67, 97, 238, 0.1);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            color: var(--dark);
+        }
+
+        .profile-btn:hover {
+            background: rgba(67, 97, 238, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .profile-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 0.5rem;
+            width: 200px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 0.75rem 0;
+            display: none;
+            animation: fadeInMenu 0.2s ease-out;
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .profile-menu a:hover {
+            background: rgba(67, 97, 238, 0.08);
+            padding-left: 1.5rem;
+        }
+
+        .profile-menu hr {
+            border: none;
+            height: 1px;
+            background: var(--border);
+            margin: 0.5rem 0;
+        }
+
+        @keyframes fadeInMenu {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-btn {
+            background: rgba(67, 97, 238, 0.1);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.05);
+            background: rgba(67, 97, 238, 0.15);
+        }
+
+        /* ==========================
+           ORDER SUCCESS STYLES
+           ========================== */
+        .success-section {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #f6f7fb, #e8f1ff);
+            min-height: calc(100vh - 400px);
+            display: flex;
+            align-items: center;
+        }
+
+        .success-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--success), #2ecc71);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+            color: white;
+            animation: bounce 1s ease infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        .success-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .success-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .order-number {
+            display: inline-block;
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            margin: 1.5rem 0;
+            border: 2px dashed var(--primary);
+        }
+
+        .order-details {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+
+        .order-details h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .order-details h3 i {
+            color: var(--primary);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(67, 97, 238, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        /* ==========================
+           FOOTER STYLES (Same as Home Page)
+           ========================== */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .footer-section p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        /* ==========================
+           RESPONSIVE STYLES
+           ========================== */
+
+        /* Tablets (768px - 1023px) */
+        @media (max-width: 1023px) {
+            .success-container {
+                padding: 2.5rem;
+            }
+
+            .success-title {
+                font-size: 2.2rem;
+            }
+
+            .success-icon {
+                width: 90px;
+                height: 90px;
+                font-size: 2.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Small tablets and large phones (600px - 767px) */
+        @media (max-width: 767px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-bar {
+                min-width: 100%;
+                order: 3;
+            }
+
+            .mobile-nav-toggle {
+                display: block;
+                position: absolute;
+                right: 1.5rem;
+                top: 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+                margin-top: 1rem;
+                text-align: center;
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 1rem;
+                font-size: 1rem;
+                width: 100%;
+                border-radius: var(--radius);
+            }
+
+            .success-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .success-title {
+                font-size: 2rem;
+            }
+
+            .success-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .order-details {
+                padding: 1.5rem;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Mobile phones (480px - 599px) */
+        @media (max-width: 599px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .success-section {
+                padding: 2rem 0;
+            }
+
+            .success-container {
+                padding: 1.5rem;
+            }
+
+            .success-title {
+                font-size: 1.75rem;
+            }
+
+            .success-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+
+            .order-number {
+                font-size: 1rem;
+                padding: 0.6rem 1.2rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .header-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+        }
+
+        /* Small phones (320px - 479px) */
+        @media (max-width: 479px) {
+            .success-title {
+                font-size: 1.5rem;
+            }
+
+            .success-subtitle {
+                font-size: 1rem;
+            }
+
+            .order-details {
+                padding: 1rem;
+            }
+
+            .order-details h3 {
+                font-size: 1.1rem;
+            }
+
+            .btn {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .profile-dropdown {
+                width: 100%;
+            }
+
+            .profile-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <!-- Logo + Mobile Toggle -->
+            <div class="header-left">
+                <a href="{% url 'home' %}" class="logo">🛍 ShopHub</a>
+
+                <!-- Mobile Navigation Toggle -->
+                <button class="mobile-nav-toggle" id="mobileNavToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <form action="{% url 'products' %}" method="GET">
+                    <i class="fas fa-search"></i>
+                    <input type="text" name="q" placeholder="Search for products, brands and more..." value="{{ request.GET.q }}">
+                    <button type="submit" class="search-btn">Search</button>
+                </form>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="header-actions">
+                <a href="{% url 'wishlist' %}" class="action-btn">
+                    <i class="fas fa-heart"></i> Wishlist
+                    <span class="badge">3</span>
+                </a>
+
+                <a href="{% url 'cart' %}" class="action-btn">
+                    <i class="fas fa-shopping-cart"></i> Cart
+                    <span class="badge">5</span>
+                </a>
+
+                <div class="profile-dropdown">
+                    <button class="profile-btn">
+                        <i class="fas fa-user"></i> JohnDoe
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+
+                    <div class="profile-menu">
+                        <a href="{% url 'profile' %}"><i class="fas fa-user-circle"></i> My Profile</a>
+                        <a href="{% url 'order_history' %}"><i class="fas fa-box"></i> My Orders</a>
+                        <a href="{% url 'wishlist' %}"><i class="fas fa-heart"></i> Wishlist</a>
+                        <a href="{% url 'cart' %}"><i class="fas fa-cart-shopping"></i> Cart</a>
+                        <hr>
+                        <a href="{% url 'logout' %}"><i class="fas fa-right-from-bracket"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="nav" id="navMenu">
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'products' %}">Products</a></li>
+                <li><a href="{% url 'deals' %}">Deals</a></li>
+                <li><a href="{% url 'trending' %}">Trending</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Order Success Content -->
+    <section class="success-section">
+        <div class="container">
+            <div class="success-container">
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+
+                <h1 class="success-title">Order Placed Successfully!</h1>
+                <p class="success-subtitle">Thank you for your purchase. Your order has been confirmed and will be shipped soon.</p>
+
+
+
+                <div class="order-number">
+    Order #{{ order.order_number }}
+</div>
+                <div class="order-details">
+    <h3><i class="fas fa-info-circle"></i> Order Details</h3>
+
+    <div class="detail-row">
+        <span class="detail-label">Order Date:</span>
+        <span class="detail-value">{{ order.created_at|date:"F j, Y" }}</span>
+    </div>
+
+    <div class="detail-row">
+        <span class="detail-label">Total Amount:</span>
+        <span class="detail-value">₹{{ order.total_amount }}</span>
+    </div>
+
+    <div class="detail-row">
+        <span class="detail-label">Payment Method:</span>
+        <span class="detail-value">{{ order.payment_method }}</span>
+    </div>
+
+    <div class="detail-row">
+        <span class="detail-label">Shipping Address:</span>
+        <span class="detail-value">
+            {{ order.full_name }},<br>
+            {{ order.address }},<br>
+            {{ order.city }}, {{ order.state }} - {{ order.pincode }}
+        </span>
+    </div>
+
+    <div class="detail-row">
+        <span class="detail-label">Expected Delivery:</span>
+        <span class="detail-value">
+            {{ order.created_at|date:"F j, Y" }}
+        </span>
+    </div>
+</div>
+
+
+
+
+                <p>You will receive an email confirmation shortly. You can track your order status in your account.</p>
+
+                <div class="action-buttons">
+                    <a href="{% url 'order_history' %}" class="btn btn-primary">
+                        <i class="fas fa-box"></i> View My Orders
+                    </a>
+                    <a href="{% url 'products' %}" class="btn btn-secondary">
+                        <i class="fas fa-shopping-bag"></i> Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ShopHub</h3>
+                    <p>Your trusted online shopping destination for quality products at the best prices. We're committed to providing exceptional customer service.</p>
+                    <div class="social-links">
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Shop</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'products' %}">All Products</a></li>
+                        <li><a href="{% url 'deals' %}">Deals</a></li>
+                        <li><a href="{% url 'trending' %}">Trending</a></li>
+                        <li><a href="{% url 'products' %}">New Arrivals</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Customer Service</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                        <li><a href="#">Shipping Information</a></li>
+                        <li><a href="#">Track Your Order</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 ShopHub. All rights reserved. Made with <i class="fas fa-heart" style="color: var(--accent);"></i> for amazing shopping experiences</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        const mobileNavToggle = document.getElementById('mobileNavToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        mobileNavToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('show');
+        });
+
+        // Profile Dropdown Toggle
+        const profileBtn = document.querySelector(".profile-btn");
+        const profileMenu = document.querySelector(".profile-menu");
+
+        if (profileBtn) {
+            profileBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                profileMenu.style.display = profileMenu.style.display === "block" ? "none" : "block";
+            });
+
+            // Hide dropdown when clicking outside
+            document.addEventListener("click", () => {
+                profileMenu.style.display = "none";
+            });
+        }
+
+        // Animation on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const successContainer = document.querySelector('.success-container');
+            successContainer.style.opacity = '0';
+            successContainer.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                successContainer.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                successContainer.style.opacity = '1';
+                successContainer.style.transform = 'translateY(0)';
+            }, 300);
+        });
+    </script>
+</body>
+</html>
