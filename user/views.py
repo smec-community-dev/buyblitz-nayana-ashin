@@ -1,6 +1,10 @@
 
 
 # Create your views here.
+import razorpay
+from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -9,6 +13,7 @@ from django.template.defaultfilters import title
 from user.models import Order,OrderItem,Review
 from core.models import User,Category
 from django.shortcuts import get_object_or_404
+
 
 from django.db.models import Q
 from seller.models import Product
@@ -550,14 +555,10 @@ def remove_cart(request, id):
 
 @login_required
 def checkout(request):
-
-
     # If user coming from cart → remove old buy_now session
     if request.GET.get("from_cart"):
         if "buy_now" in request.session:
             del request.session["buy_now"]
-
-
 
     buy_now_data = request.session.get("buy_now")
 
@@ -571,8 +572,11 @@ def checkout(request):
             "mode": "buy_now",
             "product": product,
             "quantity": quantity,
-            "total": total,          # ✅ FIXED (was total_amount)
-            "total_amount": total,   # Optional if HTML uses this
+            "total": total,
+            "total_amount": total,
+
+            # ⭐ Razorpay key sent to template
+            "RAZORPAY_KEY_ID": settings.RAZORPAY_KEY_ID
         })
 
     # CART MODE
@@ -582,13 +586,12 @@ def checkout(request):
     return render(request, "user/checkout.html", {
         "mode": "cart",
         "cart_items": cart_items,
-        "total": total_amount,        # ✅ FIXED (added)
-        "total_amount": total_amount, # Already correct
+        "total": total_amount,
+        "total_amount": total_amount,
+
+        # ⭐ Razorpay key sent to template
+        "RAZORPAY_KEY_ID": settings.RAZORPAY_KEY_ID
     })
-
-
-
-
 
 
 def order_detail(request):
@@ -768,3 +771,148 @@ def add_review(request, item_id):
         return redirect("order_history")
 
     return render(request, "user/add_review.html", {"item": item})
+
+
+
+
+client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+@csrf_exempt
+def create_order(request):
+    if request.method == "POST":
+        amount = float(request.POST.get("amount")) * 100
+        amount = int(amount)
+        # Convert to paise (Razorpay uses paise)
+
+        data = {
+            "amount": amount,
+            "currency": "INR",
+            "receipt": "receipt#1",
+        }
+
+        order = client.order.create(data=data)
+        return JsonResponse(order)
+
+@csrf_exempt
+def payment_success(request):
+    if request.method == "POST":
+        payment_id = request.POST.get("razorpay_payment_id")
+        order_id = request.POST.get("razorpay_order_id")
+        signature = request.POST.get("razorpay_signature")
+
+        # Store payment details temporarily in session
+        request.session["payment_success"] = {
+            "payment_id": payment_id,
+            "order_id": order_id,
+            "signature": signature
+        }
+
+        return JsonResponse({"status": "success"})
+
+@login_required
+def place_online_order(request):
+    # Razorpay data must exist
+    if not request.session.get("online_payment"):
+        return redirect("checkout")
+
+    payment_data = request.session["online_payment"]
+
+    # Extract payment info
+    razorpay_payment_id = payment_data.get("payment_id")
+    razorpay_order_id = payment_data.get("order_id")
+    razorpay_signature = payment_data.get("signature")
+    total_amount = payment_data.get("amount")
+    mode = payment_data.get("mode")
+
+    # =====================================
+    # 🚀 BUY NOW ORDER
+    # =====================================
+    if mode == "buy_now":
+        buy_now = request.session.get("buy_now")
+        if not buy_now:
+            return redirect("checkout")
+
+        product = Product.objects.get(id=buy_now["product_id"])
+        quantity = buy_now["quantity"]
+
+        order = Order.objects.create(
+            user=request.user,
+            total_amount=total_amount,
+            full_name=payment_data.get("full_name"),
+            phone=payment_data.get("phone"),
+            address=payment_data.get("address"),
+            city=payment_data.get("city"),
+            state=payment_data.get("state"),
+            pincode=payment_data.get("pincode"),
+
+            payment_method="ONLINE",
+            payment_status="PAID",
+
+            razorpay_payment_id=razorpay_payment_id,
+            razorpay_order_id=razorpay_order_id,
+            razorpay_signature=razorpay_signature,
+        )
+
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            product_title=product.title,
+            quantity=quantity,
+            price_at_purchase=product.price
+        )
+
+        del request.session["buy_now"]  # CLEAR
+
+    # =====================================
+    # 🛒 CART ORDER
+    # =====================================
+    else:
+        cart_items = Cart.objects.filter(user=request.user)
+
+        order = Order.objects.create(
+            user=request.user,
+            total_amount=total_amount,
+            full_name=payment_data.get("full_name"),
+            phone=payment_data.get("phone"),
+            address=payment_data.get("address"),
+            city=payment_data.get("city"),
+            state=payment_data.get("state"),
+            pincode=payment_data.get("pincode"),
+
+            payment_method="ONLINE",
+            payment_status="PAID",
+
+            razorpay_payment_id=razorpay_payment_id,
+            razorpay_order_id=razorpay_order_id,
+            razorpay_signature=razorpay_signature,
+        )
+
+        for item in cart_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                product_title=item.product.title,
+                quantity=item.quantity,
+                price_at_purchase=item.product.price
+            )
+
+        Cart.objects.filter(user=request.user).delete()  # CLEAR CART
+
+    # Clear session payment data
+    del request.session["online_payment"]
+
+    return redirect("order_success", order_number=order.order_number)
+
+
+@csrf_exempt
+@login_required
+def store_online_payment(request):
+    import json
+    data = json.loads(request.body)
+
+    print("🔥 PAYMENT SESSION SAVED:", data)
+
+    request.session["online_payment"] = data
+    request.session.modified = True
+
+    return JsonResponse({"status": "saved"})
+

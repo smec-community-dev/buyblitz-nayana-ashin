@@ -93,4 +93,12 @@ path("wishlist/toggle/<int:product_id>/", views.toggle_wishlist, name="toggle_wi
 path("review/<int:item_id>/", views.add_review, name="add_review"),
 
 
+path("create_order/", views.create_order, name="create_order"),
+path("payment_success/", views.payment_success, name="payment_success"),
+path("place_online_order/", views.place_online_order, name="place_online_order"),
+path("store_online_payment/", views.store_online_payment, name="store_online_payment"),
+
+
+
+
 ]
