@@ -43,7 +43,7 @@ SECRET_KEY = 'django-insecure-))&$b4*qu(id8p29p5y^jk(n%@py!825c3j4_f@oc$b@#wj&ca
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 AUTH_USER_MODEL = 'core.User'
 
