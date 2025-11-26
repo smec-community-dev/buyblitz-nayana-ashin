@@ -733,12 +733,10 @@
                     <span>👤</span> Admin
                 </a>
                 <a href="notifications.html">
-                    <span>🔔</span> Notifications
+                    <span>🔔</span>
                     <span class="badge">12</span>
                 </a>
-                <a href="settings.html">
-                    <span>⚙️</span> Settings
-                </a>
+
             </div>
         </div>
 
@@ -747,8 +745,10 @@
         <li><a href="home.html">Home</a></li>
         <li><a href="{% url 'admin_cz:admin_categories' %}">Categories</a>
 </li>
-        <li><a href="deals.html">Deals</a></li>
-        <li><a href="admin-dashboard.html" class="active">Dashboard</a></li>
+               <li><a href="{% url 'admin_cz:admin_subcategories' %}">Subcategories</a>
+</li>
+        <li><a href="{% url 'admin_cz:admin_orders'%}">Order</a></li>
+
 
         <!-- THIS IS CORRECT -->
        <li><a href="{% url 'admin_cz:admin_products' %}">Products</a></li>
@@ -766,14 +766,7 @@
             <div class="dashboard-header">
                 <h1 class="page-title">Admin Dashboard</h1>
                 <p class="subtitle">Welcome back, {{ user.get_full_name|default:"Admin" }}!</p>
-                <div class="dashboard-actions">
-                    <button class="btn btn-secondary">
-                        <span>📊</span> Generate Report
-                    </button>
-                    <button class="btn btn-primary">
-                        <span>➕</span> Add New Product
-                    </button>
-                </div>
+
             </div>
 
             <!-- Stats Grid -->
@@ -830,9 +823,8 @@
                 <div class="chart-container">
                     <div class="chart-header">
                         <h2 class="section-title">Weekly Sales Trend</h2>
-                        <a href="#" class="view-all">
-                            View Details <span>→</span>
-                        </a>
+
+
                     </div>
                     <div class="chart-container">
                         <canvas id="salesChart"></canvas>
@@ -842,7 +834,7 @@
                 <div class="recent-activities">
                     <div class="activities-header">
                         <h2 class="section-title">Recent Orders</h2>
-                        <a href="#" class="view-all">
+                        <a href="{% url 'admin_cz:admin_orders' %}" class="view-all">
                             View All <span>→</span>
                         </a>
                     </div>
@@ -853,7 +845,7 @@
                                 <span>🛒</span>
                             </div>
                             <div class="activity-content">
-                                <div class="activity-title">Order #{{ o.id }}</div>
+                                <div class="activity-title">Order {{ o.id }}</div>
                                 <div class="activity-desc">{{ o.customer }} - ₹{{ o.amount|floatformat:0 }}</div>
                                 <div class="activity-time">{{ o.product_count }} items</div>
                             </div>
@@ -873,7 +865,7 @@
             <div class="table-container">
                 <div style="padding: 1.5rem; background: #f8f9fa; display: flex; justify-content: space-between;">
                     <h3 style="margin: 0;">Top Selling Products</h3>
-                    <a href="#" style="color: var(--primary);">View All →</a>
+                    <a href="{% url 'admin_cz:admin_products' %}" style="color: var(--primary);">View All →</a>
                 </div>
                 <table>
                     <thead><tr>
