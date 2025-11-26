@@ -7,10 +7,9 @@
     <title>Your Cart - ShopHub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-
         a {
-    text-decoration: none !important;
-}
+            text-decoration: none !important;
+        }
 
         * {
             margin: 0;
@@ -257,6 +256,10 @@
             border-radius: 10px;
         }
 
+        .cart-details {
+            flex: 1;
+        }
+
         .cart-details h3 {
             margin: 0;
             font-size: 18px;
@@ -457,14 +460,30 @@
             font-size: 0.9rem;
         }
 
-        /* Responsive Design */
+        /* Enhanced Responsive Design */
+        @media (max-width: 1200px) {
+            .cart-container {
+                gap: 15px;
+            }
+
+            .cart-item img {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
         @media (max-width: 1024px) {
             .cart-container {
                 flex-direction: column;
             }
+
+            .cart-summary {
+                order: -1;
+                margin-bottom: 20px;
+            }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .header-wrapper {
                 flex-direction: column;
                 gap: 1rem;
@@ -478,14 +497,74 @@
             .nav-links {
                 gap: 1rem;
             }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+                margin: 1rem auto;
+            }
+
+            .cart-items {
+                padding: 15px;
+            }
 
             .cart-item {
                 flex-direction: column;
                 text-align: center;
+                padding: 15px;
+                background: #f9f9f9;
+                border-radius: 10px;
+                margin-bottom: 15px;
             }
 
             .cart-item img {
                 align-self: center;
+                width: 140px;
+                height: 140px;
+            }
+
+            .cart-details {
+                text-align: center;
+            }
+
+            .qty-box {
+                justify-content: center;
+            }
+
+            .cart-summary {
+                padding: 15px;
+            }
+
+            .header-actions {
+                gap: 1rem;
+            }
+
+            .header-actions a {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .nav-links {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 12px 20px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .social-links {
+                justify-content: center;
             }
         }
 
@@ -495,7 +574,89 @@
             }
 
             .container {
-                padding: 0 15px;
+                padding: 0 10px;
+            }
+
+            .cart-items {
+                padding: 10px;
+            }
+
+            .cart-item {
+                padding: 10px;
+            }
+
+            .cart-item img {
+                width: 120px;
+                height: 120px;
+            }
+
+            .cart-details h3 {
+                font-size: 16px;
+            }
+
+            .qty-box {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .search-bar form {
+                height: 45px;
+            }
+
+            .search-btn {
+                padding: 8px 16px;
+            }
+
+            .header-actions {
+                gap: 0.5rem;
+            }
+
+            .header-actions a {
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
+
+            .badge {
+                width: 18px;
+                height: 18px;
+                font-size: 0.65rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .logo {
+                font-size: 1.7rem;
+            }
+
+            .cart-item img {
+                width: 100px;
+                height: 100px;
+            }
+
+            .qty-box form {
+                gap: 5px;
+            }
+
+            .qty-btn {
+                width: 25px;
+                height: 25px;
+                font-size: 16px;
+            }
+
+            .checkout-btn {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+
+        /* Mobile menu toggle for very small screens */
+        @media (max-width: 320px) {
+            .header-actions {
+                justify-content: center;
+            }
+
+            .nav-links a {
+                padding: 10px 15px;
             }
         }
     </style>
@@ -577,26 +738,22 @@
                             <h3>{{ item.product.title }}</h3>
                             <p>₹{{ item.product.price }}</p>
                             <div class="qty-box">
+                                <!-- Decrease -->
+                                <form method="POST" action="{% url 'update_cart' item.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="decrement">
+                                    <button type="submit" class="qty-btn">-</button>
+                                </form>
 
-    <!-- Decrease -->
-    <form method="POST" action="{% url 'update_cart' item.id %}">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="decrement">
-        <button type="submit" class="qty-btn">-</button>
-    </form>
+                                <span>Qty: {{ item.quantity }}</span>
 
-    <span>Qty: {{ item.quantity }}</span>
-
-    <!-- Increase -->
-    <form method="POST" action="{% url 'update_cart' item.id %}">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="increment">
-        <button type="submit" class="qty-btn">+</button>
-    </form>
-
-</div>
-
-
+                                <!-- Increase -->
+                                <form method="POST" action="{% url 'update_cart' item.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="increment">
+                                    <button type="submit" class="qty-btn">+</button>
+                                </form>
+                            </div>
 
                             <form method="POST" action="{% url 'remove_cart' item.id %}" class="remove-form">
                                 {% csrf_token %}
@@ -604,7 +761,7 @@
                             </form>
                         </div>
 
-                        <div style="margin-left:auto; font-weight:700;">
+                        <div style="font-weight:700; display: flex; align-items: center;">
                             ₹{{ item.subtotal }}
                         </div>
                     </div>
@@ -635,19 +792,13 @@
                     <span style="color:green;">Free</span>
                 </div>
 
-
-
                 <div class="summary-row" style="font-weight:700;">
                     <span>Total Amount</span>
                     <span>₹{{ total_amount }}</span>
                 </div>
                 <a href="{% url 'checkout' %}?from_cart=1" class="checkout-btn">
-
-
-               Proceed to Checkout
-</a>
-
-
+                    Proceed to Checkout
+                </a>
             </div>
             {% endif %}
         </div>

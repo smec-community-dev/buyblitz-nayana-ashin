@@ -1174,6 +1174,7 @@
                         <div class="payment-options">
                             <!-- COD -->
                             <div class="payment-option selected" onclick="selectPayment('COD', this)">
+
                                 <div class="payment-icon">💵</div>
                                 <div class="payment-details">
                                     <div class="payment-title">Cash on Delivery (COD)</div>
@@ -1183,6 +1184,7 @@
 
                             <!-- ONLINE -->
                             <div class="payment-option" onclick="selectPayment('ONLINE', this)">
+
                                 <div class="payment-icon">🛜</div>
                                 <div class="payment-details">
                                     <div class="payment-title">Online Payment</div>
@@ -1222,15 +1224,27 @@
                 <span>₹{{ total_amount }}</span>
             </div>
 
-            <div class="price-row total">
-                <span>Total</span>
-                <span>₹{{ total_amount }}</span>
-            </div>
+           <div class="price-row total">
+    <span>Total</span>
+    <span>₹{{ total_amount }}</span>
+</div>
+
+<input type="hidden" id="total_amount" value="{{ total_amount }}">
+
         </div>
 
         <button type="submit" class="place-order-btn">
             Place Order – ₹{{ total_amount }}
         </button>
+                <button id="razorpay_btn_buynow"
+        type="button"
+        class="place-order-btn"
+        style="display:none; background:#111;"
+        onclick="startPayment()">
+    Pay Online – ₹{{ total_amount }}
+</button>
+
+
 
         <div class="security-notice">
             <span>🔒</span>
@@ -1263,15 +1277,26 @@
                 <span>₹{{ total_amount }}</span>
             </div>
 
-            <div class="price-row total">
-                <span>Total</span>
-                <span>₹{{ total_amount }}</span>
-            </div>
+           <div class="price-row total">
+    <span>Total</span>
+    <span>₹{{ total_amount }}</span>
+</div>
+
+<input type="hidden" id="total_amount" value="{{ total_amount }}">
+
         </div>
 
         <button type="submit" class="place-order-btn">
             Place Order – ₹{{ total_amount }}
         </button>
+                    <button id="razorpay_btn_cart" type="button" class="place-order-btn"
+        style="display:none; background:#111;"
+        onclick="startPayment()">
+    Pay Online – ₹{{ total_amount }}
+</button>
+
+
+
 
         <div class="security-notice">
             <span>🔒</span>
@@ -1337,71 +1362,153 @@
     </footer>
 
     <script>
-        // Mobile Navigation Toggle
-        const mobileNavToggle = document.getElementById('mobileNavToggle');
-        const navMenu = document.getElementById('navMenu');
+    // Mobile Navigation Toggle
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    const navMenu = document.getElementById('navMenu');
 
-        mobileNavToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
+    mobileNavToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+    });
+
+    // Payment Method Selection (UPDATED)
+    function selectPayment(method, element) {
+        document.getElementById('payment_method').value = method;
+
+        document.querySelectorAll('.payment-option').forEach(opt => {
+            opt.classList.remove('selected');
         });
 
-        // Payment Method Selection
-        function selectPayment(method, element) {
-            document.getElementById('payment_method').value = method;
+        element.classList.add('selected');
 
-            document.querySelectorAll('.payment-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
+        // Razorpay buttons for Buy-Now & Cart
+        let btn1 = document.getElementById("razorpay_btn_buynow");
+        let btn2 = document.getElementById("razorpay_btn_cart");
 
-            element.classList.add('selected');
+        if (method === "ONLINE") {
+            if (btn1) btn1.style.display = "block";
+            if (btn2) btn2.style.display = "block";
+        } else {
+            if (btn1) btn1.style.display = "none";
+            if (btn2) btn2.style.display = "none";
         }
+    }
 
-        // Profile Dropdown Toggle
-        const profileBtn = document.querySelector(".profile-btn");
-        const profileMenu = document.querySelector(".profile-menu");
+    // Profile Dropdown Toggle
+    const profileBtn = document.querySelector(".profile-btn");
+    const profileMenu = document.querySelector(".profile-menu");
 
-        if (profileBtn) {
-            profileBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                profileMenu.style.display = profileMenu.style.display === "block" ? "none" : "block";
-            });
-
-            // Hide dropdown when clicking outside
-            document.addEventListener("click", () => {
-                profileMenu.style.display = "none";
-            });
-        }
-
-        // Form validation
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const fullName = document.querySelector('input[name="full_name"]').value.trim();
-            const phone = document.querySelector('input[name="phone"]').value.trim();
-            const address = document.querySelector('input[name="address"]').value.trim();
-            const city = document.querySelector('input[name="city"]').value.trim();
-            const state = document.querySelector('input[name="state"]').value.trim();
-            const pincode = document.querySelector('input[name="pincode"]').value.trim();
-
-            if (!fullName || !phone || !address || !city || !state || !pincode) {
-                e.preventDefault();
-                alert('Please fill in all required fields.');
-                return false;
-            }
-
-            // Additional validation for phone and pincode format if needed
-            if (!/^\d{10}$/.test(phone)) {
-                e.preventDefault();
-                alert('Please enter a valid 10-digit phone number.');
-                return false;
-            }
-
-            if (!/^\d{6}$/.test(pincode)) {
-                e.preventDefault();
-                alert('Please enter a valid 6-digit pincode.');
-                return false;
-            }
-
-            return true;
+    if (profileBtn) {
+        profileBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            profileMenu.style.display = profileMenu.style.display === "block" ? "none" : "block";
         });
-    </script>
+
+        // Hide dropdown when clicking outside
+        document.addEventListener("click", () => {
+            profileMenu.style.display = "none";
+        });
+    }
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const fullName = document.querySelector('input[name="full_name"]').value.trim();
+        const phone = document.querySelector('input[name="phone"]').value.trim();
+        const address = document.querySelector('input[name="address"]').value.trim();
+        const city = document.querySelector('input[name="city"]').value.trim();
+        const state = document.querySelector('input[name="state"]').value.trim();
+        const pincode = document.querySelector('input[name="pincode"]').value.trim();
+
+        if (!fullName || !phone || !address || !city || !state || !pincode) {
+            e.preventDefault();
+            alert('Please fill in all required fields.');
+            return false;
+        }
+
+        if (!/^\d{10}$/.test(phone)) {
+            e.preventDefault();
+            alert('Please enter a valid 10-digit phone number.');
+            return false;
+        }
+
+        if (!/^\d{6}$/.test(pincode)) {
+            e.preventDefault();
+            alert('Please enter a valid 6-digit pincode.');
+            return false;
+        }
+
+        return true;
+    });
+</script>
+
+<!-- Razorpay Script (only once) -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+function startPayment() {
+
+    let amount = document.getElementById("total_amount").value;
+
+    // 🔥 Step 1 — Create Razorpay order
+    fetch('/user/create_order/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'amount=' + amount
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        // 🔥 Step 2 — Razorpay popup options
+        var options = {
+            "key": "{{ RAZORPAY_KEY_ID }}",
+            "amount": data.amount,
+            "currency": "INR",
+            "name": "BuyBlitz",
+            "order_id": data.id,
+
+            "handler": function (response){
+
+                // 🔥 Step 3 — Save everything into session via backend
+                fetch("/user/store_online_payment/", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        payment_id: response.razorpay_payment_id,
+                        order_id: response.razorpay_order_id,
+                        signature: response.razorpay_signature,
+
+                        amount: amount,
+
+                        mode: "{{ mode }}",
+
+                        // USER ADDRESS
+                        full_name: document.querySelector('input[name="full_name"]').value,
+                        phone: document.querySelector('input[name="phone"]').value,
+                        address: document.querySelector('input[name="address"]').value,
+                        city: document.querySelector('input[name="city"]').value,
+                        state: document.querySelector('input[name="state"]').value,
+                        pincode: document.querySelector('input[name="pincode"]').value,
+                    })
+                })
+                .then(result => {
+                    // 🔥 Step 4 — Now redirect safely to create order
+                    window.location.href = "/user/place_online_order/";
+                });
+            }
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+    });
+}
+</script>
+
+
+
 </body>
 </html>

@@ -71,8 +71,15 @@ class Order(models.Model):
     ]
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default="PENDING")
 
+    # ⭐⭐⭐ NEW RAZORPAY FIELDS ADDED ⭐⭐⭐
+    razorpay_payment_id = models.CharField(max_length=200, null=True, blank=True)
+    razorpay_order_id = models.CharField(max_length=200, null=True, blank=True)
+    razorpay_signature = models.CharField(max_length=200, null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
 
     def __str__(self):
         return f"Order #{self.order_number}"

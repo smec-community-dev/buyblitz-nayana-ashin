@@ -19,26 +19,64 @@
         body { font-family: Segoe UI, sans-serif; background: var(--light); }
 
         header { background: white; padding: 20px 0; border-bottom: 1px solid #eee; }
-        .header-wrapper { max-width: 1200px; margin: auto; display: flex; justify-content: space-between; align-items: center; }
+        .header-wrapper {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+        }
         .logo { font-size: 2rem; font-weight: 800; color: var(--primary); text-decoration: none; }
 
-        .search-bar { width: 400px; position: relative; }
+        .search-bar {
+            width: 400px;
+            position: relative;
+        }
         .search-bar input { width: 100%; padding: 12px; border-radius: 25px; border: 1px solid #ddd; }
         .search-btn { position: absolute; right: 5px; top: 5px; padding: 8px 15px; background: var(--primary); color: white; border: none; border-radius: 20px; }
 
-        .header-actions a { text-decoration: none; padding: 10px 15px; background: rgba(102,126,234,0.1); border-radius: 10px; color: #333; }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .header-actions a {
+            text-decoration: none;
+            padding: 10px 15px;
+            background: rgba(102,126,234,0.1);
+            border-radius: 10px;
+            color: #333;
+            white-space: nowrap;
+        }
 
         nav { background: white; border-top: 1px solid #eee; }
-        .nav-links { display: flex; justify-content: center; padding: 15px; list-style: none; gap: 25px; }
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            list-style: none;
+            gap: 25px;
+            overflow-x: auto;
+        }
         .nav-links a { text-decoration: none; font-weight: bold; color: #333; }
 
-        main { max-width: 1200px; margin: 40px auto; padding: 20px; }
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
         .page-header { text-align: center; margin-bottom: 30px; }
 
-        .login-content { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .login-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
 
         .login-form-container {
-            background: white; padding: 40px; border-radius: 12px;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
             box-shadow: var(--shadow);
         }
 
@@ -70,6 +108,127 @@
 
         footer { background: #1a1a2e; padding: 40px; color: white; margin-top: 40px; }
         .footer-bottom { text-align: center; margin-top: 20px; color: #999; }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .search-bar {
+                width: 300px;
+            }
+
+            .login-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .login-form-container {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-wrapper {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .logo {
+                font-size: 1.8rem;
+            }
+
+            .search-bar {
+                width: 100%;
+                order: 3;
+                margin-top: 10px;
+            }
+
+            .header-actions {
+                order: 2;
+            }
+
+            .nav-links {
+                justify-content: flex-start;
+                padding: 10px 15px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .nav-links.active {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+            }
+
+            .login-form-container {
+                padding: 20px;
+            }
+
+            .benefit-item {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .header-actions a {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+
+            .login-form-container {
+                padding: 15px;
+            }
+
+            .form-group input {
+                padding: 10px;
+            }
+
+            .login-btn {
+                padding: 12px;
+                font-size: 1rem;
+            }
+
+            .benefit-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            footer {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .header-actions a {
+                padding: 6px 8px;
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 
@@ -78,6 +237,8 @@
 <header>
     <div class="header-wrapper">
         <a href="/user/home" class="logo">🛍 ShopHub</a>
+
+        <button class="menu-toggle">☰</button>
 
         <div class="search-bar">
             <input type="text" placeholder="Search for products...">
@@ -190,6 +351,11 @@
         let input = document.getElementById('password');
         input.type = input.type === "password" ? "text" : "password";
         this.textContent = input.type === "password" ? "👁" : "🔒";
+    });
+
+    // Mobile menu toggle
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+        document.querySelector('.nav-links').classList.toggle('active');
     });
 </script>
 

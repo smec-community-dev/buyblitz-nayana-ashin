@@ -27,7 +27,7 @@ urlpatterns = [
     path('seller/',include("seller.urls")),
     path("accounts/", include("allauth.urls")),
 
-    path("",views.home,name="home")
+    path("",views.home,name="home"),
    # <-- ADD THIS
 
     path("accounts/", include("allauth.urls")),
