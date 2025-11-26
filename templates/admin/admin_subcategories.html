@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subcategories Management - ShopHub Admin</title>
+    {% load static %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .search-bar {
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 14px 50px 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .search-bar input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header-actions a {
+            color: #333;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .header-actions a:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .badge {
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        nav {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+
+        /* Main Content */
+        .subcategories-management {
+            padding: 2rem 0;
+            background: #f5f7fa;
+            min-height: calc(100vh - 200px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+            border-bottom: 1px solid #e1e5e9;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--gray);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-3px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e1e5e9;
+            background: #f8f9fa;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #495057;
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+        }
+
+        /* Add Subcategory Form */
+        .add-subcategory-form {
+            display: none;
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+            margin: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e1e5e9;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .close-form {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #6c757d;
+            transition: color 0.3s;
+        }
+
+        .close-form:hover {
+            color: #dc3545;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #e1e5e9;
+            background: #f8f9fa;
+        }
+
+        /* Subcategories Table */
+        .subcategories-table-container {
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .subcategories-table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .subcategories-table th {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #e1e5e9;
+        }
+
+        .subcategories-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e1e5e9;
+            vertical-align: middle;
+        }
+
+        .subcategories-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .subcategory-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .subcategory-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e9ecef;
+            border-radius: 8px;
+        }
+
+        .subcategory-details h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #2d3748;
+        }
+
+        .subcategory-details p {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .parent-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #e9ecef;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #495057;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .btn-edit:hover {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .btn-delete:hover {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* No Subcategories State */
+        .no-subcategories {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+
+        .no-subcategories h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #495057;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .footer-section p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .header-wrapper {
+                flex-wrap: wrap;
+            }
+
+            .search-bar {
+                flex: 1 1 100%;
+                order: 3;
+                margin: 1rem 0 0 0;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .page-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .filters-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .nav-links {
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            .nav-links li a {
+                padding: 1rem;
+                white-space: nowrap;
+            }
+
+            .subcategories-table-container {
+                padding: 1rem;
+            }
+
+            .subcategories-table {
+                font-size: 0.85rem;
+            }
+
+            .subcategories-table th,
+            .subcategories-table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .subcategory-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-wrapper">
+            <a href="home.html" class="logo">
+                🛍️ ShopHub
+            </a>
+
+            <div class="search-bar">
+                <input type="text" placeholder="Search for products, brands and more...">
+                <button class="search-btn">Search</button>
+            </div>
+
+            <div class="header-actions">
+                <a href="login.html">
+                    <span>👤</span> Admin
+                </a>
+                <a href="notifications.html">
+                    <span>🔔</span>
+                    <span class="badge">12</span>
+                </a>
+            </div>
+        </div>
+
+        <nav>
+            <ul class="nav-links">
+                <li><a href="home.html">Home</a></li>
+                <li><a href="{% url 'admin_cz:admin_categories' %}">Categories</a></li>
+                <li><a href="{% url 'admin_cz:admin_subcategories' %}" class="active">Subcategories</a></li>
+                <li><a href="{% url 'admin_cz:admin_orders'%}">Order</a></li>
+                <li><a href="{% url 'admin_cz:admin_products' %}">Products</a></li>
+                <li><a href="users.html">Users</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Subcategories Management Section -->
+    <section class="subcategories-management">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Subcategories Management</h1>
+                <div class="page-actions">
+                    <button class="btn btn-secondary" id="export-subcategories">
+                        <span>📥</span> Export Subcategories
+                    </button>
+                    <button class="btn btn-primary" id="add-subcategory-btn">
+                        <span>➕</span> Add New Subcategory
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value">{{ total_subcategories }}</span>
+                    <span class="stat-label">Total Subcategories</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">{{ active_count }}</span>
+                    <span class="stat-label">Active</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">{{ inactive_count }}</span>
+                    <span class="stat-label">Inactive</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">{{ categories_count }}</span>
+                    <span class="stat-label">Parent Categories</span>
+                </div>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <div class="filter-group">
+                    <label for="category-filter">Filter by Category</label>
+                    <select class="filter-select" id="category-filter">
+                        <option value="all" {% if current_category_filter == 'all' %}selected{% endif %}>All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if current_category_filter == category.id|stringformat:"s" %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="status-filter">Filter by Status</label>
+                    <select class="filter-select" id="status-filter">
+                        <option value="all" {% if current_status_filter == 'all' %}selected{% endif %}>All Statuses</option>
+                        <option value="active" {% if current_status_filter == 'active' %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if current_status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Add Subcategory Form -->
+            <div class="add-subcategory-form" id="add-subcategory-form">
+                <div class="form-header">
+                    <h2 class="form-title" id="form-title">Add New Subcategory</h2>
+                    <button class="close-form" id="close-form">×</button>
+                </div>
+                <form id="subcategory-form">
+                    <input type="hidden" id="subcategory-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="subcategory-name">Subcategory Name</label>
+                            <input type="text" id="subcategory-name" class="form-control" placeholder="Enter subcategory name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="parent-category">Parent Category</label>
+                            <select id="parent-category" class="form-control" required>
+                                <option value="">Select a parent category</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subcategory-icon">Subcategory Icon</label>
+                            <select id="subcategory-icon" class="form-control" required>
+                                <option value="">Select an icon</option>
+                                <option value="📱">📱 Electronics</option>
+                                <option value="💻">💻 Computers</option>
+                                <option value="👕">👕 Fashion</option>
+                                <option value="👟">👟 Shoes</option>
+                                <option value="🏠">🏠 Home</option>
+                                <option value="🍳">🍳 Kitchen</option>
+                                <option value="💄">💄 Beauty</option>
+                                <option value="⚽">⚽ Sports</option>
+                                <option value="🎮">🎮 Gaming</option>
+                                <option value="📚">📚 Books</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subcategory-status">Status</label>
+                            <select id="subcategory-status" class="form-control" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="subcategory-description">Subcategory Description</label>
+                            <textarea id="subcategory-description" class="form-control" placeholder="Enter subcategory description" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="display-order">Display Order</label>
+                            <input type="number" id="display-order" class="form-control" min="1" value="1">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-form">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="submit-button">Save Subcategory</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Subcategories Table -->
+            <div class="subcategories-table-container">
+                {% if subcategories %}
+                <table class="subcategories-table">
+                    <thead>
+                        <tr>
+                            <th>Subcategory</th>
+                            <th>Parent Category</th>
+                            <th>Products</th>
+                            <th>Status</th>
+                            <th>Display Order</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for subcategory in subcategories %}
+                        <tr data-subcategory-id="{{ subcategory.id }}">
+                            <td>
+                                <div class="subcategory-info">
+                                    <div class="subcategory-icon">{{ subcategory.icon }}</div>
+                                    <div class="subcategory-details">
+                                        <h4>{{ subcategory.name }}</h4>
+                                        <p>{{ subcategory.description }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="parent-category">
+                                    {{ subcategory.category.name }}
+                                </span>
+                            </td>
+                            <td>{{ subcategory.product_count }}</td>
+                            <td>
+                                <span class="status-badge status-{{ subcategory.status }}">
+                                    {{ subcategory.status|title }}
+                                </span>
+                            </td>
+                            <td>{{ subcategory.display_order }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn btn-edit" title="Edit Subcategory" onclick="editSubcategory({{ subcategory.id }})">
+                                        ✏️
+                                    </button>
+                                    <button class="action-btn btn-delete" title="Delete Subcategory" onclick="deleteSubcategory({{ subcategory.id }})">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="no-subcategories">
+                    <h3>No subcategories found</h3>
+                    <p>Click "Add New Subcategory" to create your first subcategory.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>ShopHub</h3>
+                <p>Your trusted online shopping destination for quality products at the best prices. We're committed to providing exceptional customer service.</p>
+                <div class="social-links">
+                    <a href="#" title="Facebook">f</a>
+                    <a href="#" title="Twitter">𝕏</a>
+                    <a href="#" title="Instagram">i</a>
+                    <a href="#" title="YouTube">▶</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Shop</h3>
+                <ul class="footer-links">
+                    <li><a href="category.html">All Products</a></li>
+                    <li><a href="deals.html">Deals</a></li>
+                    <li><a href="trending.html">Trending</a></li>
+                    <li><a href="category.html">New Arrivals</a></li>
+                    <li><a href="category.html">Best Sellers</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Customer Service</h3>
+                <ul class="footer-links">
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="#">Shipping Information</a></li>
+                    <li><a href="#">Returns & Exchanges</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Track Your Order</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Company</h3>
+                <ul class="footer-links">
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 ShopHub. All rights reserved. Made with ❤️ for amazing shopping experiences</p>
+        </div>
+    </footer>
+
+    <script>
+        // CSRF Token for Django
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        // Subcategory Management Functions
+        let currentEditingId = null;
+
+        // Form Toggle
+        const addSubcategoryBtn = document.getElementById('add-subcategory-btn');
+        const addSubcategoryForm = document.getElementById('add-subcategory-form');
+        const closeForm = document.getElementById('close-form');
+        const cancelForm = document.getElementById('cancel-form');
+        const formTitle = document.getElementById('form-title');
+        const submitButton = document.getElementById('submit-button');
+
+        addSubcategoryBtn.addEventListener('click', function() {
+            currentEditingId = null;
+            formTitle.textContent = 'Add New Subcategory';
+            submitButton.textContent = 'Save Subcategory';
+            document.getElementById('subcategory-form').reset();
+            addSubcategoryForm.style.display = 'block';
+            addSubcategoryBtn.style.display = 'none';
+        });
+
+        closeForm.addEventListener('click', function() {
+            addSubcategoryForm.style.display = 'none';
+            addSubcategoryBtn.style.display = 'flex';
+            currentEditingId = null;
+        });
+
+        cancelForm.addEventListener('click', function() {
+            addSubcategoryForm.style.display = 'none';
+            addSubcategoryBtn.style.display = 'flex';
+            currentEditingId = null;
+        });
+
+        // Form Submission
+        document.getElementById('subcategory-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = {
+                name: document.getElementById('subcategory-name').value,
+                category_id: document.getElementById('parent-category').value,
+                description: document.getElementById('subcategory-description').value,
+                icon: document.getElementById('subcategory-icon').value,
+                status: document.getElementById('subcategory-status').value,
+                display_order: parseInt(document.getElementById('display-order').value) || 1
+            };
+
+            const url = currentEditingId
+                ? "{% url 'admin_cz:update_subcategory' 0 %}".replace('0', currentEditingId)
+                : "{% url 'admin_cz:create_subcategory' %}";
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Subcategory "${formData.name}" has been ${currentEditingId ? 'updated' : 'created'} successfully!`);
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while saving the subcategory.');
+            });
+        });
+
+        // Edit Subcategory
+        function editSubcategory(subcategoryId) {
+            const url = "{% url 'admin_cz:get_subcategory_detail' 0 %}".replace('0', subcategoryId);
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const subcategory = data.subcategory;
+                        currentEditingId = subcategoryId;
+                        formTitle.textContent = 'Edit Subcategory';
+                        submitButton.textContent = 'Update Subcategory';
+
+                        document.getElementById('subcategory-id').value = subcategory.id;
+                        document.getElementById('subcategory-name').value = subcategory.name;
+                        document.getElementById('parent-category').value = subcategory.category_id;
+                        document.getElementById('subcategory-description').value = subcategory.description || '';
+                        document.getElementById('subcategory-icon').value = subcategory.icon || '';
+                        document.getElementById('subcategory-status').value = subcategory.status;
+                        document.getElementById('display-order').value = subcategory.display_order;
+
+                        addSubcategoryForm.style.display = 'block';
+                        addSubcategoryBtn.style.display = 'none';
+                    } else {
+                        alert('Error loading subcategory data: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading subcategory data.');
+                });
+        }
+
+        // Delete Subcategory
+        function deleteSubcategory(subcategoryId) {
+            const subcategoryElement = document.querySelector(`[data-subcategory-id="${subcategoryId}"]`);
+            const subcategoryName = subcategoryElement.querySelector('.subcategory-details h4').textContent;
+
+            if (confirm(`Are you sure you want to delete the subcategory "${subcategoryName}"? This will also delete all products under it.`)) {
+                const url = "{% url 'admin_cz:delete_subcategory' 0 %}".replace('0', subcategoryId);
+
+                fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`Subcategory "${subcategoryName}" has been deleted successfully.`);
+                        subcategoryElement.remove();
+
+                        // Check if no subcategories left, show empty state
+                        const subcategoriesContainer = document.querySelector('.subcategories-table-container');
+                        const remainingSubcategories = subcategoriesContainer.querySelectorAll('tbody tr');
+                        if (remainingSubcategories.length === 0) {
+                            subcategoriesContainer.innerHTML = `
+                                <div class="no-subcategories">
+                                    <h3>No subcategories found</h3>
+                                    <p>Click "Add New Subcategory" to create your first subcategory.</p>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the subcategory.');
+                });
+            }
+        }
+
+        // Filter functionality
+        document.getElementById('category-filter').addEventListener('change', function() {
+            const categoryId = this.value;
+            const statusFilter = document.getElementById('status-filter').value;
+            updateFilters(categoryId, statusFilter);
+        });
+
+        document.getElementById('status-filter').addEventListener('change', function() {
+            const status = this.value;
+            const categoryFilter = document.getElementById('category-filter').value;
+            updateFilters(categoryFilter, status);
+        });
+
+        function updateFilters(category, status) {
+            const params = new URLSearchParams();
+            if (category !== 'all') params.append('category', category);
+            if (status !== 'all') params.append('status', status);
+
+            window.location.href = `{% url 'admin_cz:admin_subcategories' %}?${params.toString()}`;
+        }
+
+        // Export Subcategories
+        document.getElementById('export-subcategories').addEventListener('click', function() {
+            alert('Exporting subcategories data... This may take a few moments.');
+            // Implementation for export functionality
+        });
+
+        // Search functionality
+        document.querySelector('.search-btn').addEventListener('click', function() {
+            const searchTerm = document.querySelector('.search-bar input').value;
+            if (searchTerm.trim() !== '') {
+                alert(`Searching for: ${searchTerm}`);
+                // In a real app, this would filter subcategories
+            }
+        });
+    </script>
+</body>
+</html>
