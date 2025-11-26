@@ -76,11 +76,11 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
         }
 
         .logo {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
@@ -90,6 +90,7 @@
             align-items: center;
             gap: 10px;
             transition: var(--transition);
+            min-width: max-content;
         }
 
         .logo:hover {
@@ -98,14 +99,14 @@
 
         .search-bar {
             flex: 1;
-            min-width: 300px;
+            min-width: 250px;
             max-width: 600px;
             position: relative;
         }
 
         .search-bar input {
             width: 100%;
-            padding: 14px 50px 14px 20px;
+            padding: 12px 50px 12px 18px;
             border: 2px solid #e0e0e0;
             border-radius: 50px;
             font-size: 1rem;
@@ -126,12 +127,13 @@
             transform: translateY(-50%);
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 50px;
             color: white;
             cursor: pointer;
             transition: var(--transition);
             font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .search-btn:hover {
@@ -140,23 +142,25 @@
 
         .header-actions {
             display: flex;
-            gap: 1.5rem;
+            gap: 1rem;
             align-items: center;
             flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
         .header-actions a {
             color: #333;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 500;
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 15px;
+            gap: 6px;
+            padding: 8px 12px;
             border-radius: 10px;
             background: rgba(102, 126, 234, 0.1);
+            white-space: nowrap;
         }
 
         .header-actions a:hover {
@@ -168,9 +172,9 @@
             background: var(--danger);
             color: white;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -194,14 +198,14 @@
         }
 
         .profile-avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: white;
             font-weight: 700;
         }
@@ -213,16 +217,16 @@
 
         .profile-name {
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .profile-role {
             color: var(--gray);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
 
         .dropdown-arrow {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--gray);
             transition: var(--transition);
         }
@@ -283,19 +287,21 @@
         .nav-links {
             display: flex;
             justify-content: center;
-            gap: 2rem;
+            gap: 1.5rem;
             list-style: none;
             flex-wrap: wrap;
+            padding: 0 10px;
         }
 
         .nav-links a {
             color: #333;
             text-decoration: none;
             font-weight: 600;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 10px;
             transition: var(--transition);
             position: relative;
+            font-size: 0.9rem;
         }
 
         .nav-links a:hover, .nav-links a.active {
@@ -307,8 +313,8 @@
             content: '';
             position: absolute;
             bottom: 0;
-            left: 20px;
-            right: 20px;
+            left: 16px;
+            right: 16px;
             height: 3px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 3px;
@@ -351,29 +357,29 @@
         }
 
         .page-header h2 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             color: var(--dark);
             margin-bottom: 0.5rem;
             font-weight: 700;
         }
 
         .page-header p {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--gray);
         }
 
         /* Dashboard Overview */
         .dashboard-overview {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
             margin-bottom: 2rem;
         }
 
         .stat-card {
             background: white;
             border-radius: var(--radius);
-            padding: 1.5rem;
+            padding: 1.2rem;
             box-shadow: var(--shadow-sm);
             transition: var(--transition);
             display: flex;
@@ -423,13 +429,13 @@
         }
 
         .stat-icon {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: white;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             transition: var(--transition);
@@ -456,7 +462,7 @@
         }
 
         .stat-info h3 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--dark);
             margin-bottom: 0.25rem;
@@ -464,14 +470,14 @@
 
         .stat-info p {
             color: var(--gray);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         /* Profile Layout */
         .profile-layout {
             display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 2rem;
+            grid-template-columns: 280px 1fr;
+            gap: 1.5rem;
             animation: slideInUp 0.8s ease-out 0.2s both;
         }
 
@@ -479,7 +485,7 @@
         .profile-sidebar {
             background: white;
             border-radius: var(--radius);
-            padding: 2rem;
+            padding: 1.5rem;
             box-shadow: var(--shadow);
             height: fit-content;
             position: sticky;
@@ -499,18 +505,18 @@
         }
 
         .sidebar-top {
-            padding: 2rem;
+            padding: 1.5rem;
             background: linear-gradient(135deg, #6a11cb, #2575fc);
             text-align: center;
             color: white;
         }
 
         .avatar-circle {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
             color: white;
             display:flex;
@@ -523,8 +529,8 @@
 
         .sidebar-name {
             text-align: center;
-            margin: 15px 0 2px;
-            font-size: 20px;
+            margin: 12px 0 2px;
+            font-size: 18px;
             font-weight: 700;
             color: white;
         }
@@ -532,16 +538,16 @@
         .sidebar-email {
             text-align: center;
             color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .member-badge {
             display: block;
-            margin: 10px auto 20px;
+            margin: 8px auto 15px;
             width: fit-content;
             background: rgba(255, 255, 255, 0.2);
-            padding: 5px 12px;
-            font-size: 13px;
+            padding: 4px 10px;
+            font-size: 12px;
             border-radius: 20px;
             font-weight: 600;
             color: white;
@@ -556,17 +562,17 @@
         }
 
         .menu-item {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .menu-item a {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 14px 20px;
+            gap: 10px;
+            padding: 12px 16px;
             background: #f8f9ff;
             border-radius: 10px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: #444;
             text-decoration: none;
@@ -588,7 +594,7 @@
         }
 
         .menu-item a i {
-            font-size: 18px;
+            font-size: 16px;
             color: #6a11cb;
             transition: var(--transition);
         }
@@ -613,14 +619,14 @@
         .profile-content {
             background: white;
             border-radius: var(--radius);
-            padding: 2rem;
+            padding: 1.5rem;
             box-shadow: var(--shadow);
         }
 
         .section-title {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: var(--dark);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -631,14 +637,14 @@
         .dashboard-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            gap: 1.2rem;
             margin-bottom: 2rem;
         }
 
         .dashboard-card {
             background: white;
             border-radius: var(--radius);
-            padding: 1.5rem;
+            padding: 1.2rem;
             box-shadow: var(--shadow-sm);
             transition: var(--transition);
             position: relative;
@@ -667,7 +673,7 @@
         }
 
         .dashboard-card h3 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--dark);
             margin-bottom: 1rem;
             font-weight: 600;
@@ -701,15 +707,15 @@
         }
 
         .order-image {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1rem;
             transition: var(--transition);
         }
 
@@ -724,18 +730,20 @@
         .order-details h4 {
             font-weight: 600;
             margin-bottom: 0.25rem;
+            font-size: 0.95rem;
         }
 
         .order-details p {
             color: var(--gray);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .order-status {
-            padding: 0.25rem 0.75rem;
+            padding: 0.25rem 0.6rem;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .status-delivered {
@@ -756,8 +764,8 @@
         /* Quick Actions */
         .quick-actions-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1.2rem;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
             margin-top: 1rem;
         }
 
@@ -765,13 +773,13 @@
             text-decoration: none;
             background: white;
             border: 2px solid #6a11cb;
-            padding: 1.5rem 1rem;
+            padding: 1.2rem 0.8rem;
             border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #6a11cb;
             transition: 0.25s;
             position: relative;
@@ -802,8 +810,8 @@
         }
 
         .qa-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.7rem;
+            margin-bottom: 0.4rem;
             position: relative;
             z-index: 1;
         }
@@ -817,11 +825,11 @@
         .rewards-info {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1.2rem;
         }
 
         .rewards-benefits {
-            padding: 1.5rem;
+            padding: 1.2rem;
             background: linear-gradient(135deg, #f8f9ff, #f0f2ff);
             border-radius: var(--radius-sm);
             border-left: 4px solid var(--warning);
@@ -830,21 +838,23 @@
         .rewards-benefits h4 {
             color: var(--primary);
             margin-bottom: 0.5rem;
+            font-size: 1rem;
         }
 
         .rewards-benefits ul {
             color: var(--gray);
             padding-left: 1.2rem;
+            font-size: 0.9rem;
         }
 
         .rewards-benefits li {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
 
         .points-display {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #6C63FF, #8A84FF);
             color: white;
-            padding: 1.5rem;
+            padding: 1.2rem;
             border-radius: var(--radius-sm);
             text-align: center;
             position: relative;
@@ -863,20 +873,21 @@
         }
 
         .points-display h3 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+            margin-bottom: 0.4rem;
             position: relative;
         }
 
         .points-display p {
             position: relative;
+            font-size: 0.9rem;
         }
 
         /* Footer */
         footer {
             background: var(--dark);
             color: white;
-            padding: 4rem 0 2rem;
+            padding: 3rem 0 1.5rem;
             animation: slideUp 0.5s ease-out;
         }
 
@@ -896,22 +907,23 @@
             margin: 0 auto;
             padding: 0 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
         }
 
         .footer-section h3 {
             color: var(--primary);
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
         }
 
         .footer-section p {
             color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             line-height: 1.6;
+            font-size: 0.9rem;
         }
 
         .footer-links {
@@ -919,7 +931,7 @@
         }
 
         .footer-links li {
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.6rem;
         }
 
         .footer-links a {
@@ -927,6 +939,7 @@
             text-decoration: none;
             transition: var(--transition);
             display: inline-block;
+            font-size: 0.9rem;
         }
 
         .footer-links a:hover {
@@ -936,15 +949,15 @@
 
         .social-links {
             display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
+            gap: 0.8rem;
+            margin-top: 1.2rem;
         }
 
         .social-links a {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -960,10 +973,10 @@
 
         .footer-bottom {
             text-align: center;
-            padding-top: 2rem;
+            padding-top: 1.5rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             color: rgba(255, 255, 255, 0.5);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         /* Profile Section */
@@ -979,6 +992,7 @@
         @media (max-width: 1024px) {
             .profile-layout {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
 
             .profile-sidebar {
@@ -994,6 +1008,11 @@
             .header-wrapper {
                 flex-direction: column;
                 gap: 1rem;
+                align-items: stretch;
+            }
+
+            .logo {
+                align-self: center;
             }
 
             .search-bar {
@@ -1002,27 +1021,92 @@
             }
 
             .nav-links {
-                gap: 1rem;
+                gap: 0.8rem;
+                justify-content: space-between;
+                overflow-x: auto;
+                padding-bottom: 5px;
             }
 
-            .form-row {
-                grid-template-columns: 1fr;
+            .nav-links a {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+                white-space: nowrap;
             }
 
-            .form-actions {
-                flex-direction: column;
+            .header-actions {
+                justify-content: center;
+                gap: 0.8rem;
             }
 
             .profile-info {
                 display: none;
             }
 
+            .container {
+                padding: 0 15px;
+                margin: 1.5rem auto;
+            }
+
+            .page-header h2 {
+                font-size: 1.8rem;
+            }
+
             .dashboard-overview {
                 grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+                gap: 0.8rem;
+            }
+
+            .stat-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+
+            .stat-info h3 {
+                font-size: 1.3rem;
+            }
+
+            .profile-sidebar,
+            .profile-content {
+                padding: 1.2rem;
+            }
+
+            .dashboard-card {
+                padding: 1rem;
+            }
+
+            .order-item {
+                padding: 0.8rem;
+                gap: 0.8rem;
+            }
+
+            .order-image {
+                width: 45px;
+                height: 45px;
             }
 
             .quick-actions-container {
                 grid-template-columns: 1fr 1fr;
+                gap: 0.8rem;
+            }
+
+            .quick-action {
+                padding: 1rem 0.6rem;
+                font-size: 0.85rem;
+            }
+
+            .qa-icon {
+                font-size: 1.5rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
             }
         }
 
@@ -1031,13 +1115,37 @@
                 padding: 0 15px;
             }
 
-            .container {
-                padding: 0 15px;
+            .logo {
+                font-size: 1.6rem;
             }
 
-            .profile-sidebar,
-            .profile-content {
-                padding: 1.5rem;
+            .search-bar input {
+                padding: 10px 45px 10px 15px;
+                font-size: 0.9rem;
+            }
+
+            .search-btn {
+                padding: 6px 14px;
+                font-size: 0.85rem;
+            }
+
+            .header-actions a {
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
+
+            .profile-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+            }
+
+            .nav-links {
+                justify-content: flex-start;
+            }
+
+            .page-header h2 {
+                font-size: 1.6rem;
             }
 
             .dashboard-overview {
@@ -1045,45 +1153,84 @@
             }
 
             .stat-card {
+                flex-direction: row;
+                text-align: left;
+            }
+
+            .profile-sidebar,
+            .profile-content {
+                padding: 1rem;
+            }
+
+            .sidebar-top {
+                padding: 1rem;
+            }
+
+            .avatar-circle {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+
+            .sidebar-name {
+                font-size: 16px;
+            }
+
+            .menu-item a {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+
+            .dashboard-card h3 {
+                font-size: 1rem;
+            }
+
+            .order-item {
                 flex-direction: column;
-                text-align: center;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+
+            .order-status {
+                align-self: flex-start;
             }
 
             .quick-actions-container {
                 grid-template-columns: 1fr;
             }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .footer-section h3 {
+                font-size: 1rem;
+            }
         }
-        .points-display {
-    background: linear-gradient(135deg, #6C63FF, #8A84FF);
-    padding: 20px 25px;
-    border-radius: 16px;
-    text-align: center;
-    width: 200px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
 
-/* Hover effect */
-.points-display:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.20);
-}
+        @media (max-width: 360px) {
+            .header-actions a span:not(.badge) {
+                display: none;
+            }
 
-/* White & bold number */
-.points-display h3 {
-    color: #fff;
-    font-size: 32px;
-    margin: 0;
-    font-weight: 700;
-}
+            .header-actions a {
+                padding: 8px;
+            }
 
-/* Soft light text below */
-.points-display p {
-    color: rgba(255,255,255,0.9);
-    margin-top: 6px;
-    font-size: 14px;
-}
+            .nav-links a {
+                padding: 6px 8px;
+                font-size: 0.8rem;
+            }
 
+            .page-header h2 {
+                font-size: 1.4rem;
+            }
+
+            .page-header p {
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>

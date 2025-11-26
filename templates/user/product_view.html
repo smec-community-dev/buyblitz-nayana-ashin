@@ -311,7 +311,7 @@
         }
 
         /* ==========================
-           PRODUCT PAGE SPECIFIC STYLES
+           ENHANCED PRODUCT PAGE STYLES
            ========================== */
 
         /* Breadcrumb */
@@ -322,6 +322,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .breadcrumb a {
@@ -334,52 +335,70 @@
             color: var(--secondary);
         }
 
-        /* Product Detail Grid */
+        /* Enhanced Product Detail Grid */
         .product-detail-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            gap: 3rem;
             margin-bottom: 3rem;
+            position: relative;
         }
 
-        /* Gallery Card */
+        /* Enhanced Gallery Card */
         .gallery-card {
             background: white;
             border-radius: var(--radius);
             padding: 1.5rem;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-lg);
             border: 1px solid var(--border);
+            position: sticky;
+            top: 120px;
+            height: fit-content;
         }
 
         .main-image-container {
             height: 500px;
             border-radius: var(--radius);
             overflow: hidden;
-            margin-bottom: 1rem;
-            background: #f8f8f8;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #f8f8f8, #f0f0f0);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: var(--transition);
+            cursor: zoom-in;
+            border: 1px solid var(--light-gray);
+        }
+
+        .main-image-container:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
         }
 
         .main-image-container img {
             width: 100%;
             height: 100%;
             object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+
+        .main-image-container:hover img {
+            transform: scale(1.03);
         }
 
         .image-badge {
             position: absolute;
             top: 1rem;
             left: 1rem;
-            background: var(--success);
+            background: linear-gradient(135deg, var(--success), #3aa88f);
             color: white;
             padding: 0.5rem 1rem;
             border-radius: var(--radius-sm);
             font-size: 0.9rem;
             font-weight: 600;
             z-index: 5;
+            box-shadow: 0 2px 8px rgba(76, 201, 167, 0.4);
         }
 
         .thumbnail-grid {
@@ -387,6 +406,22 @@
             gap: 0.75rem;
             overflow-x: auto;
             padding: 0.5rem 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--light-gray);
+        }
+
+        .thumbnail-grid::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .thumbnail-grid::-webkit-scrollbar-track {
+            background: var(--light-gray);
+            border-radius: 10px;
+        }
+
+        .thumbnail-grid::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
         }
 
         .thumbnail-item {
@@ -398,10 +433,16 @@
             flex-shrink: 0;
             cursor: pointer;
             transition: var(--transition);
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .thumbnail-item:hover, .thumbnail-item.active {
             border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
         }
 
         .thumbnail-item img {
@@ -410,13 +451,16 @@
             object-fit: cover;
         }
 
-        /* Product Info Card */
+        /* Enhanced Product Info Card */
         .product-info-card {
             background: white;
             border-radius: var(--radius);
             padding: 2rem;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-lg);
             border: 1px solid var(--border);
+            position: sticky;
+            top: 120px;
+            height: fit-content;
         }
 
         .product-category {
@@ -424,6 +468,10 @@
             font-size: 0.9rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 20px;
         }
 
         .product-title {
@@ -432,13 +480,26 @@
             color: var(--dark);
             margin-bottom: 0.75rem;
             line-height: 1.3;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .product-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 3px;
         }
 
         .product-rating {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            background: var(--success);
+            background: linear-gradient(135deg, var(--success), #3aa88f);
             color: white;
             padding: 0.5rem 1rem;
             border-radius: var(--radius-sm);
@@ -446,6 +507,7 @@
             font-size: 0.9rem;
             font-weight: 600;
             margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(76, 201, 167, 0.4);
         }
 
         .product-rating .star {
@@ -454,6 +516,10 @@
 
         .price-section {
             margin: 1.5rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8f9ff, #f0f2ff);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--primary);
         }
 
         .product-price {
@@ -476,6 +542,9 @@
             color: var(--success);
             font-weight: 700;
             font-size: 1rem;
+            background: rgba(76, 201, 167, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
         }
 
         .product-description {
@@ -483,6 +552,10 @@
             font-size: 1rem;
             line-height: 1.6;
             margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--accent);
         }
 
         .stock-status {
@@ -493,13 +566,18 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(76, 201, 167, 0.1);
+            border-radius: var(--radius);
+            width: fit-content;
         }
 
         .stock-status.out-of-stock {
             color: var(--danger);
+            background: rgba(249, 65, 68, 0.1);
         }
 
-        /* Quantity Section */
+        /* Enhanced Quantity Section */
         .quantity-section {
             margin: 1.5rem 0;
         }
@@ -508,6 +586,7 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .quantity-controls {
@@ -516,6 +595,7 @@
             border-radius: var(--radius-sm);
             overflow: hidden;
             width: fit-content;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
         .quantity-btn {
@@ -527,10 +607,14 @@
             color: var(--gray);
             cursor: pointer;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .quantity-btn:hover {
             background: var(--light-gray);
+            color: var(--primary);
         }
 
         .quantity-input {
@@ -541,9 +625,10 @@
             border-left: 1px solid var(--border);
             border-right: 1px solid var(--border);
             font-weight: 600;
+            font-size: 1rem;
         }
 
-        /* Action Buttons */
+        /* Enhanced Action Buttons */
         .action-buttons {
             display: flex;
             gap: 1rem;
@@ -567,28 +652,30 @@
             flex: 1;
             min-width: 150px;
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
         }
 
         .add-to-cart {
-            background: var(--accent);
+            background: linear-gradient(135deg, var(--accent), #e91e63);
             color: white;
-            box-shadow: 0 2px 6px rgba(247, 37, 133, 0.4);
+            box-shadow: 0 4px 12px rgba(247, 37, 133, 0.4);
         }
 
         .add-to-cart:hover {
             transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(247, 37, 133, 0.6);
+            box-shadow: 0 6px 20px rgba(247, 37, 133, 0.6);
         }
 
         .buy-now {
-            background: var(--warning);
+            background: linear-gradient(135deg, var(--warning), #f7b731);
             color: white;
-            box-shadow: 0 2px 6px rgba(249, 199, 79, 0.4);
+            box-shadow: 0 4px 12px rgba(249, 199, 79, 0.4);
         }
 
         .buy-now:hover {
             transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(249, 199, 79, 0.6);
+            box-shadow: 0 6px 20px rgba(249, 199, 79, 0.6);
         }
 
         .add-to-cart:disabled, .buy-now:disabled {
@@ -611,20 +698,25 @@
             color: var(--gray);
             transition: var(--transition);
             text-decoration: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
         .wishlist-btn:hover, .wishlist-btn.liked {
             border-color: var(--danger);
             color: var(--danger);
             background: #ffebee;
+            transform: scale(1.1);
         }
 
-        /* Product Meta Information */
+        /* Enhanced Product Meta Information */
         .product-meta {
             border-top: 1px solid var(--border);
             padding-top: 1.5rem;
             font-size: 0.9rem;
             color: var(--dark);
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 1.5rem;
         }
 
         .meta-item {
@@ -632,6 +724,13 @@
             justify-content: space-between;
             padding: 0.75rem 0;
             border-bottom: 1px solid var(--light-gray);
+            transition: var(--transition);
+        }
+
+        .meta-item:hover {
+            background: rgba(255,255,255,0.7);
+            padding-left: 0.5rem;
+            border-radius: var(--radius-sm);
         }
 
         .meta-item:last-child {
@@ -642,9 +741,10 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-weight: 600;
         }
 
-        /* Related Products */
+        /* Enhanced Related Products */
         .related-products {
             margin: 3rem 0;
         }
@@ -654,6 +754,19 @@
             font-weight: 700;
             margin-bottom: 1.5rem;
             color: var(--dark);
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 4px;
         }
 
         .related-grid {
@@ -669,6 +782,7 @@
             box-shadow: var(--shadow);
             transition: var(--transition);
             position: relative;
+            border: 1px solid var(--border);
         }
 
         .product-card:hover {
@@ -697,6 +811,7 @@
 
         .wishlist-btn-small:hover, .wishlist-btn-small.liked {
             color: var(--danger);
+            transform: scale(1.1);
         }
 
         .product-image {
@@ -705,13 +820,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f8f8f8;
+            background: linear-gradient(135deg, #f8f8f8, #f0f0f0);
         }
 
         .product-image img {
             width: 100%;
             height: 100%;
             object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
         }
 
         .product-info-small {
@@ -747,7 +867,7 @@
             display: block;
             width: 100%;
             padding: 0.75rem;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             border: none;
             border-radius: var(--radius-sm);
@@ -756,10 +876,75 @@
             transition: var(--transition);
             text-align: center;
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
         }
 
         .add-to-cart-small:hover {
-            background: var(--primary-dark);
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.4);
+        }
+
+        /* Enhanced Review Section */
+        .review-section {
+            margin: 40px 0;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
+            position: relative;
+        }
+
+        .review-section h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .review-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+
+        .user-review {
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            border-left: 5px solid var(--success);
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .review-form {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .review-item {
+            padding: 18px 20px;
+            margin-bottom: 15px;
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .review-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
         }
 
         /* Mobile Sticky Bar */
@@ -771,7 +956,7 @@
             right: 0;
             background: white;
             padding: 1rem;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
             z-index: 999;
             gap: 0.75rem;
         }
@@ -866,13 +1051,27 @@
         }
 
         /* ==========================
-           RESPONSIVE DESIGN
+           ENHANCED RESPONSIVE DESIGN
            ========================== */
+
+        /* Large screens (1200px and above) - Default styles already cover this */
 
         /* Medium screens (1024px - 1199px) */
         @media (max-width: 1199px) {
             .container {
                 padding: 0 2rem;
+            }
+
+            .product-detail-wrapper {
+                gap: 2rem;
+            }
+
+            .main-image-container {
+                height: 450px;
+            }
+
+            .product-info-card, .gallery-card {
+                top: 100px;
             }
         }
 
@@ -883,6 +1082,10 @@
                 gap: 1.5rem;
             }
 
+            .gallery-card, .product-info-card {
+                position: static;
+            }
+
             .main-image-container {
                 height: 400px;
             }
@@ -890,13 +1093,36 @@
             .related-grid {
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             }
+
+            .action-buttons {
+                flex-wrap: nowrap;
+            }
+
+            .header-wrapper {
+                flex-wrap: wrap;
+            }
+
+            .search-bar {
+                order: 3;
+                min-width: 100%;
+                margin-top: 1rem;
+            }
         }
 
         /* Small tablets and large phones (600px - 767px) */
         @media (max-width: 767px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+
             .header-wrapper {
-                flex-direction: column;
+                flex-direction: row;
+                flex-wrap: wrap;
                 gap: 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
             }
 
             .search-bar {
@@ -956,11 +1182,31 @@
             }
 
             .thumbnail-grid {
-                justify-content: center;
+                justify-content: flex-start;
             }
 
             .related-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+
+            .review-section {
+                padding: 1.5rem;
+            }
+
+            .header-actions {
+                gap: 0.75rem;
+            }
+
+            .header-actions a {
+                font-size: 0.85rem;
+                padding: 0.6rem 0.8rem;
+            }
+
+            /* Review form responsive improvements */
+            .review-form select,
+            .review-form textarea {
+                font-size: 16px !important; /* Prevent zoom on iOS */
             }
         }
 
@@ -982,9 +1228,14 @@
                 font-size: 1.5rem;
             }
 
-            .add-to-cart, .buy-now {
-                padding: 0.875rem 1rem;
-                font-size: 0.9rem;
+            .product-description {
+                font-size: 0.95rem;
+            }
+
+            .mobile-action-bar .add-to-cart,
+            .mobile-action-bar .buy-now {
+                padding: 0.875rem 0.75rem;
+                font-size: 0.85rem;
             }
 
             .footer-content {
@@ -994,6 +1245,22 @@
 
             .related-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quantity-selector {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .breadcrumb {
+                font-size: 0.85rem;
+            }
+
+            .meta-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
             }
         }
 
@@ -1011,23 +1278,114 @@
                 font-size: 1.35rem;
             }
 
-            .add-to-cart, .buy-now {
-                padding: 0.75rem 0.875rem;
+            .product-rating {
                 font-size: 0.85rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .mobile-action-bar .add-to-cart,
+            .mobile-action-bar .buy-now {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.8rem;
+                min-width: auto;
             }
 
             .related-grid {
                 grid-template-columns: 1fr;
             }
 
+            .header-actions {
+                gap: 0.5rem;
+            }
+
             .header-actions a {
-                padding: 0.6rem 0.8rem;
-                font-size: 0.85rem;
+                padding: 0.5rem 0.6rem;
+                font-size: 0.8rem;
+            }
+
+            .profile-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .thumbnail-item {
+                width: 60px;
+                height: 60px;
+            }
+
+            .gallery-card, .product-info-card {
+                padding: 1rem;
+            }
+
+            .review-section {
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .wishlist-btn {
+                align-self: center;
+                margin-top: 0.5rem;
+            }
+
+            .review-form button {
+                width: 100%;
+                padding: 12px !important;
+            }
+        }
+
+        /* Extra small devices (below 320px) */
+        @media (max-width: 319px) {
+            .container {
+                padding: 0 0.75rem;
+            }
+
+            .main-image-container {
+                height: 200px;
+            }
+
+            .product-title {
+                font-size: 1.1rem;
+            }
+
+            .product-price {
+                font-size: 1.25rem;
+            }
+
+            .mobile-action-bar {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .mobile-action-bar .add-to-cart,
+            .mobile-action-bar .buy-now {
+                width: 100%;
+            }
+
+            .header-actions {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .logo {
+                font-size: 1.25rem;
+            }
+
+            .thumbnail-item {
+                width: 50px;
+                height: 50px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Your existing HTML body content remains exactly the same -->
     <!-- Header (Home Page Style) -->
     <header>
         <div class="container">
@@ -1141,23 +1499,15 @@
                             {{ discount_percentage }}% OFF
                         </div>
                         {% endif %}
-                        {% if selected_image %}
-                            <img src="{{ selected_image.image.url }}" alt="{{ product.title }}">
-                        {% elif product.images.all %}
-                            <img src="{{ product.images.first.image.url }}" alt="{{ product.title }}">
-                        {% else %}
-                            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--gray); font-size: 4rem;">
-                                🛍
-                            </div>
-                        {% endif %}
+                        <img id="main-product-image" src="{% if selected_image %}{{ selected_image.image.url }}{% elif product.images.all %}{{ product.images.first.image.url }}{% else %}#{% endif %}" alt="{{ product.title }}">
                     </div>
 
                     <!-- Thumbnail Grid -->
                     <div class="thumbnail-grid">
                         {% for img in product.images.all %}
-                            <a href="{% url 'single_view' product.slug %}?image_id={{ img.id }}" class="thumbnail-item {% if selected_image.id == img.id or not selected_image and forloop.first %}active{% endif %}">
+                            <div class="thumbnail-item {% if selected_image.id == img.id or not selected_image and forloop.first %}active{% endif %}" data-image="{{ img.image.url }}">
                                 <img src="{{ img.image.url }}" alt="Thumbnail {{ forloop.counter }}">
-                            </a>
+                            </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -1204,81 +1554,77 @@
                     <div class="quantity-selector">
                         <span class="quantity-label">Quantity:</span>
                         <div class="quantity-controls">
-
-
                             <button class="quantity-btn minus">-</button>
                             <input type="number" class="quantity-input" value="1" min="1" max="{{ product.stock }}">
                             <button class="quantity-btn plus">+</button>
-                               <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
+                            <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
                         </div>
                     </div>
                 </div>
                 {% endif %}
-<!-- Action Buttons -->
-<div class="action-buttons">
-    {% if product.stock > 0 %}
-        {% if request.user.is_authenticated %}
 
-            <!-- DESKTOP ADD TO CART (FIXED) -->
-            <form method="POST" action="{% url 'add_to_cart' product.id %}" style="display:inline;">
-                {% csrf_token %}
-                <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
-                <button type="submit" class="add-to-cart">
-                    <i class="fas fa-shopping-cart"></i> Add to Cart
-                </button>
-            </form>
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    {% if product.stock > 0 %}
+                        {% if request.user.is_authenticated %}
+                            <!-- DESKTOP ADD TO CART (FIXED) -->
+                            <form method="POST" action="{% url 'add_to_cart' product.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
+                                <button type="submit" class="add-to-cart">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </button>
+                            </form>
 
-            <!-- BUY NOW (optional: also pass quantity) -->
-            <form method="POST" action="{% url 'buy_now' product.id %}" style="display:inline;">
-                {% csrf_token %}
-                <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
-                <button type="submit" class="buy-now">
-                    <i class="fas fa-bolt"></i> Buy Now
-                </button>
-            </form>
+                            <!-- BUY NOW (optional: also pass quantity) -->
+                            <form method="POST" action="{% url 'buy_now' product.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
+                                <button type="submit" class="buy-now">
+                                    <i class="fas fa-bolt"></i> Buy Now
+                                </button>
+                            </form>
 
-        {% else %}
+                        {% else %}
+                            <!-- GUEST USER -->
+                            <form method="POST" action="{% url 'add_to_cart' product.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
+                                <button type="submit" class="add-to-cart">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </button>
+                            </form>
 
-            <!-- GUEST USER -->
-            <form method="POST" action="{% url 'add_to_cart' product.id %}" style="display:inline;">
-                {% csrf_token %}
-                <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
-                <button type="submit" class="add-to-cart">
-                    <i class="fas fa-shopping-cart"></i> Add to Cart
-                </button>
-            </form>
+                            <a href="{% url 'login' %}" class="buy-now">
+                                <i class="fas fa-bolt"></i> Buy Now
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <button class="add-to-cart" disabled>
+                            <i class="fas fa-times"></i> Out of Stock
+                        </button>
+                        <button class="buy-now" disabled>
+                            <i class="fas fa-times"></i> Unavailable
+                        </button>
+                    {% endif %}
 
-            <a href="{% url 'login' %}" class="buy-now">
-                <i class="fas fa-bolt"></i> Buy Now
-            </a>
-
-        {% endif %}
-    {% else %}
-        <button class="add-to-cart" disabled>
-            <i class="fas fa-times"></i> Out of Stock
-        </button>
-        <button class="buy-now" disabled>
-            <i class="fas fa-times"></i> Unavailable
-        </button>
-    {% endif %}
-
-    <!-- Wishlist -->
-    {% if request.user.is_authenticated %}
-        {% if product.id in wishlist_ids %}
-            <a href="{% url 'remove_from_wishlist' product.id %}" class="wishlist-btn liked">
-                <i class="fa-solid fa-heart"></i>
-            </a>
-        {% else %}
-            <a href="{% url 'add_to_wishlist' product.id %}" class="wishlist-btn">
-                <i class="fa-regular fa-heart"></i>
-            </a>
-        {% endif %}
-    {% else %}
-        <a href="{% url 'login' %}" class="wishlist-btn">
-            <i class="fa-regular fa-heart"></i>
-        </a>
-    {% endif %}
-</div>
+                    <!-- Wishlist -->
+                    {% if request.user.is_authenticated %}
+                        {% if product.id in wishlist_ids %}
+                            <a href="{% url 'remove_from_wishlist' product.id %}" class="wishlist-btn liked">
+                                <i class="fa-solid fa-heart"></i>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'add_to_wishlist' product.id %}" class="wishlist-btn">
+                                <i class="fa-regular fa-heart"></i>
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}" class="wishlist-btn">
+                            <i class="fa-regular fa-heart"></i>
+                        </a>
+                    {% endif %}
+                </div>
 
                 <!-- Product Meta Information -->
                 <div class="product-meta">
@@ -1310,115 +1656,94 @@
             </div>
         </div>
 
+        <!-- Enhanced Review Section -->
+        <div class="review-section">
+            <!-- If user already reviewed -->
+            {% if user_review %}
+                <h2>Your Review</h2>
 
-<!-- ⭐ REVIEW SECTION STARTS HERE ⭐ -->
-<div class="review-section" style="
-    margin:40px 0;
-    padding:30px;
-    background:#ffffff;
-    border-radius:15px;
-    box-shadow:0 4px 20px rgba(0,0,0,0.08);
-    border:1px solid #eee;
-">
-
-    <!-- If user already reviewed -->
-    {% if user_review %}
-        <h2 style="font-size:24px; font-weight:700; margin-bottom:15px;">Your Review</h2>
-
-        <div style="
-            padding:20px;
-            background:#f8f9ff;
-            border-radius:12px;
-            border-left:5px solid #4cc9a7;
-            margin-bottom:25px;
-        ">
-            <div style="font-size:22px; color:#ffb800; font-weight:600;">
-                ⭐ {{ user_review.rating }}/5
-            </div>
-            <p style="margin-top:10px; font-size:16px;">{{ user_review.comment }}</p>
-        </div>
-    {% endif %}
-
-    <!-- Review Form -->
-    {% if can_review and not user_review %}
-        <h2 style="font-size:24px; font-weight:700; margin-bottom:15px;">Write a Review</h2>
-
-        <form method="POST" style="margin-bottom:30px;">
-            {% csrf_token %}
-
-            <label style="font-weight:600;">Rating</label>
-            <select name="rating" class="form-control" style="
-                width:100%;
-                padding:12px;
-                border-radius:8px;
-                border:1px solid #ddd;
-                margin:8px 0 20px 0;
-                font-size:15px;
-            ">
-                <option value="">Select Rating</option>
-                <option value="1">⭐ 1 Star</option>
-                <option value="2">⭐⭐ 2 Stars</option>
-                <option value="3">⭐⭐⭐ 3 Stars</option>
-                <option value="4">⭐⭐⭐⭐ 4 Stars</option>
-                <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
-            </select>
-
-            <label style="font-weight:600;">Comment</label>
-            <textarea name="comment" rows="4" class="form-control" style="
-                width:100%;
-                padding:12px;
-                border-radius:8px;
-                border:1px solid #ddd;
-                font-size:15px;
-            "></textarea>
-
-            <button type="submit"
-                style="
-                    margin-top:15px;
-                    padding:12px 28px;
-                    background:#4361ee;
-                    color:white;
-                    border:none;
-                    border-radius:8px;
-                    font-size:16px;
-                    font-weight:600;
-                    cursor:pointer;
-                    box-shadow:0px 4px 10px rgba(67,97,238,0.3);
-                ">
-                Submit Review
-            </button>
-        </form>
-    {% endif %}
-
-
-    <!-- Customer Reviews -->
-    <h2 style="font-size:24px; font-weight:700; margin-bottom:20px;">Customer Reviews</h2>
-
-    {% for r in product.reviews.all %}
-        {% if r.user != request.user %}
-            <div style="
-                padding:18px 20px;
-                margin-bottom:15px;
-                background:#fdfdfd;
-                border:1px solid #eee;
-                border-radius:12px;
-            ">
-                <strong style="font-size:16px;">{{ r.user.username }}</strong>
-
-                <div style="font-size:18px; color:#ffb800; margin:5px 0;">
-                    ⭐ {{ r.rating }}/5
+                <div class="user-review">
+                    <div style="font-size:22px; color:#ffb800; font-weight:600;">
+                        ⭐ {{ user_review.rating }}/5
+                    </div>
+                    <p style="margin-top:10px; font-size:16px;">{{ user_review.comment }}</p>
                 </div>
+            {% endif %}
 
-                <p style="font-size:15px; color:#333;">{{ r.comment }}</p>
-            </div>
-        {% endif %}
-    {% empty %}
-        <p style="font-size:16px; color:#666;">No reviews yet.</p>
-    {% endfor %}
-</div>
-<!-- ⭐ REVIEW SECTION ENDS HERE ⭐ -->
+            <!-- Review Form -->
+            {% if can_review and not user_review %}
+                <h2>Write a Review</h2>
 
-<!-- Related Products -->
+                <form method="POST" class="review-form">
+                    {% csrf_token %}
+
+                    <label style="font-weight:600;">Rating</label>
+                    <select name="rating" class="form-control" style="
+                        width:100%;
+                        padding:12px;
+                        border-radius:8px;
+                        border:1px solid #ddd;
+                        margin:8px 0 20px 0;
+                        font-size:15px;
+                    ">
+                        <option value="">Select Rating</option>
+                        <option value="1">⭐ 1 Star</option>
+                        <option value="2">⭐⭐ 2 Stars</option>
+                        <option value="3">⭐⭐⭐ 3 Stars</option>
+                        <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                        <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                    </select>
+
+                    <label style="font-weight:600;">Comment</label>
+                    <textarea name="comment" rows="4" class="form-control" style="
+                        width:100%;
+                        padding:12px;
+                        border-radius:8px;
+                        border:1px solid #ddd;
+                        font-size:15px;
+                    "></textarea>
+
+                    <button type="submit"
+                        style="
+                            margin-top:15px;
+                            padding:12px 28px;
+                            background:#4361ee;
+                            color:white;
+                            border:none;
+                            border-radius:8px;
+                            font-size:16px;
+                            font-weight:600;
+                            cursor:pointer;
+                            box-shadow:0px 4px 10px rgba(67,97,238,0.3);
+                            transition: var(--transition);
+                        "
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0px 6px 15px rgba(67,97,238,0.4)';"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0px 4px 10px rgba(67,97,238,0.3)';"
+                    >
+                        Submit Review
+                    </button>
+                </form>
+            {% endif %}
+
+            <!-- Customer Reviews -->
+            <h2>Customer Reviews</h2>
+
+            {% for r in product.reviews.all %}
+                {% if r.user != request.user %}
+                    <div class="review-item">
+                        <strong style="font-size:16px;">{{ r.user.username }}</strong>
+
+                        <div style="font-size:18px; color:#ffb800; margin:5px 0;">
+                            ⭐ {{ r.rating }}/5
+                        </div>
+
+                        <p style="font-size:15px; color:#333;">{{ r.comment }}</p>
+                    </div>
+                {% endif %}
+            {% empty %}
+                <p style="font-size:16px; color:#666;">No reviews yet.</p>
+            {% endfor %}
+        </div>
 
         <!-- Related Products -->
         <div class="related-products">
@@ -1480,22 +1805,24 @@
     <div class="mobile-action-bar">
         {% if product.stock > 0 %}
             {% if request.user.is_authenticated %}
-                <a href="{% url 'add_to_cart' product.id %}" class="add-to-cart">
-                    <i class="fas fa-shopping-cart"></i> Add to Cart
-                </a>
+                <form method="POST" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
+                    <button type="submit" class="add-to-cart">
+                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                    </button>
+                </form>
                 <a href="{% url 'buy_now' product.id %}" class="buy-now">
                     <i class="fas fa-bolt"></i> Buy Now
                 </a>
             {% else %}
                 <form method="POST" action="{% url 'add_to_cart' product.id %}">
-    {% csrf_token %}
-    <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
-
-    <button type="submit" class="add-to-cart">
-        <i class="fas fa-shopping-cart"></i> Add to Cart
-    </button>
-</form>
-
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" class="quantity-input-hidden" value="1">
+                    <button type="submit" class="add-to-cart">
+                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                    </button>
+                </form>
                 <a href="{% url 'login' %}?next={{ request.path }}" class="buy-now">
                     <i class="fas fa-bolt"></i> Buy Now
                 </a>
@@ -1552,112 +1879,146 @@
             </div>
         </div>
     </footer>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
 
-    /* ================================
-       MOBILE NAVIGATION TOGGLE
-    =================================*/
-    const mobileNavToggle = document.getElementById('mobileNavToggle');
-    const navMenu = document.getElementById('navMenu');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-    if (mobileNavToggle) {
-        mobileNavToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-        });
-    }
+            /* ================================
+               MOBILE NAVIGATION TOGGLE
+            =================================*/
+            const mobileNavToggle = document.getElementById('mobileNavToggle');
+            const navMenu = document.getElementById('navMenu');
 
-    /* ================================
-       PROFILE DROPDOWN
-    =================================*/
-    const profileBtn = document.querySelector(".profile-btn");
-    const profileMenu = document.querySelector(".profile-menu");
-
-    if (profileBtn) {
-        profileBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            profileMenu.style.display = profileMenu.style.display === "block" ? "none" : "block";
-        });
-
-        document.addEventListener("click", () => {
-            profileMenu.style.display = "none";
-        });
-    }
-
-    /* ================================
-       PRODUCT CARD ANIMATION
-    =================================*/
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+            if (mobileNavToggle) {
+                mobileNavToggle.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                });
             }
+
+            /* ================================
+               PROFILE DROPDOWN
+            =================================*/
+            const profileBtn = document.querySelector(".profile-btn");
+            const profileMenu = document.querySelector(".profile-menu");
+
+            if (profileBtn) {
+                profileBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    profileMenu.style.display = profileMenu.style.display === "block" ? "none" : "block";
+                });
+
+                document.addEventListener("click", () => {
+                    profileMenu.style.display = "none";
+                });
+            }
+
+            /* ================================
+               PRODUCT CARD ANIMATION
+            =================================*/
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.product-card').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+
+            /* ================================
+               QUANTITY INCREASE / DECREASE
+               (UPDATE ALL HIDDEN INPUTS)
+            =================================*/
+            const minusBtn = document.querySelector('.quantity-btn.minus');
+            const plusBtn = document.querySelector('.quantity-btn.plus');
+            const quantityInput = document.querySelector('.quantity-input');
+
+            function syncHidden() {
+                document.querySelectorAll('.quantity-input-hidden')
+                        .forEach(h => h.value = quantityInput.value);
+            }
+
+            if (minusBtn && plusBtn && quantityInput) {
+
+                minusBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    let q = parseInt(quantityInput.value);
+                    if (q > 1) quantityInput.value = q - 1;
+                    syncHidden();
+                });
+
+                plusBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    let q = parseInt(quantityInput.value);
+                    const maxStock = parseInt(quantityInput.max);
+                    if (q < maxStock) quantityInput.value = q + 1;
+                    syncHidden();
+                });
+
+                quantityInput.addEventListener('input', function() {
+                    let q = parseInt(quantityInput.value);
+                    const maxStock = parseInt(quantityInput.max);
+
+                    if (isNaN(q) || q < 1) q = 1;
+                    if (q > maxStock) q = maxStock;
+
+                    quantityInput.value = q;
+                    syncHidden();
+                });
+            }
+
+            /* ================================
+               IMAGE CHANGING FUNCTIONALITY
+            =================================*/
+            const thumbnailItems = document.querySelectorAll('.thumbnail-item');
+            const mainProductImage = document.getElementById('main-product-image');
+
+            if (thumbnailItems.length > 0 && mainProductImage) {
+                thumbnailItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        // Get the image URL from data attribute
+                        const imageUrl = this.getAttribute('data-image');
+
+                        // Update the main image
+                        mainProductImage.src = imageUrl;
+
+                        // Remove active class from all thumbnails
+                        thumbnailItems.forEach(thumb => {
+                            thumb.classList.remove('active');
+                        });
+
+                        // Add active class to clicked thumbnail
+                        this.classList.add('active');
+                    });
+                });
+            }
+
+            /* ================================
+               IMAGE ZOOM EFFECT
+            =================================*/
+            const mainImageContainer = document.querySelector('.main-image-container');
+            if (mainImageContainer) {
+                mainImageContainer.addEventListener('click', function() {
+                    this.classList.toggle('zoomed');
+                });
+            }
+
         });
-    }, observerOptions);
 
-    document.querySelectorAll('.product-card').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-
-    /* ================================
-       QUANTITY INCREASE / DECREASE
-       (UPDATE ALL HIDDEN INPUTS)
-    =================================*/
-    const minusBtn = document.querySelector('.quantity-btn.minus');
-    const plusBtn = document.querySelector('.quantity-btn.plus');
-    const quantityInput = document.querySelector('.quantity-input');
-
-    function syncHidden() {
-        document.querySelectorAll('.quantity-input-hidden')
-                .forEach(h => h.value = quantityInput.value);
-    }
-
-    if (minusBtn && plusBtn && quantityInput) {
-
-        minusBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            let q = parseInt(quantityInput.value);
-            if (q > 1) quantityInput.value = q - 1;
-            syncHidden();
-        });
-
-        plusBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            let q = parseInt(quantityInput.value);
-            const maxStock = parseInt(quantityInput.max);
-            if (q < maxStock) quantityInput.value = q + 1;
-            syncHidden();
-        });
-
-        quantityInput.addEventListener('input', function() {
-            let q = parseInt(quantityInput.value);
-            const maxStock = parseInt(quantityInput.max);
-
-            if (isNaN(q) || q < 1) q = 1;
-            if (q > maxStock) q = maxStock;
-
-            quantityInput.value = q;
-            syncHidden();
-        });
-    }
-
-});
-</script>
-
-{% if request.GET.review and not user_review %}
-<script>
-window.scrollTo(0, document.querySelector("form").offsetTop - 120);
-</script>
-{% endif %}
-
+        {% if request.GET.review and not user_review %}
+        window.scrollTo(0, document.querySelector("form").offsetTop - 120);
+        {% endif %}
+    </script>
 </body>
 </html>
