@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - ShopHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F8FBFF;
+            --primary-color: #3B82F6;
+            --accent-color: #60A5FA;
+            --secondary-color: #2563EB;
+            --text-color: #1E3A8A;
+            --light-text: #64748B;
+            --hover-color: #2563EB;
+            --input-bg: #F0F9FF;
+            --input-border: #BFDBFE;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow-light: 0 8px 30px rgba(59, 130, 246, 0.08);
+            --shadow-medium: 0 15px 40px rgba(59, 130, 246, 0.12);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Open Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #F8FBFF 0%, #EFF6FF 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-section {
+            padding: 50px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .form-header h1 {
+            font-family: var(--font-heading);
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .form-header p {
+            color: var(--light-text);
+            margin-bottom: 0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-error {
+            background: #FEF2F2;
+            color: #EF4444;
+            border-left: 4px solid #EF4444;
+        }
+
+        .alert-success {
+            background: #ECFDF5;
+            color: #10B981;
+            border-left: 4px solid #10B981;
+        }
+
+        /* Social Login Section */
+        .social-login {
+            margin-bottom: 25px;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--input-border);
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .social-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .social-btn .google-icon {
+            width: 20px;
+            height: 20px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="%23EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="%234285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="%23FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="%2334A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>') no-repeat center;
+            background-size: contain;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--input-border), transparent);
+        }
+
+        .divider::before {
+            margin-right: 16px;
+        }
+
+        .divider::after {
+            margin-left: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            letter-spacing: 0.2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94A3B8;
+            font-size: 1.1rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 14px 18px 14px 48px;
+            border-radius: 10px;
+            border: 1.5px solid var(--input-border);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        .input-group select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            background-size: 16px;
+            padding-right: 45px;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .input-group input::placeholder {
+            color: #94A3B8;
+        }
+
+        .role-section {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .role-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--light-text);
+            cursor: pointer;
+            line-height: 1.5;
+        }
+
+        .checkbox-group a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .checkbox-group a:hover {
+            color: var(--hover-color);
+            text-decoration: underline;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+            color: white;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.25);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .form-footer {
+            text-align: center;
+            color: var(--light-text);
+            font-size: 0.95rem;
+            margin-top: 20px;
+        }
+
+        .form-footer a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .form-footer a:hover {
+            color: var(--hover-color);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 550px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                margin: 0;
+                border-radius: 20px;
+            }
+
+            .form-section {
+                padding: 30px 25px;
+            }
+
+            .logo {
+                font-size: 1.9rem;
+            }
+
+            .form-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-section">
+            <div class="form-header">
+                <div class="logo">ShopHub</div>
+                <h1>Create Account</h1>
+                <p>Join ShopHub and start shopping today!</p>
+            </div>
+
+            <!-- Display Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Google Sign Up -->
+            <div class="social-login">
+                <a href="{% url 'google_login' %}" class="social-btn">
+                    <span class="google-icon"></span>
+                    Continue with Google
+                </a>
+            </div>
+
+            <div class="divider">or register with email</div>
+
+            <form method="POST" action="{% url 'register_seller' %}">
+                {% csrf_token %}
+
+                <div class="input-group">
+                    <label for="first_name">First Name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="last_name">Last Name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="last_name" name="last_name" placeholder="Enter your last name" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">✉</span>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="role">Account Type</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👥</span>
+                        <select id="roleSelect" name="role" required>
+                            <option value="" disabled selected>Select your role</option>
+                            <option value="user">User</option>
+                            <option value="seller">Seller</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- USER FIELDS -->
+                <div id="userFields" class="role-section">
+                    <div class="role-badge">👤 User Registration</div>
+
+                    <div class="input-group">
+                        <label for="phone">Phone Number</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📱</span>
+                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SELLER FIELDS -->
+                <div id="sellerFields" class="role-section">
+                    <div class="role-badge">🏪 Seller Registration</div>
+
+                    <div class="input-group">
+                        <label for="shop_name">Shop Name</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🏪</span>
+                            <input type="text" id="shop_name" name="shop_name" placeholder="Enter your shop name">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="shop_type">Shop Type</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">💼</span>
+                            <select id="shop_type" name="shop_type">
+                                <option value="" disabled selected>Select shop type</option>
+                                <option value="RETAIL">Retail Shop</option>
+                                <option value="WHOLESALE">Wholesale</option>
+                                <option value="DROPSHIPPING">Dropshipping</option>
+                                <option value="MANUFACTURER">Manufacturer</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="shop_address">Shop Address</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📍</span>
+                            <input type="text" id="shop_address" name="shop_address" placeholder="Enter shop address">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="gst_number">GST Number</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📄</span>
+                            <input type="text" id="gst_number" name="gst_number" placeholder="Enter GST number">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="bank_account_number">Bank Account Number</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🏦</span>
+                            <input type="text" id="bank_account_number" name="bank_account_number" placeholder="Enter bank account number">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADMIN FIELDS -->
+                <div id="adminFields" class="role-section">
+                    <div class="role-badge">⚙ Admin Registration</div>
+
+                    <div class="input-group">
+                        <label for="admin_id">Employee ID</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🆔</span>
+                            <input type="text" id="admin_id" name="admin_id" placeholder="Enter employee ID">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" name="password" placeholder="Create a password" required>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">I agree to the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a></label>
+                </div>
+
+                <button type="submit" class="btn">CREATE ACCOUNT</button>
+            </form>
+
+            <div class="form-footer">
+                <p>Already have an account? <a href="{% url 'login' %}">Sign in here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const roleSelect = document.getElementById("roleSelect");
+        const userFields = document.getElementById("userFields");
+        const sellerFields = document.getElementById("sellerFields");
+        const adminFields = document.getElementById("adminFields");
+
+        roleSelect.addEventListener("change", () => {
+            userFields.classList.remove("active");
+            sellerFields.classList.remove("active");
+            adminFields.classList.remove("active");
+
+            if (roleSelect.value === "user") userFields.classList.add("active");
+            if (roleSelect.value === "seller") sellerFields.classList.add("active");
+            if (roleSelect.value === "admin") adminFields.classList.add("active");
+        });
+
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('roleSelect').value;
+            const terms = document.getElementById('terms').checked;
+
+            if (!terms) {
+                alert('Please agree to the Terms and Conditions');
+                e.preventDefault();
+                return;
+            }
+
+            if (role === 'seller') {
+                const shopName = document.getElementById('shop_name').value;
+                const shopType = document.getElementById('shop_type').value;
+                const shopAddress = document.getElementById('shop_address').value;
+                const gstNumber = document.getElementById('gst_number').value;
+                const bankAccount = document.getElementById('bank_account_number').value;
+
+                if (!shopName || !shopType || !shopAddress || !gstNumber || !bankAccount) {
+                    alert('Please fill in all seller fields');
+                    e.preventDefault();
+                    return;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

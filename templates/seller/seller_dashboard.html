@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Seller Dashboard - ShopHub</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .notification-icon {
+            position: relative;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .notification-icon:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .profile-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .profile-dropdown:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .dropdown-arrow {
+            font-size: 0.8rem;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        .profile-dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 200px;
+            padding: 0.5rem 0;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+        }
+
+        .profile-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: #333;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #eaeaea;
+            margin: 0.5rem 0;
+        }
+
+        .main-layout {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 50;
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .seller-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .seller-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 1.5rem 0;
+            flex: 1;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 12px 1.5rem;
+            text-decoration: none;
+            color: #333;
+            transition: var(--transition);
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(102, 126, 234, 0.15);
+            color: var(--primary);
+            font-weight: 600;
+            border-left: 3px solid var(--primary);
+        }
+
+        .sidebar-nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #eaeaea;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 8px 16px;
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 53, 69, 0.2);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .dashboard-subtitle {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .date-filter {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .stat-icon-revenue {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .stat-icon-orders {
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        }
+
+        .stat-icon-products {
+            background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+        }
+
+        .stat-icon-customers {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .change-positive {
+            color: var(--success);
+        }
+
+        .change-negative {
+            color: var(--danger);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid #eaeaea;
+            color: var(--gray);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .orders-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .orders-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .orders-table tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .order-id {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .order-id:hover {
+            text-decoration: underline;
+        }
+
+        .customer-name {
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #856404;
+        }
+
+        .status-processing {
+            background: rgba(255, 193, 7, 0.2);
+            color: #856404;
+        }
+
+        .status-placed {
+            background: rgba(0, 123, 255, 0.2);
+            color: #004085;
+        }
+
+        .status-shipped {
+            background: rgba(40, 167, 69, 0.2);
+            color: #155724;
+        }
+
+        .status-delivered {
+            background: rgba(40, 167, 69, 0.2);
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: rgba(220, 53, 69, 0.2);
+            color: #721c24;
+        }
+
+        .product-performance {
+            margin-top: 1rem;
+        }
+
+        .performance-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .performance-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .product-category {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-stats {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat .stat-value {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .stat .stat-label {
+            font-size: 0.75rem;
+            margin-bottom: 0;
+        }
+
+        .recent-activity {
+            margin-top: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-desc {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .messages {
+            margin-bottom: 1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-error {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                top: auto;
+            }
+
+            .sidebar-nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 1rem 0;
+            }
+
+            .sidebar-nav li {
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+
+            .sidebar-nav a {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                flex-direction: column;
+                padding: 10px 15px;
+                text-align: center;
+                min-width: 100px;
+            }
+
+            .sidebar-nav a.active {
+                border-left: none;
+                border-bottom: 3px solid var(--primary);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .date-filter {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .orders-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-card {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-right {
+                gap: 1rem;
+            }
+
+            .chart-container {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="{% url 'seller_dashboard' %}" class="header-logo">🛍️ ShopHub Seller</a>
+        </div>
+        <div class="header-right">
+            <div class="notification-icon">
+             <a href="{% url 'notifications' %}" class="notification-icon" style="text-decoration:none; color:inherit;">
+    <span>🔔</span>
+
+    {% if unread_count > 0 %}
+        <span class="notification-badge">{{ unread_count }}</span>
+    {% endif %}
+</a>
+                <span class="notification-badge">{{ unread_count }}</span>
+            </div>
+            <div class="profile-dropdown">
+                <div class="profile-avatar">{{ user.username|first|upper }}</div>
+                <div class="profile-info">
+                    <span class="profile-name">{{ user.username }}</span>
+                </div>
+                <span class="dropdown-arrow">▼</span>
+                <div class="dropdown-menu">
+                    <a href="{% url 'seller_profile' %}" class="dropdown-item">
+                        <span>👤</span> My Profile
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span>⚙️</span> Account Settings
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span>💳</span> Billing
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{% url 'logout_seller' %}" class="dropdown-item">
+                        <span>🚪</span> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="seller-avatar">{{ user.username|first|upper }}</div>
+                <div class="seller-info">
+                    <h3>{{ user.username }}</h3>
+                    <span style="color: var(--gray); font-size: 0.9rem;">Seller Account</span>
+                </div>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li><a href="{% url 'seller_dashboard' %}" class="active">
+                    <span class="sidebar-nav-icon">📊</span>
+                    Dashboard
+                </a></li>
+                <li><a href="{% url 'seller_products' %}">
+                    <span class="sidebar-nav-icon">📦</span>
+                    Products
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">📋</span>
+                    Categories
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">📊</span>
+                    Inventory
+                </a></li>
+                <li><a href="{% url 'seller_orders' %}">
+                    <span class="sidebar-nav-icon">💰</span>
+                    Orders
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">👥</span>
+                    Customers
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">📈</span>
+                    Analytics
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">🎯</span>
+                    Promotions
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">⭐</span>
+                    Reviews
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">⚙️</span>
+                    Settings
+                </a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <a href="{% url 'logout_seller' %}" class="logout-btn">
+                    <span>🚪</span> Logout
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <div class="dashboard-header">
+                    <div>
+                        <h1 class="dashboard-title">Seller Dashboard</h1>
+                        <p class="dashboard-subtitle">Manage your products, track sales, and monitor performance</p>
+                    </div>
+
+                        <button class="btn btn-primary" onclick="updateChart()">
+                            <span>📊</span> Generate Report
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-revenue">💰</div>
+                        <div class="stat-info">
+                            <div class="stat-value">₹{{ total_revenue|floatformat:2 }}</div>
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-change change-positive">↑ From delivered orders</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-orders">📦</div>
+                        <div class="stat-info">
+                            <div class="stat-value">{{ total_orders }}</div>
+                            <div class="stat-label">Total Orders</div>
+                            <div class="stat-change change-positive">↑ All time orders</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-products">📱</div>
+                        <div class="stat-info">
+                            <div class="stat-value">{{ active_products }}</div>
+                            <div class="stat-label">Active Products</div>
+                            <div class="stat-change change-positive">↑ Currently listed</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-customers">👥</div>
+                        <div class="stat-info">
+                            <div class="stat-value">{{ total_customers }}</div>
+                            <div class="stat-label">Total Customers</div>
+                            <div class="stat-change change-positive">↑ Unique buyers</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div>
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">Sales Overview</h2>
+                                <div class="card-actions">
+                                    <button class="btn btn-outline" onclick="toggleChartType()">
+                                        <span>📈</span> Switch View
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="salesChart"></canvas>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #764ba2;"></div>
+                                    <span>Orders</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">Recent Orders</h2>
+                                <div class="card-actions">
+                                    <a href="{% url 'seller_orders' %}" class="btn btn-outline">View All</a>
+                                </div>
+                            </div>
+
+                            {% if recent_orders %}
+                            <table class="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in recent_orders %}
+                                    <tr>
+                                        <td><a href="{% url 'order_detail' order.id %}" class="order-id">{{ order.order_number }}</a></td>
+                                        <td class="customer-name">{{ order.user.username|default:"Guest" }}</td>
+                                        <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                        <td>₹{{ order.total_amount|floatformat:2 }}</td>
+                                        <td>
+                                            <span class="status-badge status-{{ order.order_status|lower }}">
+                                                {{ order.get_order_status_display }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📦</div>
+                                <p>No orders yet</p>
+                                <small>Orders will appear here once customers start purchasing</small>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">Product Performance</h2>
+                                <div class="card-actions">
+                                    <a href="{% url 'seller_products' %}" class="btn btn-outline">Manage Products</a>
+                                </div>
+                            </div>
+
+                            {% if product_performance %}
+                            <div class="product-performance">
+                                {% for performance in product_performance %}
+                                <div class="performance-item">
+                                    <div class="product-image">
+                                        {% if performance.product.main_image %}
+                                        <img src="{{ performance.product.main_image }}" alt="{{ performance.product.title }}">
+                                        {% else %}
+                                        📦
+                                        {% endif %}
+                                    </div>
+                                    <div class="product-info">
+                                        <div class="product-name">{{ performance.product.title }}</div>
+                                        <div class="product-category">
+                                            {% if performance.product.category %}
+                                                {{ performance.product.category.name }}
+                                            {% else %}
+                                                Uncategorized
+                                            {% endif %}
+                                        </div>
+                                        <div class="product-stats">
+                                            <div class="stat">
+                                                <div class="stat-value">₹{{ performance.revenue|floatformat:0 }}</div>
+                                                <div class="stat-label">Revenue</div>
+                                            </div>
+                                            <div class="stat">
+                                                <div class="stat-value">{{ performance.sold }}</div>
+                                                <div class="stat-label">Sold</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📊</div>
+                                <p>No product performance data yet</p>
+                                <small>Product performance will appear after sales</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">Recent Activity</h2>
+                                <div class="card-actions">
+                                    <button class="btn btn-outline" onclick="refreshActivity()">
+                                        <span>🔄</span> Refresh
+                                    </button>
+                                </div>
+                            </div>
+
+                            {% if recent_activity %}
+                            <div class="recent-activity">
+                                {% for activity in recent_activity %}
+                                <div class="activity-item">
+                                    <div class="activity-icon">{{ activity.icon }}</div>
+                                    <div class="activity-info">
+                                        <div class="activity-title">{{ activity.title }}</div>
+                                        <div class="activity-desc">{{ activity.desc }}</div>
+                                        <div class="activity-time" style="font-size: 0.75rem; color: var(--gray); margin-top: 0.25rem;">
+                                            {{ activity.timestamp|timesince }} ago
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📋</div>
+                                <p>No recent activity</p>
+                                <small>Your recent activities will appear here</small>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h2 class="card-title">Quick Actions</h2>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                                <a href="{% url 'seller_products' %}" class="btn btn-outline" style="justify-content: center;">
+                                    <span>📦</span> Add Product
+                                </a>
+                                <a href="{% url 'seller_orders' %}" class="btn btn-outline" style="justify-content: center;">
+                                    <span>💰</span> View Orders
+                                </a>
+                            </div>
+                        </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+
+        const notificationSocket = new WebSocket(
+    "ws://" + window.location.host + "/ws/seller/notifications/"
+);
+
+notificationSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+
+    const badge = document.querySelector('.notification-badge');
+    if (badge) {
+        badge.innerText = parseInt(badge.innerText) + 1;
+    }
+
+    const toast = document.createElement("div");
+    toast.style.position = "fixed";
+    toast.style.top = "20px";
+    toast.style.right = "20px";
+    toast.style.padding = "15px 20px";
+    toast.style.background = "#667eea";
+    toast.style.color = "white";
+    toast.style.borderRadius = "10px";
+    toast.style.zIndex = 9999;
+    toast.innerHTML = `🔔 ${data.message}`;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 4000);
+};
+
+         let salesChart;
+        let chartType = 'line';
+
+        function initializeChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+
+            // Use backend data from Django template
+            const labels = {{ chart_labels_json|safe }};
+            const revenueData = {{ chart_revenue_data_json|safe }};
+            const ordersData = {{ chart_orders_data_json|safe }};
+
+            console.log("Chart Data Loaded:", { labels, revenueData, ordersData });
+
+            // Destroy existing chart if it exists
+            if (salesChart) {
+                salesChart.destroy();
+            }
+
+            salesChart = new Chart(ctx, {
+                type: chartType,
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Revenue (₹)',
+                            data: revenueData,
+                            borderColor: '#667eea',
+                            backgroundColor: chartType === 'bar' ? 'rgba(102, 126, 234, 0.3)' : 'rgba(102, 126, 234, 0.1)',
+                            borderWidth: 3,
+                            fill: chartType === 'line',
+                            tension: 0.4,
+                            pointBackgroundColor: '#667eea',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: 'Orders',
+                            data: ordersData,
+                            borderColor: '#764ba2',
+                            backgroundColor: chartType === 'bar' ? 'rgba(118, 75, 162, 0.3)' : 'rgba(118, 75, 162, 0.1)',
+                            borderWidth: 3,
+                            fill: chartType === 'line',
+                            tension: 0.4,
+                            pointBackgroundColor: '#764ba2',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    size: 12,
+                                    weight: '600'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#333',
+                            bodyColor: '#666',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            boxPadding: 6
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    if (value >= 1000) {
+                                        return '₹' + (value / 1000).toFixed(0) + 'k';
+                                    }
+                                    return '₹' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11,
+                                    weight: '600'
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        function toggleChartType() {
+            chartType = chartType === 'line' ? 'bar' : 'line';
+            initializeChart();
+
+            // Update button text
+            const switchBtn = document.querySelector('.btn-outline');
+            if (switchBtn) {
+                const icon = chartType === 'line' ? '📊' : '📈';
+                switchBtn.innerHTML = `<span>${icon}</span> Switch View`;
+            }
+        }
+
+        function updateChart() {
+            // Show loading state
+            const generateBtn = document.querySelector('.btn-primary');
+            const originalText = generateBtn.innerHTML;
+            generateBtn.innerHTML = '<span>⏳</span> Generating...';
+            generateBtn.disabled = true;
+
+            // Simulate API call or refresh
+            setTimeout(() => {
+                if (salesChart) {
+                    salesChart.destroy();
+                }
+                initializeChart();
+
+                // Restore button
+                generateBtn.innerHTML = originalText;
+                generateBtn.disabled = false;
+
+                // Show success message
+                alert('Report generated successfully!');
+            }, 1000);
+        }
+
+        function refreshActivity() {
+            const refreshBtn = event.target.closest('.btn');
+            const originalText = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<span>⏳</span> Refreshing...';
+            refreshBtn.disabled = true;
+
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }
+
+        // Profile dropdown functionality
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        if (profileDropdown) {
+            profileDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('active');
+            });
+        }
+
+        document.addEventListener('click', function() {
+            if (profileDropdown) profileDropdown.classList.remove('active');
+        });
+
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+        if (dropdownMenu) {
+            dropdownMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+
+        // Logout confirmation
+        const logoutBtns = document.querySelectorAll('.logout-btn, a[href*="logout"]');
+        logoutBtns.forEach(btn => {
+            if (btn.classList.contains('logout-btn')) {
+                btn.addEventListener('click', function(e) {
+                    if(!confirm('Are you sure you want to logout?')) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+
+        // Notification click
+        const notificationIcon = document.querySelector('.notification-icon');
+        if (notificationIcon) {
+            notificationIcon.addEventListener('click', function() {
+                alert('You have 3 new notifications');
+            });
+        }
+
+        // Auto-hide messages
+        setTimeout(function() {
+            const messages = document.querySelector('.messages');
+            if (messages) {
+                messages.style.transition = 'opacity 0.5s ease';
+                messages.style.opacity = '0';
+                setTimeout(() => messages.remove(), 500);
+            }
+        }, 5000);
+
+        // Initialize chart when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChart();
+        });
+
+
+
+    </script>
+</body>
+</html><div class="legend-color" style="background-color: #667eea;"></div>
+                                    <span>Revenue</span>
+                                </div>
+                                <div class="legend-item">

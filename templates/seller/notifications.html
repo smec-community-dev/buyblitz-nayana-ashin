@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - StyleCart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .notification-icon {
+            position: relative;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .notification-icon:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .profile-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .profile-dropdown:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .dropdown-arrow {
+            font-size: 0.8rem;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        .profile-dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 200px;
+            padding: 0.5rem 0;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+        }
+
+        .profile-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: #333;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #eaeaea;
+            margin: 0.5rem 0;
+        }
+
+        .main-layout {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 50;
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .seller-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 1.5rem 0;
+            flex: 1;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 12px 1.5rem;
+            text-decoration: none;
+            color: #333;
+            transition: var(--transition);
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(102, 126, 234, 0.15);
+            color: var(--primary);
+            font-weight: 600;
+            border-left: 3px solid var(--primary);
+        }
+
+        .sidebar-nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #eaeaea;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 8px 16px;
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 53, 69, 0.2);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .dashboard-subtitle {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .notification-card {
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .notification-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .live-notification {
+            animation: slideIn 0.5s ease-out;
+            border-left: 4px solid var(--success);
+        }
+
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-new {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .badge-old {
+            background-color: var(--gray);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray);
+            opacity: 0.6;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .connection-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                top: auto;
+            }
+
+            .sidebar-nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 1rem 0;
+            }
+
+            .sidebar-nav li {
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+
+            .sidebar-nav a {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                flex-direction: column;
+                padding: 10px 15px;
+                text-align: center;
+                min-width: 100px;
+            }
+
+            .sidebar-nav a.active {
+                border-left: none;
+                border-bottom: 3px solid var(--primary);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .profile-info {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-card {
+                padding: 1rem;
+            }
+
+            .header-right {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="{% url 'seller_dashboard' %}" class="header-logo">🛍️ StyleCart Seller</a>
+        </div>
+        <div class="header-right">
+            <a href="{% url 'notifications' %}" class="notification-icon" style="text-decoration:none; color:inherit;">
+                <span>🔔</span>
+                {% if unread_count > 0 %}
+                <span class="notification-badge">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+            <div class="profile-dropdown">
+                <div class="profile-avatar">{{ seller.user.username|first|upper }}</div>
+                <div class="profile-info">
+                    <span class="profile-name">{{ seller.user.username }}</span>
+                </div>
+                <span class="dropdown-arrow">▼</span>
+                <div class="dropdown-menu">
+                    <a href="{% url 'seller_profile' %}" class="dropdown-item">
+                        <span>👤</span> My Profile
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span>⚙️</span> Account Settings
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span>💳</span> Billing
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="/seller/logout/" class="dropdown-item">
+                        <span>🚪</span> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="seller-avatar">{{ seller.user.username|first|upper }}</div>
+                <div class="seller-info">
+                    <h3>{{ seller.user.username }}</h3>
+                    <span style="color: var(--gray); font-size: 0.9rem;">Seller Account</span>
+                </div>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li><a href="{% url 'seller_dashboard' %}" class="active">
+                    <span class="sidebar-nav-icon">📊</span>
+                    Dashboard
+                </a></li>
+                <li><a href="{% url 'seller_products' %}">
+                    <span class="sidebar-nav-icon">📦</span>
+                    Products
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">📋</span>
+                    Categories
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">📊</span>
+                    Inventory
+                </a></li>
+                <li><a href="{% url 'seller_orders' %}">
+                    <span class="sidebar-nav-icon">💰</span>
+                    Orders
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">👥</span>
+                    Customers
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">📈</span>
+                    Analytics
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">🎯</span>
+                    Promotions
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">⭐</span>
+                    Reviews
+                </a></li>
+                <li><a href="#">
+                    <span class="sidebar-nav-icon">⚙️</span>
+                    Settings
+                </a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <a href="{% url 'logout_seller' %}" class="logout-btn">
+                    <span>🚪</span> Logout
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <div class="dashboard-header">
+                    <div>
+                        <h1 class="dashboard-title">Notifications</h1>
+                        <p class="dashboard-subtitle">Stay updated with real-time store activities</p>
+                    </div>
+                    <div class="connection-status">
+                        <div class="connection-dot"></div>
+                        <span class="text-sm text-green-600 font-medium">Live Updates</span>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">All Notifications</h2>
+                        <div class="flex items-center space-x-2">
+                            <button id="markAllRead" class="text-sm text-purple-600 hover:text-purple-800 font-medium">
+                                Mark all as read
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div id="notificationsContainer" class="space-y-4 max-h-[600px] overflow-y-auto">
+                            <!-- New Notifications (Live) will appear here -->
+                            <div id="liveNotifications"></div>
+
+                            <!-- Older Notifications from Database -->
+                            {% for n in notifications %}
+                            <div class="notification-card">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="flex items-center space-x-2">
+                                        <strong class="text-gray-800 font-semibold">{{ n.title }}</strong>
+                                        <span class="notification-badge badge-old">
+                                            <i class="fas fa-clock mr-1"></i>
+                                            Older
+                                        </span>
+                                    </div>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{{ n.created_at }}</span>
+                                </div>
+                                <p class="text-gray-600 mb-2">{{ n.message }}</p>
+                                <div class="flex items-center text-xs text-gray-400">
+                                    <i class="far fa-clock mr-1"></i>
+                                    {{ n.created_at }}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <!-- Empty state will be shown if no notifications -->
+                            {% endfor %}
+
+                            <!-- Initial empty state -->
+                            <div id="emptyState" class="empty-state">
+                                <div class="empty-state-icon">🔔</div>
+                                <p>No notifications yet</p>
+                                <small>New notifications will appear here automatically</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connection Status -->
+                <div class="dashboard-card">
+                    <div class="flex items-center justify-between p-4">
+                        <div class="flex items-center">
+                            <div class="connection-dot"></div>
+                            <span class="text-sm font-medium text-gray-700 ml-2">WebSocket Connected</span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            Real-time updates enabled
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // WebSocket connection for real-time notifications
+        const socket = new WebSocket(
+            "ws://" + window.location.host + "/ws/notifications/"
+        );
+
+        socket.onmessage = function(e) {
+            let data = JSON.parse(e.data);
+
+            // Remove empty state if it exists
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+                emptyState.remove();
+            }
+
+            // Create new notification element
+            const notificationElement = document.createElement('div');
+            notificationElement.className = 'notification-card live-notification';
+            notificationElement.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex items-center space-x-2">
+                        <strong class="text-gray-800 font-semibold">${data.title}</strong>
+                        <span class="notification-badge badge-new">
+                            <i class="fas fa-bolt mr-1"></i>
+                            New
+                        </span>
+                    </div>
+                    <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded flex items-center">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span>
+                        Live
+                    </span>
+                </div>
+                <p class="text-gray-600 mb-2">${data.message}</p>
+                <div class="flex items-center text-xs text-gray-400">
+                    <i class="fas fa-clock mr-1"></i>
+                    Just now
+                </div>
+            `;
+
+            // Add to top of notifications container
+            const liveNotifications = document.getElementById('liveNotifications');
+            const notificationsContainer = document.getElementById('notificationsContainer');
+
+            if (liveNotifications) {
+                liveNotifications.appendChild(notificationElement);
+            } else {
+                // Create live notifications container if it doesn't exist
+                const liveContainer = document.createElement('div');
+                liveContainer.id = 'liveNotifications';
+                liveContainer.appendChild(notificationElement);
+                notificationsContainer.insertBefore(liveContainer, notificationsContainer.firstChild);
+            }
+
+            // Update notification badge count
+            const notificationBadge = document.querySelector('.notification-badge');
+            if (notificationBadge) {
+                let currentCount = parseInt(notificationBadge.textContent);
+                notificationBadge.textContent = currentCount + 1;
+            } else {
+                // Create badge if it doesn't exist
+                const notificationIcon = document.querySelector('.notification-icon');
+                const badge = document.createElement('span');
+                badge.className = 'notification-badge';
+                badge.textContent = '1';
+                notificationIcon.appendChild(badge);
+            }
+
+            // Show browser notification if permitted
+            if (Notification.permission === 'granted') {
+                new Notification(data.title, {
+                    body: data.message,
+                    icon: '/favicon.ico'
+                });
+            }
+        };
+
+        // Profile dropdown functionality
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        if (profileDropdown) {
+            profileDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('active');
+            });
+        }
+
+        document.addEventListener('click', function() {
+            if (profileDropdown) profileDropdown.classList.remove('active');
+        });
+
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+        if (dropdownMenu) {
+            dropdownMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+
+        // Mark all as read functionality
+        const markAllReadBtn = document.getElementById('markAllRead');
+        if (markAllReadBtn) {
+            markAllReadBtn.addEventListener('click', function() {
+                // In a real app, this would make an API call to mark all notifications as read
+                alert('All notifications marked as read!');
+
+                // Remove the notification badge
+                const notificationBadge = document.querySelector('.notification-badge');
+                if (notificationBadge) {
+                    notificationBadge.remove();
+                }
+            });
+        }
+
+        // Request notification permission on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+
+            // Hide empty state if there are existing notifications
+            const notifications = document.querySelectorAll('.notification-card');
+            const emptyState = document.getElementById('emptyState');
+            if (notifications.length > 0 && emptyState) {
+                emptyState.remove();
+            }
+        });
+
+        // Handle connection status
+        socket.onopen = function() {
+            console.log('WebSocket connection established');
+        };
+
+        socket.onclose = function() {
+            console.log('WebSocket connection closed');
+            const connectionDot = document.querySelector('.connection-dot');
+            if (connectionDot) {
+                connectionDot.style.backgroundColor = 'var(--danger)';
+                connectionDot.style.animation = 'none';
+            }
+        };
+
+        socket.onerror = function() {
+            console.log('WebSocket connection error');
+            const connectionDot = document.querySelector('.connection-dot');
+            if (connectionDot) {
+                connectionDot.style.backgroundColor = 'var(--danger)';
+                connectionDot.style.animation = 'none';
+            }
+        };
+    </script>
+</body>
+</html>

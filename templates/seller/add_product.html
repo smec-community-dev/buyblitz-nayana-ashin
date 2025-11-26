@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Product Management - ShopHub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .header-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .notification-icon {
+            position: relative;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .notification-icon:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: scale(1.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .profile-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .profile-dropdown:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .profile-role {
+            color: var(--gray);
+            font-size: 0.8rem;
+        }
+
+        .dropdown-arrow {
+            font-size: 0.8rem;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            width: 200px;
+            padding: 0.5rem 0;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .profile-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: #333;
+            transition: var(--transition);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #eaeaea;
+            margin: 0.5rem 0;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 50;
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .seller-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .seller-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .seller-info p {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 1.5rem 0;
+            flex: 1;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 12px 1.5rem;
+            text-decoration: none;
+            color: #333;
+            transition: var(--transition);
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(102, 126, 234, 0.15);
+            color: var(--primary);
+            font-weight: 600;
+            border-left: 3px solid var(--primary);
+        }
+
+        .sidebar-nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #eaeaea;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 8px 16px;
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 53, 69, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .dashboard-subtitle {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-info {
+            background: rgba(23, 162, 184, 0.2);
+            color: #0c5460;
+        }
+
+        .btn-info:hover {
+            background: rgba(23, 162, 184, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Compact Form Styles */
+        .form-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            transition: var(--transition);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-container:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .form-subtitle {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            font-family: inherit;
+            background: #fafafa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+            line-height: 1.4;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                top: auto;
+            }
+
+            .sidebar-nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 1rem 0;
+            }
+
+            .sidebar-nav li {
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+
+            .sidebar-nav a {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                flex-direction: column;
+                padding: 10px 15px;
+                text-align: center;
+                min-width: 100px;
+            }
+
+            .sidebar-nav a.active {
+                border-left: none;
+                border-bottom: 3px solid var(--primary);
+            }
+
+            .sidebar-nav a:hover {
+                transform: translateX(0) translateY(-2px);
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+                margin: 0 1rem;
+            }
+
+            .form-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.75rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-title {
+                font-size: 1.8rem;
+            }
+
+            .header-right {
+                gap: 1rem;
+            }
+
+            .btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+
+            .form-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="#" class="header-logo">🛍️ ShopHub Seller</a>
+        </div>
+        <div class="header-right">
+            <div class="notification-icon">
+                <span>🔔</span>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="profile-dropdown">
+                <div class="profile-avatar">{{ user.username|first|upper }}</div>
+                <div class="profile-info">
+                    <span class="profile-name">{{ user.username }}</span>
+                </div>
+                <span class="dropdown-arrow">▼</span>
+                <div class="dropdown-menu">
+                    <a href="{% url 'seller_profile' %}" class="dropdown-item"><span>👤</span> My Profile</a>
+                    <a href="#" class="dropdown-item"><span>⚙️</span> Account Settings</a>
+                    <a href="#" class="dropdown-item"><span>💳</span> Billing</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item"><span>🚪</span> Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="seller-avatar">{{ user.username|first|upper }}</div>
+                <div class="seller-info">
+                    <h3>{{ user.username }}</h3>
+                </div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="{% url 'seller_dashboard' %}"><span class="sidebar-nav-icon">📊</span> Dashboard</a></li>
+                <li><a href="{% url 'seller_products' %}" class="active"><span class="sidebar-nav-icon">📦</span> Products</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">📋</span> Categories</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">📊</span> Inventory</a></li>
+                <li><a href="{% url 'seller_orders' %}"><span class="sidebar-nav-icon">💰</span> Orders</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">👥</span> Customers</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">📈</span> Analytics</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">🎯</span> Promotions</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">⭐</span> Reviews</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">⚙️</span> Settings</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <button class="logout-btn"><span>🚪</span> Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <div class="dashboard-header">
+                    <div>
+                        <h1 class="dashboard-title">Product Management</h1>
+                        <p class="dashboard-subtitle">Manage your products, inventory, and pricing</p>
+                    </div>
+                    <a href="{% url 'add_product' %}" class="btn btn-primary"><span>➕</span> Add Product</a>
+                </div>
+
+                <!-- Compact Product Form Section -->
+                <div class="form-container">
+                    <div class="form-header">
+                        <div class="form-icon">
+                            {% if edit %}✏️{% else %}➕{% endif %}
+                        </div>
+                        <div>
+                            <h2 class="form-title">{% if edit %}Update Product{% else %}Add New Product{% endif %}</h2>
+                            <p class="form-subtitle">{% if edit %}Modify your product details{% else %}Fill in the product details{% endif %}</p>
+                        </div>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data"
+                          action="{% if edit %}{% url 'update_product' product.slug %}{% else %}{% url 'add_product' %}{% endif %}">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-control" required>
+                                <option value="">Select Category</option>
+                                {% for c in categories %}
+                                    <option value="{{ c.id }}"
+                                        {% if edit and product.category.id == c.id %}selected{% endif %}>
+                                        {{ c.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Product Name</label>
+                            <input type="text" name="title"
+                                   value="{% if edit %}{{ product.title }}{% endif %}"
+                                   class="form-control"
+                                   placeholder="Enter product name"
+                                   required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Price (₹)</label>
+                                <input type="number" step="0.01" name="price"
+                                       value="{% if edit %}{{ product.price }}{% endif %}"
+                                       class="form-control"
+                                       placeholder="0.00"
+                                       required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Stock Quantity</label>
+                                <input type="number" name="stock"
+                                       value="{% if edit %}{{ product.stock }}{% endif %}"
+                                       class="form-control"
+                                       placeholder="0"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" rows="3"
+                                      class="form-control"
+                                      placeholder="Product description...">{% if edit %}{{ product.description }}{% endif %}</textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <a href="{% url 'seller_products' %}" class="btn btn-outline">
+                                <span>←</span> Back
+                            </a>
+                            {% if edit %}
+                                <button type="submit" class="btn btn-success">
+                                    <span>✓</span> Update
+                                </button>
+                            {% else %}
+                                <button type="submit" class="btn btn-primary">
+                                    <span>➕</span> Add Product
+                                </button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
