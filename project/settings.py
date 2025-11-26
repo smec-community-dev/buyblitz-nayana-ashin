@@ -12,7 +12,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", default="your-default-key")
 
 DEBUG = env.bool("DEBUG", default=True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 AUTH_USER_MODEL = 'core.User'
 
